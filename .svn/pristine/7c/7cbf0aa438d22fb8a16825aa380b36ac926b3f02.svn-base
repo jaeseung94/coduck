@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.co.coduck.dao.QuestionDao">
+	
+	<!-- 질문하기 -->
+	<!-- <insert id="insertQuestion" parameterType="">
+		insert into lect_questions
+		values (lect_questions_seq.nextval, #{user.no}, #{lesson.no}, #{contents}, #{isAnswered}, sysdate)
+	</insert> -->
+	
+	<!-- 조건별 질문 조회 -->
+	<select id="getQuestionByLectureNo" parameterType="LectureCriteria" resultType="Question">
+		select *
+		from
+			(select 
+				row_number() over (order by  q.lect_question_create_date desc) as rn
+				, s.lesson_title				"lesson.title"
+			    , u.user_id						"user.id"
+			    , u.user_image_filename  		"user.imageFilename"
+			    , q.lect_question_no			no
+			    , q.lect_question_contents		contents
+			    , q.lect_question_create_date	createDate
+			    , q.lect_question_is_answered	isAnswered
+			from 
+				lect_questions q, lects l, chapters c, lessons s, users u
+			where
+			    q.lesson_no = s.lesson_no
+			and c.chapter_no = s.chapter_no
+		    and c.lect_no = l.lect_no
+		    and u.user_no = l.user_no
+		    and l.lect_no = #{no}
+	    	and  q.lect_question_contents like '%' || #{keyword} || '%'
+	    	)
+	    	<!-- <![CDATA[
+	    		where rn >= #{beginIndex}
+	    		and rn <= #{endIndex}
+	    	]]> -->
+	</select>
+	
+	<!-- 최근 30일 이내 질문 조회 (10개) -->
+	<select id="getQuestionByRecent" parameterType="int" resultType="Question">
+		select *
+		from
+			(select 
+				row_number() over (order by  q.lect_question_create_date desc) as rn
+				, s.lesson_title				"lesson.title"
+			    , u.user_id						"user.id"
+			    , u.user_image_filename  		"user.imageFilename"
+			    , q.lect_question_no			no
+			    , q.lect_question_contents		contents
+			    , q.lect_question_create_date	createDate
+			    , q.lect_question_is_answered	isAnswered
+			from 
+				lect_questions q, lects l, chapters c, lessons s, users u
+			where
+			    q.lesson_no = s.lesson_no
+			and c.chapter_no = s.chapter_no
+		    and c.lect_no = l.lect_no
+		    and u.user_no = l.user_no
+		    and l.lect_no = #{value}
+            and  to_char(q.lect_question_create_date, 'yyyy-MM-dd') > sysdate - 30	
+	    	)
+	    	<![CDATA[
+	    		where rn <= 15
+	    	]]> 
+	</select>
+	
+	<!-- 질문에 대한 답글 조회 -->
+	<select id="getAnswerByQuestionNo" parameterType="int" resultType="Answer">
+		select 
+		    u.user_id					"user.id"
+		    , u.user_image_filename		"user.imageFilename"
+		    , a.lect_answer_no			no
+		    , a.lect_answer_contents	contents
+		    , a.lect_answer_date		createDate
+		    , a.lect_question_no		"question.no"
+		from 
+			lect_answers A,lects L, users u
+		where
+		    a.lect_no = l.lect_no
+		and u.user_no = l.user_no
+		and a.lect_question_no = #{value}
+	</select>
+	
+</mapper>

@@ -1,0 +1,12 @@
+package kr.co.coduck.dao;
+
+import java.util.List;
+
+import kr.co.coduck.dto.UserByLectDto;
+import kr.co.coduck.vo.Lect;
+
+public interface LectDao {
+
+	List<UserByLectDto> getLectListUserByNo(int userNo);
+	Lect getLectByNo(int lectNo);
+}

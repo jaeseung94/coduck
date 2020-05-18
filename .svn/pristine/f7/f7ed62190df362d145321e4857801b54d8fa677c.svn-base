@@ -1,0 +1,8 @@
+package kr.co.coduck.service;
+
+import kr.co.coduck.vo.Review;
+
+public interface ReviewService {
+
+	Review getAllReivewStarAvg(int lectureNo);
+}

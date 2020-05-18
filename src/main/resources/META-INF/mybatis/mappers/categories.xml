@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.co.coduck.dao.CategoryDao">
+
+	
+	
+	<!-- 시험에서 상위카테고리로 조회 -->
+	<select id="getCatesByMainCateNo" parameterType="int" resultType="Category">
+		select 
+			cate_no			no,
+			cate_name		name,
+			main_cate_no	parentNo
+		from 
+			categories
+		where 
+			main_cate_no = #{value}	
+		order 
+			by 2	
+	</select>
+	
+	<!-- 강좌 카테고리 조회 -->
+	<select id="getAllLectureCategories" resultType="Category">
+		select 
+		    cate_no				no
+		    , cate_name			name
+		    , main_cate_no		parentNo
+		from 
+			categories
+		where 
+			main_cate_no = 10000
+	</select>
+	
+	<!-- 카테고리 번호로 카테고리 조회 -->
+	<select id="getCategoryByCategoryNo" parameterType="int" resultType="Category">
+		select 
+			cate_no
+			,cate_name
+			,main_cate_no
+		from 
+			categories
+		where 
+			cate_no = #{value}
+	</select>
+	
+	<!-- 동영상 카테고리만 조회하기 -->
+	<select id="getLectureCategoryByAdmin" resultType="Category">
+		select 
+			cate_no			as no,
+			cate_name		as name,
+			main_cate_no	as parentNo
+		from
+			categories
+		where
+			cate_no between 10001 and 19999
+		order by
+			cate_name asc
+	</select>
+	
+	<!-- 시험 카테고리만 조회하기 -->
+	<select id="getTestCategoryByAdmin" resultType="Category">
+		select 
+			cate_no			as no,
+			cate_name		as name,
+			main_cate_no	as parentNo
+		from 
+			CATEGORIES
+		where 
+			MAIN_CATE_NO in (select CATE_NO
+							from CATEGORIES
+							where MAIN_CATE_NO = 20000)
+		order by
+			cate_name
+	</select>
+	
+</mapper>

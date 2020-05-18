@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.co.coduck.dao.AdminQnaDao">
+	<!-- 1:1 답변내역 조회 -->
+	<select id="getAnswerByNo" parameterType="int" resultType="AdminAnswerDto">
+		select 
+			admin_answer_title				as title,
+			admin_answer_contents			as content,
+			admin_answer_file_name			as fileName,
+			admin_answer_create_date		as createDate,
+			admin_qna_no					as qnaNo,
+			admin_answer_no					as no
+		from
+			ad_answers
+		where
+			admin_qna_no = {value};
+	</select>
+	<!-- 1:1 문의내역 사진조회 -->
+	<select id="getAdQnaFileByQnaNo" parameterType="int" resultType="AdQnaFile">
+		select
+			ad_qnas_images_name,
+			admin_qna_no
+		from
+			ad_qnas_images
+		where
+			admin_qna_no = #{value}
+	</select>
+
+	<!-- 1:1 문의내역 상세보기(글번호로 조회) -->
+	<select id="getAdQnaByNo" parameterType="int" resultType="AdQna">
+		select 
+			admin_qna_no				no,
+			user_no						userNo,
+			admin_qna_title				title,
+			admin_qna_content			content,
+			admin_qna_create_date		createDate,
+			admin_qna_isanswered		isAnswered
+		from
+			ad_qnas
+		where
+			admin_qna_no = #{value}
+	</select>
+	
+	<!-- 1:1 문의내역 상세보기(유저로 조회) -->
+	<select id="getAdQnaByUserNo" parameterType="int" resultType="AdQna">
+		select 
+			admin_qna_no				no,
+			user_no						userNo,
+			admin_qna_title				title,
+			admin_qna_content			content,
+			admin_qna_create_date		createDate,
+			admin_qna_isanswered		isAnswered
+		from
+			ad_qnas
+		where
+			user_no = #{value}
+	</select>
+	
+	<!-- 1:1 문의글 조회하기 -->
+	<select id="getQnaByCriteria" parameterType="AdminQnaCriteria" resultType="AdminQnaDto">
+	 	select 
+	 		*		
+		from (
+				select
+				<choose>
+					<when test="sort eq 'date'">
+						ROW_NUMBER() over (order by A.admin_qna_no desc) rn,
+					</when>
+					<when test="sort eq 'title'">
+						ROW_NUMBER() over (order by A.admin_qna_title desc) rn,
+					</when>
+					<otherwise>
+						ROW_NUMBER() over (order by A.admin_qna_isanswered desc) rn,
+					</otherwise>
+				</choose>
+					A.admin_qna_no				as no,
+					A.admin_qna_title			as title,
+					A.admin_qna_content			as content,
+					A.admin_qna_create_date		as createDate,
+					A.admin_qna_isanswered		as isAnswered,
+					B.user_no					as userNo,
+					B.user_name					as userName,
+					B.user_id					as userId
+				from
+					ad_qnas A, users B
+				where 
+					A.user_no = B.user_no 
+					<if test="keyword != null and keyword != ''">
+		          		and (A.admin_qna_title like '%' || #{keyword} || '%'
+				        or B.user_id like '%' || #{keyword} || '%'
+				        or B.user_name like '%' || #{keyword} || '%'
+				        or A.admin_qna_isanswered like '%' || #{keyword} || '%')
+					</if>
+					<if test="startDate != null and startDate != ''">
+						and to_char(A.admin_qna_create_date, 'yyyy-MM-dd') >= #{startDate}
+					</if>
+					<if test="endDate != null and endDate != ''">
+						and to_char(A.admin_qna_create_date, 'yyyy-MM-dd') &lt;= #{endDate}
+					</if>
+					<if test='isAnswered != null and !isAnswered.equals("A")'>
+						and A.admin_qna_isanswered = #{isAnswered}
+					</if>			
+			)
+        	where rn between #{beginIndex} and #{endIndex}
+	</select>
+	
+	<select id="getQnaCntByCriteria" parameterType="AdminQnaCriteria" resultType="int">
+		select count(*)
+		from
+			ad_qnas A, users B
+		where 
+			A.user_no = B.user_no
+				<if test="keyword != null and keyword != ''">
+	          		and (A.admin_qna_title like '%' || #{keyword} || '%'
+			        or B.user_id like '%' || #{keyword} || '%'
+			        or B.user_name like '%' || #{keyword} || '%'
+			        or A.admin_qna_isanswered like '%' || #{keyword} || '%')
+				</if>
+				<if test="startDate != null and startDate != ''">
+					and to_char(A.admin_qna_create_date, 'yyyy-MM-dd') >= #{startDate}
+				</if>
+				<if test="endDate != null and endDate != ''">
+					and to_char(A.admin_qna_create_date, 'yyyy-MM-dd') &lt;= #{endDate}
+				</if>
+				<if test='isAnswered != null and !isAnswered.equals("A")'>
+					and A.admin_qna_isanswered = #{isAnswered}
+				</if>			
+	</select>
+	
+</mapper>

@@ -1,0 +1,39 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>1:1질문하기 목록</title>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<%@ include file="../common/header.jsp"%>
+<div class="container" style="font-size:17px; width:1440px;">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성일</th>
+				<th>답변여부</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach var="q" items="${qnas}" varStatus="loop">
+				<tr>
+					<td>${loop.count }</td>
+					<td>${q.title }</td>
+					<td>${q.createDate }</td>
+					<td>${q.isAnswered }</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+</div>
+</body>
+</html>

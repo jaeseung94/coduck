@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.LectDao">
+	
+	<!-- 유저 번호로 유저가 구매한 수강리스트 조회 -->
+	<select id="getLectListUserByNo" parameterType="map" resultType="UserByLectDto">
+		SELECT
+			A.USER_NO					as no,
+			A.USER_NAME					as name,
+			B.ORD_LECT_CREATE_DATE		as lectCreateDate,
+			F.ACCUMULATE_TIME			as accumulateTime,
+			D.LECT_IMAGE_PATH			as imagePath,
+			B.ORD_LECT_TOTAL_PRICE		as totalPrice,
+			D.LECT_PRICE				as lectPrice,
+			D.LECT_TITLE				as lectTitle
+		FROM
+			USERS A, Ord_lects B, Ord_lect_infos C, lects D, chapters E, lessons F
+		WHERE
+			A.USER_NO = B.USER_NO
+		AND
+			B.ORD_NO = C.ORD_NO
+		AND
+			C.LECT_NO = D.LECT_NO
+		AND
+			D.LECT_NO = E.LECT_NO
+		AND
+			E.CHAPTER_NO = F.CHAPTER_NO
+		AND
+			F.CHAPTER_NO = E.CHAPTER_NO
+		AND
+			A.USER_NO = #{value}
+		order BY
+			B.ORD_LECT_CREATE_DATE DESC
+	</select>
+	
+	<select id="getLectByNo" parameterType="int" resultType="Lect">
+		select
+			lect_no						as no,
+			cate_no						as cateNo,
+			user_no						as userNo,
+			lect_title					as lectTitle,
+			lect_info					as lectInfo,
+			lect_price					as price,
+			lect_discount_price			as discountPrice,
+			lect_discount_rate			as discountRate,
+			lect_is_freed				as isFreed,
+			lect_is_display				as isDisplay,
+			lect_create_date			as lectCreateDate,
+			lect_grade					as grade,
+			lect_tag					as tag,
+			lect_image_path				as imagePath
+		from
+			lects
+		where
+			lect_no = #{value}
+	</select>
+	
+	<!-- 카테고리번호로 강좌 리스트 조회 -->
+	<select id="getLectureByCategoryNo" parameterType="int" resultType="LectureDto">
+		select
+			l.lect_no					no,
+			l.cate_no				 	cateNo,
+			l.user_no					userNo,
+			l.lect_title				title,
+			l.lect_info					info,
+			l.lect_price				price,
+			l.lect_discount_price		discountPrice,
+			l.lect_discount_rate		discountRate,
+			l.lect_is_freed				isFreed,
+			l.lect_is_display			isDisplay,
+			l.lect_create_date			createDate,
+			l.lect_grade				grade,
+			l.lect_tag					tag,
+			l.lect_image_path			imagePath,
+			u.user_name					userName
+		from
+			lects L, users U
+		where
+			l.user_no = u.user_no
+		    and cate_no = #{value}
+	</select>
+	
+	<!-- 강좌번호로 강좌 조회 -->
+	<select id="getLectureByLectureNo" parameterType="int" resultType="LectureDto">
+		select
+			l.lect_no					no,
+			l.cate_no				 	cateNo,
+			l.user_no					userNo,
+			l.lect_title				title,
+			l.lect_info_title			infoTitle,
+			l.lect_info					info,
+			l.lect_price				price,
+			l.lect_discount_price		discountPrice,
+			l.lect_discount_rate		discountRate,
+			l.lect_is_freed				isFreed,
+			l.lect_is_display			isDisplay,
+			l.lect_create_date			createDate,
+			l.lect_grade				grade,
+			l.lect_tag					tag,
+			l.lect_image_path			imagePath,
+			u.user_name					userName,
+			u.user_image_filename		userImagePath,
+			u.user_self_introduction	userIntroduction
+			
+		from
+			lects L, users U
+		where
+			l.user_no = u.user_no
+			and l.lect_no = #{value}		
+	</select>
+	
+	<!-- 조건별(필터)강좌 조회 *****미완성-->
+	<select id="getLectureByCriteria" parameterType="map" resultType="LectureDto">
+	 	select *
+			from (
+				select      ROW_NUMBER() over (order by NVL(likes,0) desc) rn,
+					l.lect_no					no,
+					l.cate_no				 	cateNo,
+					l.user_no					userNo,
+					l.lect_title				title,
+					l.lect_info					info,
+					l.lect_price				price,
+					l.lect_discount_price		discountPrice,
+					l.lect_discount_rate		discountRate,
+					l.lect_is_freed				isFreed,
+					l.lect_is_display			isDisplay,
+					l.lect_create_date			createDate,
+					l.lect_grade				grade,
+					l.lect_tag					tag,
+					l.lect_image_path			imagePath,
+					u.user_name					userName,
+		            NVL(likes,0) as "like"
+				from
+					lects L, users U, (SELECT lect_no,COUNT(*) as likes FROM like_lects GROUP BY lect_no) H
+				where
+					l.user_no = u.user_no
+		         and l.lect_no = h.lect_no(+)
+		         and l.lect_title like '%' || '#{keyword}' || '%'
+		            <if test="grades != null and !grades.isEmpty()">
+		            and l.lect_grade in 
+			            <foreach collection="grades" item="grade" open="(" close=")" separator=",">
+			            	#{grade}
+			            </foreach>
+		            </if>
+		            )
+	             <![CDATA[
+				where rn > 0 
+				and rn < 10    
+	            ]]>
+	</select>
+	
+	<!-- 강좌별 평균 별점 조회 -->
+	<select id="getAvgStarByLectureNo" parameterType="int" resultType="int">
+		select 
+			avg(A.review_star)
+		from (
+		    select 
+		        L.lect_no, R.review_star
+		    from 
+		        reviews R, ord_lect_infos O, lects L
+		    where 
+		    	R.ord_lect_no = O.ord_lect_no
+		    and L.lect_no = O.lect_no
+		      
+		    group by 
+		    	L.lect_no, R.review_star) A 
+		where 
+			A.lect_no = #{value}    
+		group by 
+			A.lect_no
+	</select>
+	
+	<!-- 강좌별 수강평 개수 조회 -->
+	<select id="getReviewCountByLectureNo" parameterType="int" resultType="int">
+		select 
+		    COUNT(*)
+		from (
+		    select 
+		        R.review_no, L.lect_no
+		    from 
+		        reviews R, ord_lect_infos O, lects L
+		    where 
+		        R.ord_lect_no = O.ord_lect_no
+		    and L.lect_no = O.lect_no
+		      
+		    group by 
+		        l.lect_no, r.review_no) A 
+		where
+    		A.lect_no = #{value}
+		group by 
+		    A.lect_no
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

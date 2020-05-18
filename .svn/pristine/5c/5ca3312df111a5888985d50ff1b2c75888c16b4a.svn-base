@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.OrderLectDao">	
+
+	<insert id="insertOrderLect" parameterType="OrdLect">
+		insert into ORD_LECTS
+		(ORD_NO, USER_NO, ORD_LECT_STATUS, ORD_LECT_STATUS, ORD_LECT_TOTAL_PRICE)
+		values
+		(ord_lects_seq.nextval, #{userNo}, #{status}, #{totalPrice})		
+	</insert>	
+	
+	<insert id="insertOrderLectInfo" parameterType="OrderLectInfo">
+		insert into ORD_LECT_INFOS
+		(ORD_LECT_NO, LECT_NO, ORD_NO, COUPON_NO)
+		values
+		(ord_lect_infos_seq.nextval, #{lectNo}, #{orderNo}, #{couponNo})
+	</insert>
+	
+	<select id="getCountStudentByLectureNo" parameterType="int" resultType="int">
+		select 
+			count(*)
+		from 
+			ord_lect_infos
+		where 
+			lect_no = #{value}	
+		group by 
+			lect_no
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

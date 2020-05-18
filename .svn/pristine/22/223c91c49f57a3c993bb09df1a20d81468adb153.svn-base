@@ -1,0 +1,12 @@
+package kr.co.coduck.service;
+
+import java.util.List;
+
+import kr.co.coduck.dto.UserByLectDto;
+import kr.co.coduck.vo.Lect;
+
+public interface LectService {
+
+	List<UserByLectDto> getLectListUserByNo(int userNo);
+	Lect getLectByNo(int lectNo);
+}

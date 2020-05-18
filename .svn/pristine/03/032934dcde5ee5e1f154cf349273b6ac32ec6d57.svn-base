@@ -1,0 +1,14 @@
+package kr.co.coduck.service;
+
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.coduck.vo.Category;
+
+@Transactional
+public interface CategoryService {
+
+	List<Category> getAllLectureCategories();
+	List<Category> getCatesByMainNo(int mainCateNo);
+}

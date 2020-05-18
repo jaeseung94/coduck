@@ -1,0 +1,12 @@
+package kr.co.coduck.dao;
+
+import java.util.List;
+
+import kr.co.coduck.vo.Coupon;
+
+public interface CouponDao {
+
+	// 쿠폰 추가
+	void addNewCoupon(Coupon coupon);
+	List<Coupon> getCouponByUserNo(int userNo);
+}

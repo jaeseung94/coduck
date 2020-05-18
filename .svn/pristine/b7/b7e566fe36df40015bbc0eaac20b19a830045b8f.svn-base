@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.LectDao">
+	
+	<!-- 유저 번호로 유저가 구매한 수강리스트 조회 -->
+	<select id="getLectListUserByNo" parameterType="map" resultType="UserByLectDto">
+		SELECT
+			A.USER_NO					as no,
+			A.USER_NAME					as name,
+			B.ORD_LECT_CREATE_DATE		as lectCreateDate,
+			F.ACCUMULATE_TIME			as accumulateTime,
+			D.LECT_IMAGE_PATH			as imagePath,
+			D.LECT_TITLE				as lectTitle
+		FROM
+			USERS A, Ord_lects B, Ord_lect_infos C, lects D, chapters E, lessons F
+		WHERE
+			A.USER_NO = B.USER_NO
+		AND
+			B.ORD_NO = C.ORD_NO
+		AND
+			C.LECT_NO = D.LECT_NO
+		AND
+			D.LECT_NO = E.LECT_NO
+		AND
+			E.CHAPTER_NO = F.CHAPTER_NO
+		AND
+			F.CHAPTER_NO = E.CHAPTER_NO
+		AND
+			A.USER_NO = #{value}
+	</select>
+	
+</mapper>

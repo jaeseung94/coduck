@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.UserDao">
+	
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO USERS
+			(USER_NO, USER_NAME, USER_EMAIL, USER_PWD, USER_SELF_INTRODUCTION, USER_ID, USER_NICKNAME, USER_IMAGE_FILENAME)
+		values
+			(users_seq.nextval, #{name}, #{email}, #{password}, #{selfInfo}, #{id}, #{nickname}, #{imageFilename})
+	</insert>
+	
+</mapper>

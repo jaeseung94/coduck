@@ -1,0 +1,187 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>내 정보</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<%@ include file="../common/header.jsp"%>
+	<%@ include file="../common/tag.jsp"%>
+	<div class="container" style="font-size:17px; width:1440px;">
+		<div class="row">
+			<div class="col-sm-2" style="border: 1px solid red;">
+				<p>대시보드</p>
+				<p>내 학습</p>
+				<ul>
+					<li><a href="/user/userlecting.hta">수강중인 강의</a></li>
+					<li><a href="/question/userqueston.hta">내 질문</a></li>
+					<li>내 모의고사</li>
+				</ul>
+				<p>내 결제</p>
+				<ul>
+					<li>위시리스트</li>
+					<li><a href="/cart/userCartLectList.hta">장바구니</a></li>
+					<li>내 쿠폰함</li>
+					<li><a href="/user/userbylist.hta">구매내역</a></li>
+				</ul>
+				<p>설정</p>
+				<ul>
+					<li>프로필 설정</li>
+					<li>알림 설정</li>
+				</ul>
+				<p>내 강의/모의고사</p>
+				<ul>
+					<li>내 강의</li>
+					<li>내 모의고사</li>
+				</ul>
+			</div>
+
+			<div class="col-sm-10">
+				<p>구매하기</p>
+				<h4>구매할 강의 정보</h4>
+				<div class="row">
+					<table class="table" id="lecture-table">
+						<thead id="lecture-thead">
+							<tr>
+								<th>순번</th>
+								<th>제목</th>
+								<th>가격</th>
+								<th>삭제</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>ajndpawjndl;ks</td>
+								<td>213213</td>
+								<td><a href="" class="btn btn-primary btn-xs">삭제하기</a></td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="text-right">
+					    <button type="submit" class="btn btn-primary">쿠폰 사용하기</button>
+						<p>총 가격 : <span id="lecture-summary-price">0</span>원</p>
+						<button type="submit" class="btn btn-primary">구매하기</button>
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+	<script type="text/javascript">
+		$("#lecture-table tbody :checkbox[name=lectprice]").change(function() {
+			
+			var totalPrice = 0;
+			$("#lecture-table tbody :checkbox[name=lectprice]:checked").parents("tr").each(function(index, tr) {
+				var price = parseInt($(tr).find('td:eq(3)').text());
+				totalPrice += price;
+			});			
+			$("#lecture-summary-price").text(totalPrice);
+		});
+		
+		
+		$("#lecture-table thead :checkbox[name=lect-all-price]").change(function() {
+			var totalPrice = 0;
+			if($(this).is(":checked")){
+				$("#lecture-table tbody :checkbox[name=lectprice]").prop("checked", true);
+				$("#lecture-table tbody :checkbox[name=lectprice]:checked").parents("tr").each(function(index, tr) {
+					var price = parseInt($(tr).find('td:eq(3)').text());
+					totalPrice += price;
+				});			
+				$("#lecture-summary-price").text(totalPrice);
+			}else{
+				$("#lecture-table tbody :checkbox[name=lectprice]").prop("checked", false);
+				$("#lecture-summary-price").text(totalPrice);
+			}
+			
+		})
+		
+		
+	
+	$("#test-table tbody :checkbox[name=testprice]").change(function() {
+		
+		var totalPrice = 0;
+		$("#test-table tbody :checkbox[name=testprice]:checked").parents("tr").each(function(index, tr) {
+			var price = parseInt($(tr).find('td:eq(3)').text());
+			totalPrice += price;
+		});			
+		$("#test-summary-price").text(totalPrice);
+	});
+	
+	
+	$("#test-table thead :checkbox[name=test-all-price]").change(function() {
+		var totalPrice = 0;
+		if($(this).is(":checked")){
+			$("#test-table tbody :checkbox[name=testprice]").prop("checked", true);
+			$("#test-table tbody :checkbox[name=testprice]:checked").parents("tr").each(function(index, tr) {
+				var price = parseInt($(tr).find('td:eq(3)').text());
+				totalPrice += price;
+			});			
+			$("#test-summary-price").text(totalPrice);
+		}else{
+			$("#test-table tbody :checkbox[name=testprice]").prop("checked", false);
+			$("#test-summary-price").text(totalPrice);
+		}
+		
+	})
+	</script>
+</body>
+<%@ include file="../common/footer.jsp"%>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

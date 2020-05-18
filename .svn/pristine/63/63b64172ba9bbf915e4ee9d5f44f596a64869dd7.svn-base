@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.ReviewDao">
+
+	<select id="getAllReivewStarAvg" parameterType="int" resultType="ReviewStarDto">
+		with temp as (
+		    select 
+		    	r.review_star, count(*)  count
+		    from
+		     	reviews r, ord_lect_infos o 
+		    where
+		     	r.ord_lect_no = o.ord_lect_no 
+		    and o.lect_no = #{value}
+		    group by 
+		    	r.review_star)
+		select 
+			review_star		star
+			, count		
+			, trunc(count*100/(select sum(count) from temp)) avgStar
+		from 
+			temp
+		group by 
+			review_star, count
+	</select>	
+	
+	<!-- 강좌번호로 리뷰 조회 -->
+	<select id="getReviewByLectureNo" parameterType="int" resultType="Review">
+		select 
+		    R.review_no 				no
+		    , R.review_star			star
+		    , R.review_contents		contents
+		    , R.review_title			title
+		    , R.review_create_date 	createDate
+		    , U.user_no				"user.no"
+		    , U.user_name				"user.name"
+		    , U.user_id				"user.id"
+		    , U.user_image_filename   "user.imageFilename"
+		from
+		    lects L,
+		    ord_lect_infos O,
+		    ord_lects OL,
+		    reviews R,
+		    users U
+		where
+		    L.lect_no = O.lect_no
+		and
+		    O.ord_lect_no = R.ord_lect_no
+		and O.ord_no = OL.ord_no
+		and U.user_no = OL.user_no
+		and
+		    L.lect_no = #{value}
+	</select>
+</mapper>

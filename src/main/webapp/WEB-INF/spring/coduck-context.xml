@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	<!-- Spring MVC 관련 빈 설정 -->
+	
+	<mvc:annotation-driven/>
+	
+	<mvc:resources mapping="/resources/**" location="/resources/css/" />
+	<mvc:resources mapping="/smartEditor/**" location="/resources/js/smartEditor2/" />
+	
+	<!-- 프로젝트 외부 경로에서 파일 가져오기(확정X) -->
+	<!-- <mvc:resources mapping="/coduck-images/*" location="file:///C:/coduck-images" /> -->
+	
+	<mvc:view-resolvers order="2">
+		<mvc:jsp prefix="/WEB-INF/views/" suffix=".jsp"/>
+	</mvc:view-resolvers>
+	
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="1"></property>
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="31457280" /> <!--약 10mb 제한 -->
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+	
+	<context:component-scan base-package="kr.co.coduck.web.controller"/>
+	<context:component-scan base-package="kr.co.coduck.web.advice"/>
+	
+	<!--  
+		사용자 정의 View를 스프링의 빈으로 등록하기
+	-->
+	
+	<!--  
+		인터셉터 관련 설정
+	-->
+	<mvc:interceptors>
+		<!-- 순서대로 첫번째 실행 -->
+		<mvc:interceptor>
+			<!-- 현재 프로젝트의 모든 url -->
+			<mvc:mapping path="/**"/>
+			<!-- 빈 객체로 등록 -->
+			<bean class="kr.co.coduck.web.interceptor.LoginCheckInterceptor"></bean>
+		</mvc:interceptor>
+		<!-- 두번째로 실행 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="kr.co.coduck.web.interceptor.GradeCheckInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- 프로젝트 외부에서 파일 가져오기 -->
+	<!-- <resources mapping="/resources/**" location="/resources/" />
+    <resources mapping="/img/**" location="지정한 업로드 폴더 절대경로" /> -->
+	
+	
+	<context:property-placeholder location="classpath:/META-INF/config/application-config.properties"/>
+
+	<bean id="fileDownloadView" class="kr.co.coduck.web.view.FileDownloadView">
+	
+	</bean>
+	
+</beans>

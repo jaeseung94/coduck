@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.LikeLectDao">
+	
+	<insert id="insertLikeLect" parameterType="Likelect">
+		insert into Like_lects
+		(LIKE_NO, USER_NO, LECT_NO)
+		values
+		(like_lects_seq.nextval, #{userNo}, #{lectNo})
+	</insert>
+	
+	
+	<select id="getLikeLectsByUserNo" parameterType="int" resultType="LikeLectListDto">
+		SELECT
+			C.USER_NO				as likeLectUserNo,
+			C.LECT_NO				as lectNo,
+			A.USER_NO				as userNo,
+			C.LECT_TITLE			as likeLectTitle,
+			C.LECT_GRADE			as likeLectGrade,
+			C.LECT_PRICE			as likeLectPrice,
+			C.LECT_IMAGE_PATH		as likeLectImg,
+			C.LECT_DISCOUNT_PRICE	as likeLectDiscountPrice
+		FROM
+			Like_lects A, Users B, lects C
+		WHERE
+			A.USER_NO = B.USER_NO
+		AND
+			C.LECT_NO = A.LECT_NO
+		AND
+			A.USER_NO = #{value}
+	</select>
+</mapper>

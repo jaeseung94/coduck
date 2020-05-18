@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.co.coduck.dao.UserQuestionDao">
+
+	<!--  -->
+	<!-- 1:1 문의내역 사진조회 -->
+	<select id="getAdQnaFilesByQnaNo" parameterType="int" resultType="AdQnaFile">
+		select
+			ad_qnas_images_name		fileName,
+			admin_qna_no			AdQnaNo
+		from
+			ad_qnas_images
+		where
+			admin_qna_no = #{value}
+	</select>
+
+	<!-- 1:1 문의내역 상세보기(글번호로 조회) -->
+	<select id="getAdQnaByNo" parameterType="int" resultType="AdQna">
+		select 
+			admin_qna_no				no,
+			user_no						userNo,
+			admin_qna_title				title,
+			admin_qna_content			content,
+			admin_qna_create_date		createDate,
+			admin_qna_isanswered		isAnswered
+		from
+			ad_qnas
+		where
+			admin_qna_no = #{value}
+	</select>
+	
+	<!-- 전체 데이터 개수 조회 -->
+	<select id="getAllAdQnaCntByUserNo" parameterType="int" resultType="int">
+		select count(*)
+		from ad_qnas
+		where user_no = #{value}
+	</select>
+	
+	<!-- 1:1 문의내역 보기(페이지네이션) -->
+	<select id="getAdQnasByCriteria" parameterType="map" resultType="AdQna">
+		select *	
+		from	(select 
+					ROW_NUMBER() over (order by admin_qna_create_date desc) rn,
+					admin_qna_no				no,
+					user_no						userNo,
+					admin_qna_title				title,
+					admin_qna_content			content,
+					admin_qna_create_date		createDate,
+					admin_qna_isanswered		isAnswered
+				from
+					ad_qnas
+				where
+					user_no = #{userNo}) 
+		where
+			rn between #{beginIndex} and #{endIndex}
+	</select>	
+
+	<!-- 1:1 문의내역 보기(유저로 조회) -->
+	<select id="getAdQnasByUserNo" parameterType="int" resultType="AdQna">	
+		select 
+			admin_qna_no				no,
+			user_no						userNo,
+			admin_qna_title				title,
+			admin_qna_content			content,
+			admin_qna_create_date		createDate,
+			admin_qna_isanswered		isAnswered
+		from
+			ad_qnas
+		where
+			user_no = #{value}
+		order by admin_qna_create_date
+			
+	</select>
+
+	<!-- 1:1 문의글 파일 첨부 저장 -->
+	<insert id="insertAdQnaFile" parameterType="AdQnaFile">
+		insert into ad_qnas_images(
+			ad_qnas_images_name,
+			admin_qna_no
+		)
+		values(
+			#{fileName},
+			#{AdQnaNo}
+		)
+	</insert>
+	
+	<!--  -->
+	<!-- 1:1 문의글 작성 -->
+	<insert id="insertAdQna" parameterType="AdQna">
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			select ad_qnas_seq.nextval from dual
+		</selectKey>
+		insert into ad_qnas ( 
+			admin_qna_no,
+			user_no,
+			admin_qna_title,
+			admin_qna_content
+		)
+		values (
+			#{no},
+			#{userNo},
+			#{title},
+			#{content}
+		)
+		
+	</insert>
+	
+	<select id="getUserQuestionListByUserNo" parameterType="int" resultType="UserQuestionDto">
+		select
+			C.LESSON_TITLE							as questionLessonTitle,
+			B.LECT_QUESTION_CONTENTS				as questionContents,
+			B.LECT_QUESTION_CREATE_DATE				as questionCreateDate,
+			B.LECT_QUESTION_IS_ANSWERED				as isAnswered,
+			A.LECT_NO								as lectNo
+		FROM
+			LESSON_HISTORIES A, LECT_QUESTIONS B, LESSONS C
+		where
+			A.LESSON_NO = B.LESSON_NO
+		AND
+			A.USER_NO = B.USER_NO
+		AND
+			C.LESSON_NO = A.LESSON_NO
+		AND
+			A.USER_NO = #{value}
+			
+	</select>
+	
+	<select id="searchQuestion" parameterType="map" resultType="UserQuestionDto">
+  		select
+			C.LESSON_TITLE							as questionLessonTitle,
+			B.LECT_QUESTION_CONTENTS				as questionContents,
+			B.LECT_QUESTION_CREATE_DATE				as questionCreateDate,
+			B.LECT_QUESTION_IS_ANSWERED				as isAnswered
+		FROM
+			LESSON_HISTORIES A, LECT_QUESTIONS B, LESSONS C
+		where
+			A.LESSON_NO = B.LESSON_NO
+		AND
+			A.USER_NO = B.USER_NO
+		AND
+			C.LESSON_NO = A.LESSON_NO
+		AND
+			A.USER_NO = #{userNo}
+  		<where>
+  			<if test="sort != null">
+  				B.LECT_QUESTION_IS_ANSWERED == 'Y'
+  			</if>
+  		</where>
+  	</select>
+	
+</mapper>

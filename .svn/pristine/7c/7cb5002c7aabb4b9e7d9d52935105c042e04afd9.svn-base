@@ -1,0 +1,19 @@
+package kr.co.coduck.dao;
+
+import java.util.List;
+
+import kr.co.coduck.dto.AdminQnaCriteria;
+import kr.co.coduck.dto.AdminQnaDto;
+import kr.co.coduck.vo.AdQna;
+import kr.co.coduck.vo.AdQnaFile;
+
+public interface AdminQnaDao {
+	
+	AdQnaFile getAdQnaFileByQnaNo(int qnaNo);
+	AdQna getAdQnaByUserNo(int userNno);
+	AdQna getAdQnaByNo(int no);
+	void insertAdQnaFile(AdQnaFile file);
+	void insertAdQna(AdQna adQna);
+	List<AdminQnaDto> getQnaByCriteria(AdminQnaCriteria adminQnaCriteria);
+	int getQnaCntByCriteria(AdminQnaCriteria adminQnaCriteria);
+}

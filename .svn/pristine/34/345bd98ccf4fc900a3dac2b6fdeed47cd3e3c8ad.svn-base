@@ -1,0 +1,11 @@
+package kr.co.coduck.dao;
+
+import java.util.List;
+
+import kr.co.coduck.vo.Notice;
+
+public interface NoticeDao {
+
+	void insertNotice(Notice notice);
+	List<Notice> getNotices();
+}

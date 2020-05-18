@@ -1,0 +1,84 @@
+package kr.co.coduck.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.coduck.dao.CouponDao;
+import kr.co.coduck.dao.UserDao;
+import kr.co.coduck.vo.Coupon;
+import kr.co.coduck.vo.CouponBox;
+import kr.co.coduck.vo.User;
+
+@Service
+public class CouponServiceImpl implements CouponService {
+
+	@Autowired
+	private CouponDao couponDao;
+	@Autowired
+	private UserDao userDao;
+	
+	@Override
+	public void addNewCoupon(Coupon coupon) {
+		couponDao.addNewCoupon(coupon);
+	}
+
+	@Override
+	public List<Coupon> getCouponsByAdmin() {
+		return couponDao.getCouponsByAdmin();
+	}
+	
+	@Override
+	public List<Coupon> getCouponsByUserNo(int userNo) {
+		User user = userDao.getUserProfilByNo(userNo);
+		List<Coupon> userCouponLists = couponDao.getCouponsByUserNo(user.getNo());
+		return userCouponLists;
+	}
+
+	@Override
+	public void updateCouponByAdmin(Coupon coupon) {
+		couponDao.updateCouponByAdmin(coupon);
+		
+	}
+
+	@Override
+	public Coupon getCouponByCouponNo(int couponNo) {
+		return couponDao.getCouponByCouponNo(couponNo);
+	}
+
+	@Override
+	public void deleteCoupon(int couponNo) {
+		couponDao.deleteCoupon(couponNo);
+	}
+
+	@Override
+	public void deleteCoupons(int[] couponNos) {
+		for (int couponNo : couponNos) {
+			couponDao.deleteCoupon(couponNo);
+		}
+	}
+
+	@Override
+	public void insertCouponByAdmin(int couponNo, int[] userNos) {
+		for (int userNo : userNos) {
+			CouponBox couponBox = new CouponBox();
+			couponBox.setCouponNo(couponNo);
+			couponBox.setUserNo(userNo);
+			
+			Coupon coupon = couponDao.getCouponByCouponNo(couponNo);
+			
+			if (coupon.getAmount() > 0 && coupon.getLimited().equals("Y")) {			
+				coupon.setAmount(coupon.getAmount() - 1);			
+				if (coupon.getAmount() == 0 && coupon.getLimited().equals("Y")) {
+					coupon.setEnabled("N");			
+				}
+			}
+			
+			couponDao.updateCouponByAdmin(coupon);
+			couponDao.insertCouponByAdmin(couponBox);
+		}
+	}
+	
+
+}

@@ -1,0 +1,44 @@
+package kr.co.coduck.web.controller;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import kr.co.coduck.dto.LectureCourseDto;
+import kr.co.coduck.dto.LectureDto;
+import kr.co.coduck.service.LectService;
+import kr.co.coduck.vo.LectureCriteria;
+
+@RequestMapping("/lecture/api")
+@RestController
+public class LectRestController {
+
+	private static Logger log = Logger.getLogger(LectRestController.class);
+
+	@Autowired
+	private LectService lectService;
+	/*
+	 * // // @PostMapping("/searchLecture") // public List<LectureCourseDto>
+	 * mainByCateNo(@RequestBody LectureCriteria cri) { // //
+	 * log.info("URL searchLecture CRI{} : " + cri); // // return
+	 * lectService.getLectureByCriteria(cri); // }
+	 */
+	// @RequestMapping(name = "/lecture",method = RequestMethod.GET)
+	
+	@PostMapping("/searchLecture")
+	public List<LectureCourseDto> mainByCateNo(@RequestBody LectureCriteria cri) {
+		List<LectureCourseDto> lectures = lectService.getLectureByCriteria(cri);
+		
+		for (LectureCourseDto lecture : lectures) {
+			LectureDto lectureDto = lectService.getAllCountByLectureNo(lecture.getLecture().getNo());
+			lecture.setLectureDto(lectureDto);
+		}
+		
+		return lectures;
+	}
+}

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.OrderTestDao">	
+
+	<!-- 구매이력 조회 -->
+	<select id="getOrdTestByTestNoNUserNo" parameterType="map" resultType="OrdTest">
+		select 
+			C.user_no, B.test_no
+		from 
+			ord_test_infos B, ord_tests C
+		where 
+			B.ord_test_no = C.ord_test_no
+			and C.user_no = #{value}
+			and B.test_no = #{value}
+	</select>
+
+	<insert id="insertOrderTest" parameterType="OrdTest">
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			select ord_tests_seq.nextval from dual
+		</selectKey>
+		insert into ORD_TESTS
+		(ORD_TEST_NO, USER_NO, ORD_TEST_STATUS, ORD_TEST_TOTAL_PRICE)
+		values
+		(#{no}, #{userNo}, #{status}, #{totalPrice})		
+	</insert>	
+	
+	<insert id="insertOrderTestInfo" parameterType="OrdTestInfo">
+      insert into ORD_TEST_INFOS
+      (ORD_TEST_INFOS_NO, ORD_TEST_NO, TEST_NO, COUPON_NO)
+      values
+      (ord_test_infos_seq.nextval, #{orderNo}, #{testNo}, #{couponNo})
+   </insert>
+   
+   <select id="getOrderTestInfoByOrderNo" parameterType="int" resultType="OrderTestDetailListDto">
+		SELECT
+			D.ORD_TEST_NO					orderNo,
+			B.TEST_NAME						testTitle,
+			C.ORD_TEST_TOTAL_PRICE			totalPrice,
+			C.ORD_TEST_CREATE_DATE			testCreateDate,
+			B.TEST_PRICE					testprice,
+			B.TEST_EP						ep,
+			F.TEST_IS_DONE					done,
+			B.TEST_NO						testNo					
+		FROM
+			USERS A, TESTS B, ORD_TESTS C, ORD_TEST_INFOS D, TEST_RESULTS F
+		WHERE
+			A.USER_NO = C.USER_NO
+		AND
+			B.TEST_NO = D.TEST_NO
+		AND
+			C.USER_NO = A.USER_NO
+		AND
+			D.ORD_TEST_NO = C.ORD_TEST_NO
+		AND
+			F.USER_NO = A.USER_NO
+		AND
+			A.USER_NO = #{value}
+	</select>
+
+</mapper>
+

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.CouponDao">	
+	
+	<!-- 사용한 쿠폰목록에서 쿠폰 삭제하기 -->
+	<delete id="deleteUsedCouponIntestByCouponNo" parameterType="CouponUsedTest">
+		delete from coupon_used_tests
+		where
+			user_no = #{userNo}
+			and coupon_no = #{couponNo}
+			and final_used = 'N'
+	</delete>
+	
+	<!-- 사용한 쿠폰목록에서 쿠폰 삭제하기 -->
+	<delete id="deleteUsedCouponIntestByTestNo" parameterType="CouponUsedTest">
+		delete from coupon_used_tests
+		where
+			user_no = #{userNo}
+			and test_no = #{testNo}
+			and final_used = 'N'
+	</delete>
+	
+	<!-- 적용된 쿠폰에서 상품번호 바꾸기 -->
+	<update id="updateTestNoAtAppliedCoupon" parameterType="CouponUsedTest">
+		update coupon_used_tests
+		set
+			test_no = #{testNo}
+		where
+			user_no = #{userNo}
+			and coupon_no = #{couponNo}
+	</update>
+	
+	<!-- 상품에 적용된 쿠폰번호 바꾸기 -->
+	<update id="updateCouponNoAtAppliedCoupon" parameterType="CouponUsedTest">
+		update coupon_used_tests
+		set
+			coupon_no = #{couponNo}
+		where
+			user_no = #{userNo}
+			and test_no = #{testNo}
+	</update>
+
+	<!-- 쿠폰 사용 저장 -->
+	<insert id="insertUsedCouponInTest" parameterType="CouponUsedTest">
+		insert into coupon_used_tests
+		values (coupon_used_lects_seq.nextval, #{couponNo}, #{userNo}, #{testNo}, 'N')
+			
+	</insert>
+	
+	<!-- 쿠폰 사용 여부 확인 -->
+	<select id="isUsedCouponInTest" parameterType="CouponUsedTest" resultType="CouponUsedTest">
+		select 
+			A.coupon_used_no			no,
+			A.coupon_no					couponNo,
+			A.user_no					userNo,
+			A.test_no					testNo,
+			B.coupon_title				title,
+			B.coupon_detail				detail,
+			B.coupon_enabled			enabled,
+			B.coupon_start_date		 	startDate,
+			B.coupon_end_date			endDate,
+			B.coupon_amount				amount,
+			B.coupon_limited			limited,
+			B.discount_price			discountPrice,
+			B.discount_way				discountWay
+		from coupon_used_tests A, coupons B
+		where
+			A.user_no = #{userNo}
+			and A.final_used = 'N'<!-- 구매 후 최종 사용 확정. -->
+			and A.coupon_no = B.coupon_no
+			<if test="couponNo != 0">
+				and A.coupon_no = #{couponNo}
+			</if>
+			<if test="testNo != 0 and testNo != null">
+				and A.test_no = #{testNo}
+			</if>
+	</select>
+	
+	<!-- <select id="isUsedCouponInTest" parameterType="map" resultType="int">
+		select count(*)
+		from COUPON_USED_TESTS
+		where
+			COUPON_NO = #{couponNo}
+			and user_no = #{userNo}
+	</select> -->
+
+	<delete id="deleteCoupon" parameterType="int">
+		delete from coupons
+		where coupon_no = #{value}
+	</delete>
+
+	<insert id="addNewCoupon" parameterType="Coupon">
+		insert into coupons
+		(coupon_no, coupon_title, coupon_detail, coupon_start_date, coupon_end_date, discount_price, coupon_amount, coupon_limited, discount_way)
+		values
+		(coupons_seq.nextval, #{title}, #{detail}, #{startDate}, #{endDate}, #{discountPrice}, #{amount}, #{limited}, #{discountWay})		
+	</insert>	
+	
+	<update id="updateCouponByAdmin" parameterType="Coupon">
+		update
+			coupons
+		set
+			coupon_title = #{title},
+			coupon_detail = #{detail},
+			coupon_enabled = #{enabled},
+			coupon_start_date = #{startDate},
+			coupon_end_date = #{endDate},
+			coupon_amount = #{amount},
+			coupon_limited = #{limited},
+			discount_price = #{discountPrice},
+		where
+			coupon_no = #{no}
+	</update>
+	
+	<select id="getCouponsByAdmin" resultType="Coupon">
+		select
+			coupon_no				as no,
+			coupon_title			as title,
+			coupon_detail			as detail,
+			coupon_enabled			as enabled,
+			coupon_start_date		as startDate,
+			coupon_end_date			as endDate,
+			coupon_amount			as amount,
+			coupon_limited			as limited,
+			coupon_discount_price	as discountPrice,
+			coupon_discount_rate	as discountRate
+		from
+			coupons
+	</select>
+	
+	<select id="getEnabledCouponsByAdmin" resultType="Coupon">
+		select
+			coupon_no				as no,
+			coupon_title			as title,
+			coupon_detail			as detail,
+			coupon_enabled			as enabled,
+			coupon_start_date		as startDate,
+			coupon_end_date			as endDate,
+			coupon_amount			as amount,
+			coupon_limited			as limited,
+			coupon_discount_price	as discountPrice,
+			coupon_discount_rate	as discountRate
+		from
+			coupons
+		where 
+			coupon_enabled = 'Y'
+		order by 
+			coupon_no desc
+	</select>
+	
+	<select id="getCouponByCouponNo" parameterType="int" resultType="Coupon">
+		select
+			coupon_no				as no,
+			coupon_title			as title,
+			coupon_detail			as detail,
+			coupon_enabled			as enabled,
+			coupon_start_date		as startDate,
+			coupon_end_date			as endDate,
+			coupon_amount			as amount,
+			coupon_limited			as limited,
+			discount_price			as discountPrice,
+			discount_way			as discountWay
+		from
+			coupons
+		where
+			coupon_no = #{value}
+	</select>
+	
+	<select id="getCouponsByUserNo" parameterType="int" resultType="Coupon">
+		select
+			C.COUPON_NO					as no,
+			C.COUPON_TITLE				as title,
+			C.COUPON_DETAIL				as detail,
+			C.COUPON_ENABLED			as enabled,
+			C.COUPON_CREATE_DATE		as createDate,
+			C.COUPON_START_DATE			as startDate,
+			C.COUPON_END_DATE			as endDate,
+			C.DISCOUNT_PRICE			as discountPrice,
+			C.COUPON_AMOUNT				as amount,
+			C.COUPON_LIMITED			as limited,
+			C.DISCOUNT_WAY				as discountWay
+		FROM
+			COUPON_BOX A, coupons C
+		WHERE
+			C.COUPON_NO = A.COUPON_NO
+		and
+			A.USER_NO = #{value}
+	</select>	
+	
+	<update id="updateCoupon" parameterType="CouponBox">
+		update
+			COUPON_BOX
+		set
+			COUPON_NO = #{couponNo},
+			USER_NO = #{userNo}
+		where
+			USER_NO = #{userNo}
+	</update>
+	
+	<delete id="deleteCouponBoxByUserNo" parameterType="CouponBox">
+		delete from
+			COUPON_BOX
+		where
+			USER_NO = #{userNo}
+	</delete>
+	
+	<delete id="deleteCouponBoxByCouponNo" parameterType="CouponBox">
+		delete from
+			COUPON_BOX
+		where
+			COUPON_NO = #{couponNo}
+	</delete>
+	
+	<!-- 유저에게 쿠폰 발송하기 -->
+	<insert id="insertCouponByAdmin" parameterType="CouponBox">
+		insert into coupon_box
+		(coupon_no, user_no)
+		values
+		(#{couponNo}, #{userNo})
+	</insert>
+	
+	<!-- 유저에게 쿠폰 삭제하기 -->
+	<delete id="deleteCouponByAdmin" parameterType="CouponBox">
+		delete from coupon_box
+		where coupon_no = #{couponNo} 
+		and user_no = #{userNo}
+	</delete>
+	
+	<!-- 유저가 가지고 있는 쿠폰 조회하기 -->
+	<select id="getUserCouponboxByAdmin" parameterType="int" resultType="UserCouponBoxDto">
+		select
+			A.user_no					as no,
+			A.user_name					as name,
+			B.coupon_no					as couponNo,
+			B.coupon_title				as title,
+			B.coupon_detail				as detail,
+			B.coupon_enabled			as enabled,
+			B.coupon_start_date			as startDate,
+			B.coupon_end_date			as endDate,
+			B.coupon_discount_price		as discountPrice,
+			B.coupon_discount_rate		as discountRate,
+			B.coupon_limited			as limited,
+			B.coupon_amount				as amount
+		from
+			users A, coupons B, coupon_box C
+		where
+			A.user_no = C.user_no 
+			and B.coupon_no = C.coupon_no
+			and A.user_no = #{value}
+	</select>
+	
+	
+	
+</mapper>

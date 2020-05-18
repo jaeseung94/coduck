@@ -1,0 +1,44 @@
+package kr.co.coduck.web.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.co.coduck.dto.AdminQnaCriteria;
+import kr.co.coduck.dto.AdminQnaDto;
+import kr.co.coduck.service.AdminQnaService;
+import kr.co.coduck.vo.Pagination;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminQnaController {
+
+	// 파일을 저장할 경로 지정하기
+	private static final String SAVE_PATH = "/upload";
+	
+	@Autowired
+	private AdminQnaService adminQnaService;
+	
+	@GetMapping("/qna.hta")
+	public String qnaSearch(AdminQnaCriteria criteria, @RequestParam(value = "pageno", required = false, defaultValue = "1") int pageNo, Model model) {
+		
+		int totalCnt = adminQnaService.getQnaCntByCriteria(criteria);
+		Pagination pagination = new Pagination(pageNo, totalCnt, 10, 5);
+		
+		criteria.setBeginIndex(pagination.getBeginIndex());
+		 criteria.setEndIndex(pagination.getEndIndex()); 
+	    List<AdminQnaDto> qnaList = adminQnaService.getQnaByCriteria(criteria);
+	    
+	    model.addAttribute("qnaList", qnaList); 
+	    model.addAttribute("pagination", pagination);
+	
+		return "admin/qna";
+	}
+	
+	
+}

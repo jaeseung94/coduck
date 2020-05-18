@@ -1,0 +1,117 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />    
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="col-sm-2">
+	    	<div class="navbar-header">
+	        	<a class="navbar-brand" href="/admin/home.hta">
+	        		<i class="far fa-laugh-wink fa-2x"></i>
+	        		<span>Daeilkinng</span>
+	        	</a>
+	   	    </div>
+   	    </div>
+   	    <div class="col-sm-5">
+			<form class="navbar-form navbar-left" action="#">
+				<div class="input-group">
+					<input type="text" class="form-control search-box" placeholder="검색" name="search">
+					<div class="input-group-btn">
+						<button class="btn btn-default sy-btn-search" type="submit">
+							<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</div>
+				</div>
+			</form>    
+       </div>
+       <div class="col-sm-5">
+	        <ul class="nav navbar-nav sm-auto">
+				<li class="nav-item dropdown no-arrow col-1">
+					<a class="dropdown-toggle" href="#" id="alertDowndown" role="button" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"><i class="far fa-bell"></i>
+						<span class="label label-danger">3+</span>
+					</a>
+					<div class="dropdown-list dropdown-menu" aria-labelledby="alertDropdown" style="min-width: 325px;">
+						<h6 class="dropdown-header">알림</h6>
+						
+						<a class="dropdown-item align-items-center" href="#">
+							<div class="col-sm-3">
+								<div class="icon-circle bg-primary"><span>동영상</span></div>
+							</div>
+							<div class="small text-gray-500">2020-02-03</div>
+							<span class="fotn-weight-bold">자바의 정석강의가 승인대기중입니다.</span>
+						</a>
+						<a class="dropdown-item align-items-center" href="#">
+							<div class="col-sm-3">
+								<div class="icon-circle bg-primary"><span>동영상</span></div>
+							</div>
+							<div class="small text-gray-500">2020-02-03</div>
+							<span class="fotn-weight-bold">자바의 정석강의가 승인대기중입니다.</span>
+						</a>
+						<a class="dropdown-item align-items-center" href="#">
+							<div class="col-sm-3">
+								<div class="icon-circle bg-primary"><span>동영상</span></div>
+							</div>
+							<div class="small text-gray-500">2020-02-03</div>
+							<span class="fotn-weight-bold">자바의 정석강의가 승인대기중입니다.</span>
+						</a>
+						<a class="dropdown-item text-right" href="#">모든 알람 보기</a>
+					</div>
+				</li>
+				
+				<li class="nav-item dropdown no-arrow col-1">
+					<a href="nav-link dropdown-toggle" href="" id="messageDropdown" role="button" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"><i class="fas fa-envelope"></i>
+						<span class="label label-warning">+5</span>
+					</a>
+				<div class="dropdown-list dropdown-menu" aria-labelledby="messagesDropdown">
+					<h6 class="dropdown-header">1:1 문의</h6>
+					<a class="dropdown-item align-items-center" href="#">
+						<div class="dropdown-list-uerprofile sm-3">
+							<img class="rounded-circle" src="" alt="">
+						</div>
+						<div class="font-weight-bold">
+							<div class="text-truncate">모의고사 등록이 안됩니다.</div>
+							<div class="small text-gray-500">호날두 48분 전</div>
+						</div>
+					</a>
+					<a class="dropdown-item align-items-center" href="#">
+						<div class="dropdown-list-uerprofile sm-3">
+							<img class="rounded-circle" src="" alt="">
+						</div>
+						<div class="font-weight-bold">
+							<div class="text-truncate">동영상 등록이 안됩니다.</div>
+							<div class="small text-gray-500">메시 1시간 전</div>
+						</div>
+					</a>
+					<a class="dropdown-item align-items-center" href="#">
+						<div class="dropdown-list-uerprofile sm-3">
+							<img class="rounded-circle" src="" alt="">
+						</div>
+						<div class="font-weight-bold">
+							<div class="text-truncate">모의고사 등록이 안됩니다.</div>
+							<div class="small text-gray-500">호날두 2일 전</div>
+						</div>
+					</a>
+					<a class="dropdown-item align-items-center" href="#">
+						<div class="dropdown-list-uerprofile sm-3">
+							<img class="rounded-circle" src="" alt="">
+						</div>
+						<div class="font-weight-bold">
+							<div class="text-truncate">모의고사 등록이 안됩니다.</div>
+							<div class="small text-gray-500">호날두 3일 전</div>
+						</div>
+					</a>
+					<a class="dropdown-item align-items-center" href="#">
+						<div class="dropdown-list-uerprofile sm-3">
+							<img class="rounded-circle" src="" alt="">
+						</div>
+						<div class="font-weight-bold">
+							<div class="text-truncate">동영상 등록이 안됩니다.</div>
+							<div class="small text-gray-500">메시 1주일 전</div>
+						</div>
+					</a>
+				</div>
+	       </ul>
+       </div>
+	</div>
+</nav>

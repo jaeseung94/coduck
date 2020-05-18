@@ -1,0 +1,52 @@
+package kr.co.coduck.dto;
+
+import java.util.Date;
+
+import org.apache.ibatis.type.Alias;
+
+@Alias("OrderLectListDto")
+public class OrderLectListDto {
+
+	private int orderNo;
+	private int totalPrice;
+	private Date lectCreateDate;
+	private String lectTitle;
+	
+	public OrderLectListDto() {
+		
+	}
+
+	public int getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(int totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+	
+
+	public Date getLectCreateDate() {
+		return lectCreateDate;
+	}
+
+	public void setLectCreateDate(Date lectCreateDate) {
+		this.lectCreateDate = lectCreateDate;
+	}
+
+	public int getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(int orderNo) {
+		this.orderNo = orderNo;
+	}
+
+	public String getLectTitle() {
+		return lectTitle;
+	}
+
+	public void setLectTitle(String lectTitle) {
+		this.lectTitle = lectTitle;
+	}
+
+}

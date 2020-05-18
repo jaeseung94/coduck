@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.LectDao">
+	
+	<!-- 유저 번호로 유저가 구매한 수강리스트 조회 -->
+	<select id="getLectListUserByNo" parameterType="map" resultType="UserByLectDto">
+		SELECT
+			A.USER_NO					as no,
+			A.USER_NAME					as name,
+			B.ORD_LECT_CREATE_DATE		as lectCreateDate,
+			F.ACCUMULATE_TIME			as accumulateTime,
+			D.LECT_IMAGE_PATH			as imagePath,
+			B.ORD_LECT_TOTAL_PRICE		as totalPrice,
+			D.LECT_PRICE				as lectPrice,
+			D.LECT_TITLE				as lectTitle
+		FROM
+			USERS A, Ord_lects B, Ord_lect_infos C, lects D, chapters E, lessons F
+		WHERE
+			A.USER_NO = B.USER_NO
+		AND
+			B.ORD_NO = C.ORD_NO
+		AND
+			C.LECT_NO = D.LECT_NO
+		AND
+			D.LECT_NO = E.LECT_NO
+		AND
+			E.CHAPTER_NO = F.CHAPTER_NO
+		AND
+			F.CHAPTER_NO = E.CHAPTER_NO
+		AND
+			A.USER_NO = #{value}
+		order BY
+			B.ORD_LECT_CREATE_DATE DESC
+	</select>
+	
+	<select id="getLectByNo" parameterType="int" resultType="Lect">
+		select
+			lect_no						as no,
+			cate_no						as cateNo,
+			user_no						as userNo,
+			lect_title					as lectTitle,
+			lect_info					as lectInfo,
+			lect_price					as price,
+			lect_discount_price			as discountPrice,
+			lect_discount_rate			as discountRate,
+			lect_is_freed				as isFreed,
+			lect_is_display				as isDisplay,
+			lect_create_date			as lectCreateDate,
+			lect_grade					as grade,
+			lect_tag					as tag,
+			lect_image_path				as imagePath
+		from
+			lects
+		where
+			lect_no = #{value}
+	</select>
+	
+	<!-- 카테고리번호로 강좌 리스트 조회 -->
+	<select id="getLectureByCategoryNo" parameterType="int" resultType="LectureDto">
+		select
+			l.lect_no					no,
+			l.cate_no				 	cateNo,
+			l.user_no					userNo,
+			l.lect_title				title,
+			l.lect_info					info,
+			l.lect_price				price,
+			l.lect_discount_price		discountPrice,
+			l.lect_discount_rate		discountRate,
+			l.lect_is_freed				isFreed,
+			l.lect_is_display			isDisplay,
+			l.lect_create_date			createDate,
+			l.lect_grade				grade,
+			l.lect_tag					tag,
+			l.lect_image_path			imagePath,
+			u.user_name					userName
+		from
+			lects L, users U
+		where
+			l.user_no = u.user_no
+		    and cate_no = #{value}
+	</select>
+	
+	<!-- 강좌번호로 강좌 조회 -->
+	<select id="getLectureByLectureNo" parameterType="int" resultType="LectureDto">
+		select
+			l.lect_no					no,
+			l.cate_no				 	cateNo,
+			l.user_no					userNo,
+			l.lect_title				title,
+			l.lect_info_title			infoTitle,
+			l.lect_info					info,
+			l.lect_price				price,
+			l.lect_discount_price		discountPrice,
+			l.lect_discount_rate		discountRate,
+			l.lect_is_freed				isFreed,
+			l.lect_is_display			isDisplay,
+			l.lect_create_date			createDate,
+			l.lect_grade				grade,
+			l.lect_tag					tag,
+			l.lect_image_path			imagePath,
+			u.user_name					userName,
+			u.user_image_filename		userImagePath,
+			u.user_self_introduction	userIntroduction
+			
+		from
+			lects L, users U
+		where
+			l.user_no = u.user_no
+			and l.lect_no = #{value}		
+	</select>
+	
+	<!-- 조건별(필터)강좌 조회 -->
+	<select id="getLectureByCriteria" parameterType="LectureCriteria" resultMap="lectureMap">
+	 	select *
+			from (
+				select
+				<choose>
+					<when test="sort eq 'like'">
+						ROW_NUMBER() over (order by NVL(likes,0) desc) rn,
+					</when>
+					<when test="sort eq 'price'">
+						ROW_NUMBER() over (order by l.lect_price desc) rn,
+					</when>
+					<otherwise>
+						ROW_NUMBER() over (order by l.lect_create_date desc) rn,
+					</otherwise>
+				</choose>
+					l.lect_no					
+					, l.cate_no				 	
+					, l.user_no
+					, l.lect_title				
+					, l.lect_info					
+					, l.lect_price				
+					, l.lect_discount_price	
+					, l.lect_discount_rate		
+					, l.lect_is_freed				
+					, l.lect_is_display			
+					, l.lect_create_date			
+					, l.lect_grade			
+					, l.lect_tag					
+					, l.lect_image_path			
+					, u.user_name					
+		            , NVL(likes,0) as "like"
+				from
+					lects L, users U, (select 
+										 lect_no
+										 , COUNT(*) as likes 
+									  from 
+									  	like_lects 
+									  group by 
+									 	lect_no) H
+				where
+					l.user_no = u.user_no
+		         	and l.lect_no = h.lect_no(+)
+		         	and l.lect_title like '%' || #{keyword} || '%'
+		         <if test="cateNo neq 0">
+		         	and l.cate_no = #{cateNo}
+		         </if>
+	             <if test="grades != null and grades.length > 0">
+	            	and l.lect_grade in 
+		            <foreach collection="grades" item="grade" open="(" close=")" separator=",">
+		            	#{grade}
+		            </foreach>
+	             </if>
+	             <if test="options != null and options.length > 0">
+	             	and l.lect_is_freed	in
+	             	<foreach collection="options" item="option" open="(" close=")" separator=",">
+	             		#{option}
+	             	</foreach>
+	             </if>
+	       		<if test="discount == -1">
+	           		and l.lect_discount_rate > 0
+	            </if> 
+	            )
+        <![CDATA[
+		where rn >= #{beginIndex} 
+		and rn <= #{endIndex}    
+        ]]>
+	</select>
+	
+	<!-- 조건별(필터)강좌 카운트 조회 -->
+	<select id="getLectureCountByCriteria" parameterType="LectureCriteria" resultType="int">
+		select 
+			count(*)
+		from
+			lects L, users U, (select 
+								 lect_no
+								 , COUNT(*) as likes 
+							  from 
+							  	like_lects 
+							  group by 
+							 	lect_no) H
+		where
+			l.user_no = u.user_no
+         	and l.lect_no = h.lect_no(+)
+	        <if test="cateNo neq 0">
+	        	and l.cate_no = #{cateNo}
+	        </if>
+	        and l.lect_title like '%' || #{keyword} || '%'
+            <if test="grades != null and grades.length > 0">
+           	and l.lect_grade in 
+            <foreach collection="grades" item="grade" open="(" close=")" separator=",">
+            	#{grade}
+            </foreach>
+            </if>
+            <if test="options != null and options.length > 0">
+            	and l.lect_is_freed	in
+            	<foreach collection="options" item="option" open="(" close=")" separator=",">
+            		#{option}
+            	</foreach>
+            </if>
+            <if test="discount == -1">
+          		and l.lect_discount_rate > 0
+            </if> 
+	</select>
+	
+	<!-- 강좌별 모든 count 조회 -->
+ 	<select id="getAllCountByLectureNo" parameterType="int" resultType="LectureDto">
+		 select A.lect_no, 
+		 		U.user_name		as userName,
+		    (select 
+		    	count(*) 
+		   	 from 
+		   	 	ord_lect_infos B 
+		   	 where B.lect_no = A.lect_no) studentCnt,
+		    (select 
+		    	trunc(nvl(avg(review_star), 0)) 
+		    from 
+		    	reviews B, ord_lect_infos C 
+		    where 
+		    	B.ord_lect_no = C.ord_lect_no 
+		    	and  C.lect_no = A.lect_no)	reviewStar,
+		    (select 
+		    	count(*)
+		    from 
+		        reviews R, ord_lect_infos O
+		    where 
+		        R.ord_lect_no = O.ord_lect_no
+		   	 	and A.lect_no = O.lect_no) reviewCnt,
+		   (select 
+				count(*)
+			from 
+				like_lects B
+			where
+		    	A.lect_no = B.lect_no) likeCnt	 		
+		from 
+			lects A, users U    
+		where 
+			A.user_no = U.user_no
+			and A.lect_no = #{value}
+	</select>
+	
+	<!-- 최근 시청한 레슨 조회 -->
+ 	<!-- <select id="getLessonByRecent" parameterType="map" resultMap="lessonMap">
+    	select 
+            s.lesson_title
+            ,s.total_time
+        from 
+            users u, lects l, chapters c, lessons s, ord_lects o, ord_lect_infos ol
+        where
+            u.user_no = o.user_no
+        and o.ord_no = ol.ord_no
+        and l.lect_no = ol.lect_no
+        and l.lect_no = c.lect_no
+        and c.chapter_no = s.chapter_no
+        and s.last_time > 0
+        and u.user_no = #{userNo}
+        and l.lect_no = #{no}
+	</select>  -->
+	
+	<!-- All Lecture ResultMap -->
+	<resultMap type="LectureCourseDto" id="lectureMap">
+		<association property="lecture">
+			<result column="lect_no" property="no"/>
+			<result column="user_no" property="userNo"/>
+			<result column="cate_no" property="cateNo"/>
+			<result column="lect_title" property="lectTitle"/>
+			<result column="lect_info" property="lectInfo"/>
+			<result column="lect_info_title" property="lectInfoTitle"/>
+			<result column="lect_price" property="price"/>
+			<result column="lect_discount_price" property="discountPrice"/>
+			<result column="lect_discount_rate" property="discountRate"/>
+			<result column="lect_is_freed" property="isFreed"/>
+			<result column="lect_is_display" property="isDisplay"/>
+			<result column="lect_create_date" property="lectCreateDate"/>
+			<result column="lect_image_path" property="imagePath"/>
+			<result column="lect_tag" property="tag"/>
+			<result column="lect_grade" property="grade"/>
+		</association>
+		<collection column="lect_no" property="chapters" select="getChapterByLectureNo"/>
+	</resultMap>
+
+	<resultMap type="ChapterDto" id="chapterMap">
+		<association property="chapter">
+			<result column="chapter_no" property="no"/>
+			<result column="chapter_name" property="chapterName"/>
+			<result column="lect_no" property="lectNo"/>
+		</association>
+		<collection column="chapter_no" property="lessons" select="getLessonByChpaterNo"/>
+	</resultMap>
+
+	<resultMap type="Lesson" id="lessonMap">
+		<result column="lesson_no" property="no" />
+		<result column="chapter_no" property="chapterNo" />
+		<result column="lesson_title" property="lessonTitle" />
+		<result column="lesson_sample" property="lessonSample" />
+		<result column="total_time" property="totalTime" />
+		<result column="accumulate_time" property="accumulateTime" />
+		<result column="last_time" property="lastTime" />
+		<result column="lesson_watched" property="lessonWatched" />
+	</resultMap>
+
+	<!-- 챕터번호로 레슨 조회 -->		
+	<select id="getLessonByChpaterNo" parameterType="int" resultMap="lessonMap">
+		select 
+			lesson_no
+			, chapter_no
+			, lesson_title
+			, lesson_sample
+			, total_time
+			, accumulate_time
+			, last_time
+			, lesson_watched	
+		from 
+			 lessons  
+		where
+    		chapter_no = #{value}	
+    	order by
+    		lesson_no asc		
+	</select>
+	
+	<!-- 강좌번호로 챕터 조회 -->
+	<select id="getChapterByLectureNo" parameterType="int" resultMap="chapterMap">
+		select 
+			chapter_no
+			, lect_no
+			, chapter_name
+		from 
+			chapters
+		where
+			lect_no = #{value}
+		order 
+			by chapter_no asc	
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

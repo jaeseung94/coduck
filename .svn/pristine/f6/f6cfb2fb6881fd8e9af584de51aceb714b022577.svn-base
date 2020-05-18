@@ -1,0 +1,10 @@
+package kr.co.coduck.service;
+
+import java.util.List;
+
+import kr.co.coduck.dto.UserQuestionDto;
+
+public interface UserQuestionService {
+
+	List<UserQuestionDto> getUserQuestionListByUserNo(int userNo);
+}

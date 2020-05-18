@@ -1,0 +1,99 @@
+package kr.co.coduck.dto;
+
+import java.util.Date;
+
+public class IncomeDto {
+
+	private int no;
+	private String title;
+	private int discountPrice;
+	private String cataName;
+	private Date createDate;
+	private int totalIncome;
+	private int profit;
+	private int studentCnt;
+	private int totalCount;
+	
+	public IncomeDto() {}
+
+	public int getNo() {
+		return no;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getDiscountPrice() {
+		return discountPrice;
+	}
+
+	public void setDiscountPrice(int discountPrice) {
+		this.discountPrice = discountPrice;
+	}
+
+	public String getCataName() {
+		return cataName;
+	}
+
+	public void setCataName(String cataName) {
+		this.cataName = cataName;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public int getTotalIncome() {
+		return totalIncome;
+	}
+
+	public void setTotalIncome(int totalIncome) {
+		this.totalIncome = totalIncome;
+	}
+
+	public int getProfit() {
+		return profit;
+	}
+
+	public void setProfit(int profit) {
+		this.profit = profit;
+	}
+
+	public int getStudentCnt() {
+		return studentCnt;
+	}
+
+	public void setStudentCnt(int studentCnt) {
+		this.studentCnt = studentCnt;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+
+	@Override
+	public String toString() {
+		return "IncomeDto [no=" + no + ", title=" + title + ", discountPrice=" + discountPrice + ", cataName="
+				+ cataName + ", createDate=" + createDate + ", totalIncome=" + totalIncome + ", profit=" + profit
+				+ ", studentCnt=" + studentCnt + ", totalCount=" + totalCount + "]";
+	}
+	
+	
+}

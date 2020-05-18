@@ -1,0 +1,8 @@
+package kr.co.coduck.dao;
+
+import kr.co.coduck.vo.Notice;
+
+public interface NoticeDao {
+
+	void insertNotice(Notice notice);
+}

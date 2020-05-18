@@ -1,0 +1,80 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<!--footer start-->    
+		<footer class="footer">
+	        <div class="wrapper">
+	            <div class="footer-top">
+	                <div class="menu-list">
+	                    <div class="list-title">코덕</div>
+	                    <div class="menu-sublist">
+	                        <a href="" class="list-link">공지사항</a>
+	                        <a href="" class="list-link">코덕 소개</a>
+	                        <a href="" class="list-link">코덕 이야기</a>
+	                        <a href="" class="list-link">안내</a>
+	                    </div>
+	                </div>
+	                <div class="menu-list">
+	                    <div class="list-title">고객센터</div>
+	                    <div class="menu-sublist">
+	                        <a href="" class="list-link">자주묻는 질문</a>
+	                        <a href="" class="list-link">이용약관</a>
+	                        <a href="" class="list-link">개인정보 취급방침</a>
+	                    </div>
+	                </div>
+	                <div class="menu-list">
+	                    <div class="list-title">학습하기</div>
+	                    <div class="menu-sublist">
+	                        <a href="" class="list-link">IT프로그래밍</a>
+	                        <a href="" class="list-link">웹 개발</a>
+	                        <a href="" class="list-link">풀스택 개발</a>
+	                    </div>
+	                </div>
+	                <div class="menu-list">
+	                    <div class="list-title">커뮤니티</div>
+	                    <div class="menu-sublist">
+	                        <a href="" class="list-link">학습로드맵</a>
+	                        <a href="" class="list-link">강좌 요청</a>
+	                        <a href="" class="list-link">Q&A</a>
+	                        <a href="" class="list-link">수강평 보기</a>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="footer-bottom">
+	                <div class="footer-bottom-left footer-info">
+	                    <div class="footer-info-top">
+	                        <span class="footer-logo" href="#"><img src="/resources/images/logo/coduck.ico"/></span>
+	                        <span class="sy-footer-logo" href="#">CODUCK</span>
+	                        <span class="info-contents">| 개인정보 취급방침</span>
+	                        <span class="info-contents">| 이용약관</span>
+	                    </div>
+	                    <div class="footer-info-bottom">
+	                        <div class="info-bottom-title">
+	                            <span>(주)코덕 사업자 정보</span>
+	                        </div>
+	                        <div class="info-bottom-dropdown">
+	                            <span>(주)코덕 |</span>
+	                            <span>대표자 : 이응수 |</span>
+	                            <span>사업자번호 : 02-1234-5678</span>
+	                            <br>
+	                            <span>주소 : 사울특별시 종로구 율곡로 10길 105 디아망 401호(봉익동 10-1 디아망 401호)</span>
+	                            <span>TEL : 070-8240-3211</span>
+	                            <span>FAX : 02-777-5407</span>
+	                        </div>
+	                        <div class="info-bottom-samzo">
+	                            <span>중앙HTA | Team Three | Member : 김재승 이승연 김대일 송승혁</span>
+	                            <span>Final Project | 2020-02-27</span>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="footer-bottom-right pull-right">
+	                    <span>
+	                        <img src="/resources/images/logo/share_logo.PNG">
+	                    </span>
+	                </div>
+	            </div>
+	        </div>
+	    </footer>
+    </div>
+</body>
+</html>

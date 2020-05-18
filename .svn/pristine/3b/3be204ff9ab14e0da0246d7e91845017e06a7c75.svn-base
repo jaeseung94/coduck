@@ -1,0 +1,41 @@
+package kr.co.coduck.web.controller;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.coduck.form.CouponAddForm;
+import kr.co.coduck.service.CouponService;
+import kr.co.coduck.vo.Coupon;
+
+@Controller
+@RequestMapping("/admin")
+public class CouponController {
+
+	@Autowired
+	private CouponService couponService;
+	
+	@GetMapping("/coupon.hta")
+	public String coupon() {
+		return "admin/coupon";
+	}
+	
+	@PostMapping("/addcoupon.hta")
+	public String addNewCoupon(CouponAddForm form) throws Exception {
+		Coupon coupon = new Coupon();		
+		BeanUtils.copyProperties(form, coupon);
+		if (form.getAmount() > 0) {
+			coupon.setLimited("N");
+		}
+		
+		couponService.addNewCoupon(coupon);
+		
+		return "redirect:/admin/coupon.hta";
+	}
+
+	
+}

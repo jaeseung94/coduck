@@ -1,0 +1,20 @@
+package kr.co.coduck.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.coduck.dao.CouponDao;
+import kr.co.coduck.vo.Coupon;
+
+@Service
+public class CouponServiceImpl implements CouponService {
+
+	@Autowired
+	private CouponDao couponDao; 
+	
+	@Override
+	public void addNewCoupon(Coupon coupon) {
+		couponDao.addNewCoupon(coupon);
+	}
+
+}

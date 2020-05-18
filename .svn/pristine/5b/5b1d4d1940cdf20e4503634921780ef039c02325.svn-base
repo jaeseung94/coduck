@@ -1,0 +1,8 @@
+package kr.co.coduck.dao;
+
+import kr.co.coduck.vo.OrdLect;
+
+public interface OrderLectDao {
+
+	void insertOrderLect(OrdLect ordLect);
+}

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.co.coduck.dao.TestDao">
+	
+	<!-- 맞춘 문항 및 틀린 문항 -->
+	<select id="getTestResultDtosByTestNoNUserNo" parameterType="map" resultType="TestResultDto">
+		select
+			A.VIEW_CK_NO			no, 
+			A.TEST_QT_NO			qtNo,
+			A.VIEW_CK_NUM			ckNum,
+			A.view_ck_isTrue		isTrue,
+			B.TEST_QT_NUM			qtNum,		
+			B.TEST_QT_CONTENT		content,
+			B.TEST_QT_SCORE			score,
+			B.TEST_QT_IMG			img,
+			B.TEST_QT_V1			v1,
+			B.TEST_QT_V2			v2,
+			B.TEST_QT_V3			v3,
+			B.TEST_QT_V4			v4,
+			B.TEST_QT_ANS			ans,
+			B.TEST_QT_TR_RATE		trueRate,
+			C.SUBJ_NAME				subjName,
+			C.SUBJ_NO				subjNo
+		from 
+			VIEW_CKS A, TEST_QTS B, TEST_SUBJS C
+		where 
+			A.TEST_QT_NO = B.TEST_QT_NO
+			and C.SUBJ_NO = B.SUBJ_NO
+			and A.user_no = #{userNo} 
+			and B.test_no = #{testNo}
+			and A.VIEW_CK_isTrue = #{isTrue}
+		order by 
+			C.SUBJ_NO, no
+	</select>
+	
+	<!-- 과목별 결과 조회 -->
+	<select id="getTestSubjResultDtosByTestNoNUserNo" parameterType="map" resultType="TestSubjResultDto">
+		SELECT
+			A.SUBJ_RESULT_NO				no,
+			B.subj_name						name,
+			A.USER_NO						userNo,
+			A.TEST_NO						testNo,
+			A.SUBJ_NO						subjNo,
+			A.SUBJ_RESULT_SCORE				score,
+			B.SUBJ_PASS_GRADE				passGrade,
+			A.SUBJ_RESULT_ISPASSED			isPassed,
+			A.SUBJ_RESULT_ANS_CNT			ansCnt,
+			B.SUBJ_QT_CNT					subjQtCnt,
+			B.TEST_SUBJS_LEVEL				subJLv,
+			C.TEST_RESULT_ISPASSED			finalPassed,
+			C.TEST_RESULT_PASSEDTIME		passedTime
+		from 
+			TEST_SUBJ_RESULTS A, TEST_SUBJS B, TEST_RESULTS C
+		WHERE
+			A.SUBJ_NO = B.SUBJ_NO
+			and A.USER_NO = C.USER_NO
+			and A.TEST_NO = C.TEST_NO
+			and A.USER_NO = #{userNo}
+			and A.TEST_NO = #{testNo}
+		order by 
+			subJLv
+	</select>
+	
+	<!--시험 결과 조회  -->
+	<select id="getTestResultByTestNoNUserNo" parameterType="map" resultType="TestResult">
+		select 
+			test_result_no				no,
+			test_result_passedtime		passedTime,
+			test_no						testNo,
+			test_result_avg				avg,	
+			test_result_ispassed		isPassed,
+			user_no						userNo,
+			test_result_date			createDate,
+			test_is_done				isDone
+		from
+			test_results
+		where
+			test_no = #{testNo}
+			and user_no = #{userNo}
+	</select>
+	
+	<!-- 시험 결과 저장 -->
+	<insert id="insertTestResult" parameterType="TestResult">
+		insert into test_results(
+			test_result_no,
+			test_result_avg,
+			test_result_ispassed,
+			test_result_passedTime,
+			test_no,
+			user_no
+		)
+		values (
+			test_results_seq.nextval,
+			#{avg},
+			#{isPassed},
+			#{passedTime},
+			#{testNo},
+			#{userNo}
+		)
+		
+	</insert>
+
+	<!-- 시험 과목 결과 저장  -->
+	<insert id="insertTestSubjResult" parameterType="TestSubjResult">
+		insert into test_subj_results(
+			subj_result_no,
+			user_no,
+			test_no,
+			subj_no,
+			subj_result_score,
+			subj_result_ispassed,
+			subj_result_ans_cnt
+		)
+		values (
+			test_subj_results_seq.nextval,
+			#{userNo},
+			#{testNo},
+			#{subjNo},
+			#{score},
+			#{isPassed},
+			#{ansCnt}
+		)
+	</insert>
+	
+	<!-- 내가 체크한 답 저장  -->
+	<insert id="insertViewCk" parameterType="ViewCk">
+		insert into view_cks(
+			view_ck_no,
+			test_qt_no,
+			user_no,
+			view_ck_num,
+			view_ck_isTrue
+		)
+		values (
+			view_cks_seq.nextval,
+			#{qtNo},
+			#{userNo},
+			#{ckNum},
+			#{isTrue}
+		)
+		
+	</insert>
+	
+	<!-- 시험과목 조회하기  -->
+	<select id="getTestSubjsByTestNo" parameterType="int" resultType="TestSubj">
+		select 
+			subj_no						no, 
+			subj_name					name,	 
+			subj_pass_grade				passScore, 
+			subj_qt_cnt					qtCnt,
+			cate_no						cateNo,
+			test_subjs_level			lv			
+		from 
+			test_subjs
+		where
+			cate_no = (select A.cate_no 
+						from CATEGORIES A, TESTS B
+						where A.CATE_NO = B.CATE_NO
+						and B.test_no = #{value})
+	</select>
+	
+	<!-- 시험문제 조회하기 -->
+	<select id="getTestQtsDtoByNo" parameterType="int" resultType="TestQtDto">
+		select 
+			B.SUBJ_NO					subjno, 
+			B.SUBJ_NAME					subjName,		 
+			B.SUBJ_QT_CNT				subjQtCnt, 
+			B.TEST_SUBJS_LEVEL			subjLv, 
+			C.TEST_QT_NO				qtNo, 
+			C.TEST_QT_NUM				qtNum,
+			C.TEST_QT_CONTENT			contents, 
+			C.TEST_QT_SCORE				score, 
+			C.TEST_QT_V1				v1, 
+			C.TEST_QT_V2				v2, 
+			C.TEST_QT_V3				v3, 
+			C.TEST_QT_V4				v4, 
+			C.TEST_QT_ANS				ans, 
+			C.TEST_QT_IMG				img, 
+			D.TEST_NO					testNo, 
+			D.TEST_NAME					name, 
+			D.test_ep					ep, 
+			D.TEST_QT_CNT				qtCnt	
+		from
+			TEST_SUBJS B, TEST_QTS C, TESTS D
+		where
+			C.SUBJ_NO = B.SUBJ_NO
+			and D.TEST_NO = C.TEST_NO
+			and D.TEST_NO = #{value}
+		order by 
+			C.TEST_QT_NUM
+	</select>
+	
+	<!-- 시험문제 저장 -->
+	<insert id="insertTestQt" parameterType="TestQt">
+		insert into test_qts(
+			test_qt_no,
+			test_qt_num,
+			test_qt_content,
+			test_qt_score,
+			test_qt_v1,
+			test_qt_v2,
+			test_qt_v3,
+			test_qt_v4,
+			test_qt_ans,
+			test_qt_tr_rate,
+			test_qt_img,
+			subj_no,
+			test_no
+		)
+		values(
+			test_qts_seq.nextval,
+			#{num},
+			#{content},
+			#{score},
+			#{v1},
+			#{v2},
+			#{v3},
+			#{v4},
+			#{ans},
+			#{trueRate},
+			#{img},
+			#{subjNo},
+			#{testNo}
+		)
+		
+	</insert>
+	
+	<!-- 시험 저장 -->
+	<insert id="insertTest" parameterType="Test">
+		<!-- Test의 객체의 no에 시퀀스 값을 미리 저장시킨다.  -->
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			select tests_seq.nextval from dual
+		</selectKey>
+		insert into tests(
+			test_no,
+			test_date,
+			test_name,
+			cate_no,
+			test_ep,
+			test_price,
+			test_pass_score,
+			test_ltd_time,
+			test_qt_cnt
+		)
+		values (
+			#{no},
+			#{testDate},
+			#{name},
+			#{cateNo},
+			#{ep},
+			#{price},
+			#{passScore},
+			#{ltdTime},
+			#{qtCnt}
+		)
+	</insert>
+	
+	<!-- 카테고리(시험명)번호로 시험의 다수 회차 조회 -->
+	<select id="getTestEpsByCateNo" parameterType="int" resultType="Ep">
+		select 
+			test_no		testNo, 
+			test_ep		testEp	
+		from 
+			tests
+		where 
+			cate_no = #{value}
+		order by 
+			2
+	</select>
+	
+	<!-- 여러 시험 조회 -->
+	<select id="searchTest" parameterType="map" resultType="SearchTestDetailDto">
+		select 
+			X.test_no				testNo, 
+			X.main_cate_no			mainCateNo, 
+			X.main_cate_name		mainCateName, 
+			X.sub_cate_no			subCateNo, 
+			X.sub_cate_name			subCateName, 
+			X.test_ep				testEp, 
+			X.test_name				testName, 
+			X.test_qt_cnt			testQtCnt,
+			X.test_price			testPrice,
+			(select distinct Y.test_is_done from test_results Y where Y.test_no = X.test_no and Y.user_no = #{userNo}) testDone,
+			(select max(Y.test_result_avg) from test_results Y where Y.test_no = X.test_no and Y.user_no = #{userNo} ) testAvg,
+			nvl2((select 
+               B.test_no
+            from 
+               ord_test_infos B, ord_tests C
+            where 
+               B.ord_test_no = C.ord_test_no
+                and C.user_no = #{userNo}
+               and B.test_no = X.test_no
+            ), 'Y', 'N') orderYN 
+		from (
+				select B.test_no, D.cate_no main_cate_no, D.cate_name main_cate_name, C.cate_no sub_cate_no, C.cate_name sub_cate_name, 
+						B.test_ep, B.test_name , B.test_qt_cnt, B.test_price
+				from (select distinct test_no
+					  from test_results) A, tests B, categories C, Categories D
+					  where A.test_no(+) = B.test_no
+					  and B.cate_no = C.cate_no
+					  and C.main_cate_no = D.cate_no
+					  ) X
+		<where>
+			<if test="upCateNo != null">
+				X.main_cate_no = #{upCateNo}
+			</if>
+			<if test="downCateNo != null">
+				and X.sub_cate_no = #{downCateNo}
+			</if>
+			<if test="testNo != null">
+				and X.test_no = #{testNo}
+			</if>
+		</where>	
+		order by X.main_cate_name, X.test_name, X.test_ep
+			
+	</select>
+	
+	<!-- 시험번호로 시험 조회  -->
+	<select id="getTestByNo" parameterType="int" resultType="Test">
+		select 
+			test_no					no,
+			lect_no					lectNo,	
+			test_date				testDate,
+			test_name				name,
+			test_ep					ep,
+			test_price				price,
+			test_pass_score			passScore,
+			test_ltd_time			ltdTime,
+			test_qt_cnt				qtCnt,
+			cate_no					cateNo
+		from 
+			tests
+		where
+			test_no = #{value}
+	</select>
+	
+</mapper>

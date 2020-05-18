@@ -1,0 +1,308 @@
+#main .container {
+	width: 1440px;
+}
+
+#main {
+    min-height: 800px;
+}
+#lecture-section {
+    padding: 0;
+}
+
+.main-headerline {
+	opacity: 0.6;
+}
+#lecture-section .container {
+    padding: 20px 0;
+    background: #fff;
+    max-width: 1440px;
+    width: 1440px;
+    margin: 0 auto;
+    position: relative;
+}
+#mainSearch {
+	margin-left: 925px;
+	
+}
+#mainSearch .main.search-box {
+	height: 50px;
+    width: 475px;
+}
+#mainSearch .main.sy-btn-search {
+	height: 50px;
+    width: 53px;
+}
+#courses_section .container aside.column {
+    padding: 0;
+}
+.columns.is-tablet {
+    -webkit-box-flex: 0;
+    flex: none;
+    padding: 0;
+}
+
+#lecture-section .lesson-container .lesson-list-body {
+    margin: 0;
+}
+#lecture-section .columns {
+    flex-wrap: wrap;
+    display: flex;
+}  
+#lecture-section .column {
+    padding: 12px;
+    display: block;
+}
+#lecture-section .lesson-container .lesson-tablet {
+    flex: none;
+    width: 20%;
+}
+.lecutre.lesson-item {
+    height: 100%;
+    background: #fff;
+    box-shadow: 0 2px 3px rgba(0,10,18,.1), 0 0 0 1px rgba(0,10,18,.1);
+    color: #454545;
+    max-width: 100%;
+    position: relative;
+}
+.item-image {
+    display: block;
+    position: relative;
+}
+.item-image-thumbnail {
+    display: block;
+    position: relative;
+}
+.item-image-thumbnail img {
+    height: 170px;
+    width: 100%;
+    display: block;
+}
+.item-contents {
+    padding: 12px;
+    color: #595959;
+}
+.lecture-item-title {
+    font-size: 19px;
+    font-weight: 700;
+}
+.lecture-item-front:hover {
+    text-decoration: none;
+    cursor: pointer;
+}
+.lecture-item-info .price {
+    float: right;
+    font-size: 16px;
+}
+.rating.column.is-half {
+    display: inline-block!important;
+}
+.price.column.is-half {
+    text-align: right!important;
+    margin-top: 6px;
+}
+.price .discount_price {
+    font-weight: 700;
+    color: #175cbe;
+    font-size: 20px;
+}
+.lecture-item-info div {
+    padding: 0!important;
+}
+.item-info-bottom {
+    font-size: 17px;
+}
+.lesson-item-event-card {
+    position: absolute;
+    padding: 5px;
+    top: 5%;
+    right: 0;
+    color: #fff;
+    background: #ff6318;
+    font-weight: 600;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border: 1px solid #fff;
+    font-size: 16px;
+}
+
+.lesson-item-free-card {
+	position: absolute;
+	padding: 5px;
+	top: 5%;
+	right: 0;
+	color: #fff;
+	background: olivedrab;
+	font-weight: 600;
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	border: 2px solid #fff;
+	font-size: 16px;
+}
+
+/******************** main banner-card *********************/
+
+.banner-container {
+    margin-top: 70px;
+    margin-bottom: 55px;
+}
+.main-banner-box {
+    display: inline-flex;
+    float: none;
+}
+.main .banner-icon {
+	margin: 0px	
+}
+
+.banner-card {
+    display: inline-block;
+    text-align: center;
+    margin: 0 20px 30px 20px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 1, 0.1);
+    border: 1px solid #dedede;
+    cursor: pointer;
+}
+
+.banner-card .banner-icon img {
+    width: 435px;
+    height: 300px;
+}
+.banner-card .banner-title {
+    margin-bottom: 4px;
+    color: #333;
+}
+.banner-card .banner-comment {
+    color: #595959;
+    display: -webkit-box;
+    -webkit-line-clamp : 2;
+    display: inline-block;
+    width: 96%;
+    text-align: justify;
+    margin-top: 12px;
+    padding: 8px;
+}
+.banner-comment p {
+    font-size: 17px;
+}
+/*********************** new-lecture-container ***************************/
+.new-lecture-container, .new-test-container {
+    padding: 0 10px;
+    margin-bottom: 68px;
+}
+.main-course-list {
+    margin-left: 7px;
+}
+section .header {
+    margin-left: 9px;
+    margin-bottom: 16px;
+}
+.new-lecture-box , .new-test-box {
+    border: 1px solid lightgrey;
+    display: inline-flex;
+    margin: 7px 6px 7px 3px;
+    width: 677px;
+    height: 145px;
+    background: #f4f4f4;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 1, 0.1);
+}
+
+.new-test-box {
+    background: none;
+}
+.courses_header h2 {
+    font-size: 27px;
+    font-weight: 600;
+}
+.new-lecture-box a , .new-test-box a{
+    width: 25%;
+}
+.new-lecture-thumbnail {
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+}
+.new-test-thumbnail {
+    width: 100%;
+    height: 100%;
+    padding: 9px;
+}
+.new.info-lect, .new.info-test {
+    font-size: 17px;
+}
+.lesson-container:last-child {
+	margin-bottom: 140px;
+}
+.new.test.info-price strong {
+	color: cadetblue;
+}
+.new-lecture-body, .new-test-body {
+    display: inline-block;
+	width: 75%;
+}
+
+.new-test-body {
+    margin-left: 10px;
+}
+.contenets-menu.my-lecture {
+	padding: 10px; 
+}
+
+.new-lecture-details, .new-test-details {
+    display: inline-block;
+}
+
+.teaching-details, .new.detail-title {
+    margin-top: 8px;
+    display: inline-block;
+}
+.new.detail-title h4 {
+    font-size: 21px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+a {
+	color: #595959;
+}
+.wish-btn-box {
+    float: right;
+    margin: 23px 20px 5px 0;
+}
+.wish-btn-box > i {
+    font-size: 21px;
+}
+.wish-btn-box button {
+    padding: 9px 16px;
+}
+.wish-btn-box button:hover {
+    cursor: grab;
+}
+
+.new-test .wish-btn-box .btn-cart {
+    margin-top: 60px;
+}
+.btn-cart {
+    margin-bottom: 12px;
+}
+.new.info-price {
+    margin-top: 35px;
+}
+.new.info-price .discount {
+    font-size: 20px;
+    color: #ff6318;
+}
+.new.info-price .price {
+    font-size: 20px;
+}
+.info-price .rate, .info-student {
+    font-size: 19px;
+}
+.info-wish i {
+    color: #f98173;
+}
+.fa-angle-right {
+    margin-left: 5px;
+}

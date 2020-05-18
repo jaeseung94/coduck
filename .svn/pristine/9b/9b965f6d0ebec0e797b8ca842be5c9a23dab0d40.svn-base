@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.UserDao">
+	
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO USERS
+			(USER_NO, USER_NAME, USER_EMAIL, USER_PWD, USER_SELF_INTRODUCTION, USER_ID, USER_NICKNAME, USER_IMAGE_FILENAME, USER_BANKNUMBER)
+		values
+			(users_seq.nextval, #{name}, #{email}, #{password}, #{selfInfo}, #{id}, #{nickname}, #{imageFilename}, #{bankNumber})
+	</insert>
+	
+	<select id="getUserById" parameterType="string" resultType="User">
+		select
+			USER_NO						as no,
+			USER_NAME					as name,
+			USER_EMAIL					as email,
+			USER_IMAGE_FILENAME			as imageFilename,
+			USER_SELF_INTRODUCTION		as selfInfo,
+			USER_ID						as id,
+			USER_NICKNAME				as nickname,
+			USER_BANKNUMBER				as bankNumber,
+			USER_PWD					as password
+		from
+			USERS
+		where
+			USER_ID = #{value}		
+	</select>
+
+	<select id="getUserProfilByNo" parameterType="int" resultType="User">
+		select
+			USER_NO						as no,
+			USER_NAME					as name,
+			USER_EMAIL					as email,
+			USER_IMAGE_FILENAME			as imageFilename,
+			USER_SELF_INTRODUCTION		as selfInfo,
+			USER_ID						as id,
+			USER_NICKNAME				as nickname,
+			USER_BANKNUMBER				as bankNumber,
+			USER_PWD					as password
+		from
+			USERS
+		where
+			USER_NO = #{value}
+	</select>
+	
+	<update id="updateUser" parameterType="User">
+		update
+			USERS
+		set
+			USER_NO = #{no},
+			USER_NICKNAME = #{nickname},
+			USER_EMAIL = #{email},
+			USER_IMAGE_FILENAME = #{imageFilename},
+			USER_SELF_INTRODUCTION = #{selfInfo},
+			USER_BANKNUMBER = #{bankNumber},
+			USER_PWD = #{password}
+		where
+			USER_NO = #{no}
+	</update>
+	
+</mapper>

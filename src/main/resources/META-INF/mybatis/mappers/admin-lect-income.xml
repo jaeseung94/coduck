@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.AdminLectIncomeDao">
+	
+	<!-- 1일 -->
+	<select id="getLectIncomeByDay" resultType="int">
+		select 
+			nvl(sum(ord_lect_total_price), 0) as totalPrice
+		from 
+			ord_lects
+		where 
+			ord_lect_create_date >= to_date(to_char(sysdate - 1, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+			and ord_lect_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+	</select>
+	<!-- 3일 -->
+	<select id="getLectIncomeByThree" resultType="int">
+		select 
+			nvl(sum(ord_lect_total_price), 0) as totalPrice
+		from 
+			ord_lects
+		where 
+			ord_lect_create_date >= to_date(to_char(sysdate - 3, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+			and ord_lect_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+	</select>
+	<!-- 7일 -->
+	<select id="getLectIncomeByWeek" resultType="int">
+		select 
+			nvl(sum(ord_lect_total_price), 0) as totalPrice
+		from 
+			ord_lects
+		where 
+			ord_lect_create_date >= to_date(to_char(sysdate - 7, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+			and ord_lect_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+	</select>
+	
+	<!-- 최근1주일이내 강좌, 모의고사 매출액 비율 구하기 -->
+	<select id="getIncomeRate" resultType="hashmap">
+	select 
+		<!-- resultType="hashmap" 인경우에는 별칭을 꼭 대문자로 설정하자! -->
+		round(lect_total*100/(lect_total+test_total)) LECT_RATE, round(test_total*100/(lect_total + test_total)) TEST_RATE
+	from 
+		(select		
+				(select sum(ord_lect_total_price)
+				 from ord_lects 
+				 where ord_lect_create_date >= to_date(to_char(sysdate - 7, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+				 and ord_lect_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')) lect_total,
+				(select sum(ord_test_total_price)
+				 from ord_tests 
+				 where ord_test_create_date >= to_date(to_char(sysdate - 7, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+				 and ord_test_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')) test_total
+		from dual)
+	</select>
+</mapper>

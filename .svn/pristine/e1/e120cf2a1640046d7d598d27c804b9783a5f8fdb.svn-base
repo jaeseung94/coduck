@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.AdminTestIncomeDao">
+	
+	<!-- 1일 -->
+	<select id="getTestIncomeByDay" resultType="int">
+		select 
+			nvl(sum(ord_test_total_price), 0) as totalPrice
+		from 
+			ord_tests
+		where 
+			ord_test_create_date >= to_date(to_char(sysdate - 1, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+			and ord_test_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+	</select>
+	<!-- 3일 -->
+	<select id="getTestIncomeByThree" resultType="int">
+		select 
+			nvl(sum(ord_test_total_price), 0) as totalPrice
+		from 
+			ord_tests
+		where 
+			ord_test_create_date >= to_date(to_char(sysdate - 3, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+			and ord_test_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+	</select>
+	<!-- 7일 -->
+	<select id="getTestIncomeByWeek" resultType="int">
+		select 
+			nvl(sum(ord_test_total_price), 0) as totalPrice
+		from 
+			ord_tests
+		where 
+			ord_test_create_date >= to_date(to_char(sysdate - 7, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+			and ord_test_create_date &lt; to_date(to_char(sysdate, 'yyyy-MM-dd'), 'yyyy-MM-dd')
+	</select>
+</mapper>

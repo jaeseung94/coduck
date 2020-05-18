@@ -1,0 +1,9 @@
+package kr.co.coduck.dao;
+
+import kr.co.coduck.vo.Review;
+
+public interface ReviewDao {
+
+	// 별점 평균 계산
+	Review getAllReivewStarAvg(int lectureNo);
+}

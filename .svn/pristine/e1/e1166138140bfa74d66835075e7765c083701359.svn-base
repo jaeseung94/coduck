@@ -1,0 +1,126 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>시험문제 확인하세요.</title>
+</head>
+<%@ include file="../common/tag.jsp" %>
+<body>
+<div class="container xxx">
+	<div class="row xxx" style="margin: 10px 0px 10px 0px">
+		<div class="col-sm-8">
+			<h3 style="margin-top: 12px; padding: 10px;">
+				${test.name } 필기 <span style="font-size: 20px;">(${test.ep } 기출문제)</span>
+			</h3>
+		</div>
+		<div class="col-sm-4">
+			<p style="margin-top: 10px; font-size: 17px; padding-left: 5px;">제한 시간 : <span id="timer"></span></p>
+			<p>
+				<select name="subj" style="width: 300px;">
+					<c:forEach var="subj" items="${subjs}" varStatus="loop">
+						<option value="${subj.no }">${loop.count }과목 : ${subj.name }</option>
+					</c:forEach>
+				</select>
+			</p>
+		</div>
+	</div>
+
+	<div class="row" style="margin-left: 0">
+		<div class="col-sm-10 xxx" id="div-qt">
+				<c:forEach var="qt" items="${testQtDtos }" varStatus="loop"> 
+					<c:if test="${loop.count % 5 == 1 }">
+						<div class="row" data-subj-no="${qt.subjNo }" id="qt-no-${loop.count }">
+							<div class="col-sm-6" style="border-right: 1px solid black; 
+							margin-top: 15px; margin-bottom: 15px; padding-right: 5px; padding-left: 2px;">
+					</c:if>
+					<c:if test="${loop.count % qt.subjQtCnt == 1 }">
+						<div class="col-sm-12 xxx" style="padding: 5px; margin-bottom: 10px; margin-left: 2px; margin-right: 5px;">
+							<div class="col-sm-12 xxx text-center" style="background-color: #cccccc;">
+								<h4 style="font-weight: bold; margin: 5px;">${qt.subjLv }과목 : ${qt.subjName }</h4>
+							</div>
+						</div>
+					</c:if>
+					<div class="col-sm-1" data-qt-no="${qt.qtNum }" >${qt.qtNum }.</div>
+					<div class="col-sm-11" style="padding-left: 5px; padding-right: 5px;" data-qt-no="${qt.qtNum }">
+						<p>${qt.contents }</p>
+						<p><a href=""><img src="/resources/images/test/marking-img/1.gif" alt="1" id="qt-${qt.qtNum }-1"/> ${qt.v1 }</a></p>
+						<p><a href=""><img src="/resources/images/test/marking-img/2.gif" alt="2" id="qt-${qt.qtNum }-2"/> ${qt.v2 }</a></p>
+						<p><a href=""><img src="/resources/images/test/marking-img/3.gif" alt="3" id="qt-${qt.qtNum }-3"/> ${qt.v3 }</a></p>
+						<p><a href=""><img src="/resources/images/test/marking-img/4.gif" alt="4" id="qt-${qt.qtNum }-4"/> ${qt.v4 }</a></p>
+						<br/>
+					</div>
+					<c:if test="${loop.count % 5 == 3 }">
+						</div><!-- 3문제 출력된 부분 닫기 -->
+						<div class="col-sm-6" style="margin-top: 15px; margin-bottom: 15px; padding-right: 0px;"><!-- 2문제 출력된 부분 -->
+					</c:if>
+					
+					<c:if test="${loop.count % 5 == 0 }">
+						</div><!-- 2문제 출력된 부분 닫기 -->
+						</div><!-- row 닫기 -->
+					</c:if>
+				</c:forEach>
+		</div>
+		
+		<div class="col-sm-2" >
+			<form action="/test/submitTest.hta" method="post" id="form">
+				<div class="row" id="div-mark">
+					<c:forEach var="subj" items="${subjs }">
+						<div class="col-sm-12" data-subj-no="${subj.no }"><!-- 과목을 반복 -->
+							<table style="width: 100%;">
+								<tbody style="text-align: center;">
+									<tr>
+										<td colspan="5" style="border: 1px solid black; height: 30px;" class="mark-green">${subj.name }</td>
+									</tr>
+									<c:forEach var="no" begin="${(subj.lv -1) * subj.qtCnt + 1}" end="${subj.lv * subj.qtCnt}">
+										<tr>
+											<td style="border: 1px solid black; width: 32px;" class="mark-green" data-qt-no="${no}"><a href="" class="zzz">${no }</a></td>
+											<td style="border: 1px solid black; width: 32px;" class="mark-green mark-number">
+												<a href=""><img src="/resources/images/test/marking-img/1.gif" alt="1" id="mark-${no }-1"></a>
+											</td>
+											<td style="border: 1px solid black; width: 32px;" class="mark-green mark-number">
+												<a href=""><img	src="/resources/images/test/marking-img/2.gif" alt="2" id="mark-${no }-2"></a>
+											</td>
+											<td style="border: 1px solid black; width: 32px;" class="mark-green mark-number">
+												<a href=""><img src="/resources/images/test/marking-img/3.gif" alt="3" id="mark-${no }-3"></a>
+											</td>
+											<td style="border: 1px solid black; width: 32px;" class="mark-green mark-number">
+												<a href="" ><img src="/resources/images/test/marking-img/4.gif" alt="4" id="mark-${no }-4"></a>
+											</td>
+											<td><input type="hidden" name="ans" value="0" id="input-ans-${no }"/></td>
+											<td><input type="hidden" name="qtNos" value="${no }"></td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
+					</c:forEach>
+					<br>
+				</div>
+				<!-- 시험 제출 영역 -->
+				<input type="hidden" name="testNo" value="${test.no }">
+				<input type="hidden" name="time" value="">
+				
+			</form>
+			
+			<br>
+			<p style="text-align: center;">
+				<button id="button-submit" type="button">제출</button>
+			</p>
+		</div>
+		
+		<div class="col-sm-10" style="margin-bottom: 20px;">
+			<br>
+			<div class="col-sm-6" style="text-align: right;">
+				<button class="btn btn-default" id="btn-prev">이전</button>
+			</div>
+			<div class="col-sm-6">
+				<button class="btn btn-default" id="btn-next">다음</button>
+			</div>
+		</div>
+	</div>
+</div>
+	
+</body>
+</html>

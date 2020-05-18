@@ -1,0 +1,226 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>내 정보</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<%@ include file="../common/header.jsp"%>
+	<%@ include file="../common/tag.jsp"%>
+	<div class="container" style="font-size: 17px; width: 1440px;">
+		<div class="row">
+			<div class="col-sm-2" style="border: 1px solid red;">
+				<p>대시보드</p>
+				<p>내 학습</p>
+				<ul>
+					<li><a href="/user/userlecting.hta">수강중인 강의</a></li>
+					<li><a href="/question/userqueston.hta">내 질문</a></li>
+					<li>내 모의고사</li>
+				</ul>
+				<p>내 결제</p>
+				<ul>
+					<li>위시리스트</li>
+					<li><a href="/cart/userCartLectList.hta">장바구니</a></li>
+					<li>내 쿠폰함</li>
+					<li><a href="/user/userbylist.hta">구매내역</a></li>
+				</ul>
+				<p>설정</p>
+				<ul>
+					<li>프로필 설정</li>
+					<li>알림 설정</li>
+				</ul>
+				<p>내 강의/모의고사</p>
+				<ul>
+					<li>내 강의</li>
+					<li>내 모의고사</li>
+				</ul>
+			</div>
+
+			<div class="col-sm-10">
+				<p>구매하기</p>
+				<h4>구매할 강의 정보</h4>
+				<div class="row">
+					<!-- <form action="orderlectform.hta" method="post"> -->
+						<table class="table" id="lecture-table">
+							<thead id="lecture-thead">
+								<tr>
+									<th>순번</th>
+									<th>제목</th>
+									<th>가격</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:choose>
+									<c:when test="${empty userChoiceLectList }">
+										<tr>
+											<td colspan="4" class="text-center">선택한 상품이 없습니다.</td>
+										</tr>
+									</c:when>
+									<c:otherwise>
+										<c:forEach var="userChoiceLect" items="${userChoiceLectList }"
+											varStatus="loop">
+											<tr>
+												<td>${loop.count }</td>
+												<td>${userChoiceLect.lectTitle }</td>
+												<td>${userChoiceLect.lectPrice }</td>
+											</tr>
+										</c:forEach>
+									</c:otherwise>
+								</c:choose>
+							</tbody>
+						</table>
+						<div class="form-group">
+							<button class="btn btn-info btn-xs">쿠폰 사용하기</button>
+							<p>총 가격 : <span id="lecture-summary-price">0</span>원</p>
+							<button type="submit" class="btn btn-primary">구매하기</button>
+						</div>
+					<!-- </form> -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="modal-my-coupons" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">나의 쿠폰 리스트</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table" id="modal-coupon-detail-table">
+						<thead>
+							<tr>
+								<th>쿠폰번호</th>
+								<th>쿠폰제목</th>
+								<th>쿠폰 가격할인</th>
+								<th>쿠폰 가격할인률</th>
+								<th>사용하기</th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(function() {
+			var totalPrice = 0;
+			$("#lecture-table tbody td").parents("tr").each(function(index, tr) {
+					var price = parseInt($(tr).find('td:eq(2)').text());
+					totalPrice += price;
+					$("#lect-total").val(totalPrice);
+				});
+			$("#lecture-summary-price").text(totalPrice);
+		})
+		
+		$(".btn-info").click(function() {
+
+			var $tbody = $("#modal-coupon-detail-table tbody").empty();
+
+			$.getJSON("/admin/couponDetails.hta", function(result) {
+				$.each(result, function(index, coupon) {
+
+					var row = "<tr>";
+					row += "<td>" + coupon.no + "</td>";
+					row += "<td>" + coupon.title + "</td>";
+					row += "<td id='discountPrice'>" + coupon.discountPrice + "</td>";
+					row += "<td id='discountRate'>" + coupon.discountRate + "%</td>";
+					row += "<td><button class='btn coupon-info btn-primary'>사용</button></td>";
+					row += "</tr>";
+
+					$tbody.append(row);
+					
+					$('.coupon-info').click(function() {
+						var totalPrice = parseInt($("#lecture-summary-price").text());
+
+						var couponDiscountPrice = 0;
+						var discountPrice = parseInt($('#discountPrice').text());
+						var discountRate = parseInt($('#discountRate').text());
+						
+						if(discountPrice != 0){
+							totalPrice -= discountPrice;
+							$("#lecture-summary-price").text(totalPrice);
+						}else{
+							couponDiscountPrice = totalPrice * (1- discountRate/100);
+							$("#lecture-summary-price").text(couponDiscountPrice);
+						}
+						
+					})
+					
+				})
+				$("#modal-my-coupons").modal("show");
+
+			})
+		})
+		
+	</script>
+</body>
+<%@ include file="../common/footer.jsp"%>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

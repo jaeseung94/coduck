@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.TestCartDao">
+	
+	<insert id="insertCartTest" parameterType="TestCart">
+		insert into test_carts (cart_test_no, test_no, user_no)
+		values (test_carts_seq.nextval, #{testNo}, #{userNo})
+	</insert>
+	
+	<select id="getCartTestListUserByNo" parameterType="int" resultType="CartTestDto">
+		SELECT
+			A.TEST_NO 		as testNo,
+			B.USER_NO 		as userNo,
+			C.TEST_NAME 	as testTitle,
+			C.TEST_PRICE	as testPrice
+		FROM
+			Test_Carts A, Users B, tests C
+		WHERE
+			A.USER_NO = B.USER_NO
+		AND
+			B.USER_NO = A.USER_NO
+		AND
+			C.TEST_NO = A.TEST_NO
+		AND
+			B.USER_NO = #{value}
+	</select>
+	
+	<select id="getCartChoiceTestListByCartChoiceTestNo" parameterType="map" resultType="CartChoiceTestListDto">
+     	select
+			B.test_no				as testNo,
+			B.TEST_NAME				as testTitle,
+			B.test_price			as testPrice
+		from
+			test_carts A, tests B, USERS C
+		where
+			A.test_no = B.test_no
+		AND
+			C.USER_NO = A.USER_NO
+		and
+			B.test_NO = #{testNo}
+		AND
+			C.USER_NO = #{userNo}
+   </select>
+   
+   <delete id="deleteCartTest" parameterType="TestCart">
+      delete from
+         TEST_CARTS
+      where
+         TEST_NO = #{testNo}
+         
+   </delete>
+	
+</mapper>

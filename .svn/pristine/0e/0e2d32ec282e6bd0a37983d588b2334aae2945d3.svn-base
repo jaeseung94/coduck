@@ -1,0 +1,71 @@
+package kr.co.coduck.form;
+
+import org.apache.ibatis.type.Alias;
+
+@Alias("SearchTestFormByAdm")
+public class SearchTestFormByAdm {
+	
+	private int mainCateNo;
+	private int cateNo;
+	private int testNo;
+	private int period;
+	private String from;
+	private String to;
+	
+	public SearchTestFormByAdm() {}
+
+	public int getMainCateNo() {
+		return mainCateNo;
+	}
+
+	public void setMainCateNo(int mainCateNo) {
+		this.mainCateNo = mainCateNo;
+	}
+
+	public int getCateNo() {
+		return cateNo;
+	}
+
+	public void setCateNo(int cateNo) {
+		this.cateNo = cateNo;
+	}
+
+	public int getTestNo() {
+		return testNo;
+	}
+
+	public void setTestNo(int testNo) {
+		this.testNo = testNo;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getTo() {
+		return to;
+	}
+
+	public void setTo(String to) {
+		this.to = to;
+	}
+
+	@Override
+	public String toString() {
+		return "SearchTestFormByAdm [mainCateNo=" + mainCateNo + ", cateNo=" + cateNo + ", testNo=" + testNo
+				+ ", period=" + period + ", from=" + from + ", to=" + to + "]";
+	}
+	
+}

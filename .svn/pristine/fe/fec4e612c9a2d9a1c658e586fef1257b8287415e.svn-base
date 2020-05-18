@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.AdminLectDao">
+	
+	<select id="getLectByCriteria" parameterType="AdminLectCriteria" resultType="AdminLectDto">
+	 	select 
+	 		*		
+		from (
+				select
+				<choose>
+					<when test="sort eq 'name'">
+						ROW_NUMBER() over (order by B.lect_title desc) rn,
+					</when>
+					<when test="sort eq 'cate'">
+						ROW_NUMBER() over (order by A.cate_name desc) rn,
+					</when>
+					<otherwise>
+						ROW_NUMBER() over (order by B.lect_no desc) rn,
+					</otherwise>
+				</choose>
+					B.lect_no					as no,
+					A.cate_no					as cateNo,
+					A.cate_name					as cateName,
+					B.lect_title				as title,
+					B.lect_info					as info,
+					B.lect_info_title			as infoTitle,
+					B.lect_price				as price,
+					B.lect_discount_price		as discountPrice,
+					B.lect_discount_rate		as discountRate,
+					B.lect_is_freed				as isFreed,
+					B.lect_is_display			as isDisplay,
+					B.lect_create_date			as createDate,
+					B.lect_grade				as grade,
+					B.lect_tag					as tag,
+					B.lect_image_path			as imagePath,
+					C.user_name					as userName,
+					C.user_id					as userId,
+					C.user_no					as userNo,
+					B.lect_sample_path			as samplePath				
+				from
+					categories A, lects B, users C
+				where 
+					A.cate_no = B.cate_no
+					and B.user_no = C.user_no
+					<if test="keyword != null and keyword != ''">
+		          		and (B.lect_title like '%' || #{keyword} || '%'
+				        or A.cate_name like '%' || #{keyword} || '%'
+				        or B.lect_grade like '%' || #{keyword} || '%'
+				        or C.user_name like '%' || #{keyword} || '%'
+				        or C.user_id like '%' || #{keyword} || '%'
+				        or B.lect_create_date like '%' || #{keyword} || '%'
+				        or B.lect_is_display like '%' || #{keyword} || '%')
+					</if>
+					<if test="startDate != null and startDate != ''">
+						and to_char(B.lect_create_date, 'yyyy-MM-dd') >= #{startDate}
+					</if>
+					<if test="endDate != null and endDate != ''">
+						and to_char(B.lect_create_date, 'yyyy-MM-dd') &lt;= #{endDate}
+					</if>
+					<if test='isDisplay != null and !isDisplay.equals("A")'>
+						and B.lect_is_display = #{isDisplay}
+					</if>			
+					<if test='range != null and range != 0'>
+						and A.cate_no = #{range}
+					</if>			
+			)
+        	where rn between #{beginIndex} and #{endIndex}
+	</select>
+	
+	<select id="getLectCntByCriteria" parameterType="AdminLectCriteria" resultType="int">
+		select count(*)
+			from
+				categories A, lects B, users C
+			where 
+				A.cate_no = B.cate_no
+				and B.user_no = C.user_no
+				<if test="keyword != null and keyword != ''">
+          			and (B.lect_title like '%' || #{keyword} || '%'
+				        or A.cate_name like '%' || #{keyword} || '%'
+				        or B.lect_grade like '%' || #{keyword} || '%'
+				        or C.user_name like '%' || #{keyword} || '%'
+				        or C.user_id like '%' || #{keyword} || '%'
+				        or B.lect_create_date like '%' || #{keyword} || '%'
+				        or B.lect_is_display like '%' || #{keyword} || '%')
+				</if>
+				<if test="startDate != null and startDate != ''">
+					and to_char(B.lect_create_date, 'yyyy-MM-dd') >= #{startDate}
+				</if>
+				<if test="endDate != null and endDate != ''">
+					and to_char(B.lect_create_date, 'yyyy-MM-dd') &lt;= #{endDate}
+				</if>
+				<if test='isDisplay != null and !isDisplay.equals("A")'>
+					and B.lect_is_display = #{isDisplay}
+				</if>		
+				<if test='range != null and range != 0'>
+					and A.cate_no = #{range}
+				</if>	
+	</select>
+	
+	<update id="updateLect" parameterType="Lect">
+		update
+			lects
+		set
+			lect_no = #{no},
+			lect_title	= #{lectTitle},
+			lect_info	= #{lectInfo},
+			lect_price	= #{price},
+			lect_discount_price	= #{discountPrice},
+			lect_discount_rate	= #{discountRate},
+			lect_is_freed		= #{isFreed},
+			lect_is_display		= #{isDisplay},
+			lect_create_date	= #{lectCreateDate},
+			lect_grade			= #{grade},
+			lect_tag			= #{tag},
+			lect_image_path		= #{imagePath}
+		where
+			lect_no = #{no}
+	</update>
+	
+	<select id="getLectByLectNo" parameterType="int" resultType="Lect">
+		select
+				lect_no						as no,
+				cate_no						as cateNo,
+				user_no						as userNo,
+				lect_title					as lectTitle,
+				lect_info					as lectInfo,
+				lect_price					as price,
+				lect_discount_price			as discountPrice,
+				lect_discount_rate			as discountRate,
+				lect_is_freed				as isFreed,
+				lect_is_display				as isDisplay,
+				lect_create_date			as lectCreateDate,
+				lect_grade					as grade,
+				lect_tag					as tag,
+				lect_image_path				as imagePath,
+				lect_sample_path			as samplePath
+			from
+				lects
+			where
+				lect_no = #{value}
+	</select>
+	
+	<select id="getLessonsByLectNo" parameterType="int" resultType="AdminLessonDto">
+		select
+			A.lect_no			as lectNo,
+			B.chapter_no		as chapterNo,
+			B.chapter_name		as chapterName,
+			C.lesson_no			as lessonNo,
+			C.lesson_title		as lessonTitle,
+			C.lesson_video_path	as lessonVideoPath,
+			C.total_time		as totalTime
+		from
+			lects A, chapters B, lessons C
+		where
+			A.lect_no = B.lect_no
+			and B.chapter_no = C.chapter_no
+			and A.lect_no = #{value}
+	</select>
+	
+</mapper>

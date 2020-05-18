@@ -1,0 +1,107 @@
+package kr.co.coduck.web.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.coduck.dto.AdminLectCriteria;
+import kr.co.coduck.dto.AdminLectDto;
+import kr.co.coduck.dto.AdminQnaCriteria;
+import kr.co.coduck.dto.AdminQnaDto;
+import kr.co.coduck.service.AdminLectService;
+import kr.co.coduck.service.AdminQnaService;
+import kr.co.coduck.service.CategoryService;
+import kr.co.coduck.service.LectService;
+import kr.co.coduck.vo.Category;
+import kr.co.coduck.vo.Pagination;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+	@Autowired
+	private CategoryService categoryService;
+	@Autowired
+	private AdminLectService adminLectService;
+	@Autowired
+	private AdminQnaService adminQnaService;
+	@Autowired
+	private LectService lectService;
+
+	@GetMapping("/home.hta")
+	public String home() {
+		return "admin/home";
+	}
+
+//	@GetMapping("/lecture.hta")
+//	public String lecture() {
+//		return "admin/lecture";
+//	}
+
+	@GetMapping("/test.hta")
+	public String test() {
+		return "admin/test";
+	}
+
+//	@GetMapping("/lecturecategory.hta")
+//	public List<Category> lecturecategory(Model model) throws Exception {
+//		
+//		return categoryService.getLectureCategoryByAdmin();
+//	}
+
+	
+	@GetMapping("/lecture.hta") 
+	public String lectureSearch(AdminLectCriteria criteria, @RequestParam(value="pageno", required = false, defaultValue = "1") int pageNo, Model model) {
+	 
+		int totalCnt = adminLectService.getLectCntByCriteria(criteria); 
+		Pagination pagination = new Pagination(pageNo, totalCnt, 10, 5);
+	 
+	    criteria.setBeginIndex(pagination.getBeginIndex());
+	    criteria.setEndIndex(pagination.getEndIndex()); 
+	    List<AdminLectDto> lectList = adminLectService.getLectByCriteria(criteria);
+	    
+	    List<Category> categories = categoryService.getLectureCategoryByAdmin();
+	    model.addAttribute("categories", categories);
+  
+	    model.addAttribute("lectList", lectList ); 
+	    model.addAttribute("pagination", pagination);
+	 
+	    return "admin/lecture";     
+	}	  
+	
+	@PostMapping("/confirmlect.hta")
+	@ResponseBody
+	public void confirmlect(@RequestParam("lectNo") int lectNo) throws Exception {
+		adminLectService.confirmLect(lectNo);
+	}
+	
+	@PostMapping("/denylect.hta")
+	@ResponseBody
+	public void denylect(@RequestParam("lectNo") int lectNo) throws Exception {
+		adminLectService.denyLect(lectNo);
+	}
+	
+	@GetMapping("/qna.hta")
+	public String qnaSearch(AdminQnaCriteria criteria, @RequestParam(value = "pageno", required = false, defaultValue = "1") int pageNo, Model model) {
+		
+		int totalCnt = adminQnaService.getQnaCntByCriteria(criteria);
+		Pagination pagination = new Pagination(pageNo, totalCnt, 10, 5);
+		
+		criteria.setBeginIndex(pagination.getBeginIndex());
+		 criteria.setEndIndex(pagination.getEndIndex()); 
+	    List<AdminQnaDto> qnaList = adminQnaService.getQnaByCriteria(criteria);
+	    
+	    model.addAttribute("qnaList", qnaList); 
+	    model.addAttribute("pagination", pagination);
+	
+		return "admin/qna";
+	}
+	
+}

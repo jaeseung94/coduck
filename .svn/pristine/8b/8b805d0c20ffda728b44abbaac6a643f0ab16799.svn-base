@@ -1,0 +1,30 @@
+package kr.co.coduck.web.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.coduck.service.CouponService;
+import kr.co.coduck.vo.Coupon;
+
+@Controller
+@RequestMapping("/admin")
+public class CouponController {
+
+	@Autowired
+	private CouponService couponService;
+	
+	@GetMapping("coupon.hta")
+	public String coupon() {
+		return "admin/coupon";
+	}
+	
+	@PostMapping("coupon.hta")
+	public void addNewCoupon() {
+		Coupon coupon = new Coupon();
+
+	}
+	
+}

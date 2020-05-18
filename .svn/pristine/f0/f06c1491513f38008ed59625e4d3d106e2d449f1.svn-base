@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.TestCartDao">
+	
+	<select id="getNoticeByNo" parameterType="int" resultType="Notice">
+		select 
+			A.notice_no				as no,
+			A.notice_title			as title,
+			A.notice_contents		as contents,
+			A.notice_file_name		as fileName,
+			A.notice_create_date	as createDate,
+			A.notice_counts			as counts,
+			B.user_no				as userNo
+		from 
+			ad_notices A, users B
+		where 
+			A.notice_no = ${value}
+	</select>
+	
+	<insert id="insertNotice" parameterType="Notice">
+		insert into ad_notices
+			(notice_no, notice_title, notice_contents, notice_file_name, user_no)
+		values 
+			(ad_notices_seq.nextval, #{title}, #{contents}, #{fileName}, #{userNo})
+	</insert>
+	
+   <delete id="deleteNotice" parameterType="Notice">
+      delete from
+         ad_notices
+      where
+         notice_no = #{no}       
+   </delete>
+	
+</mapper>

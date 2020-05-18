@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.co.coduck.dao.UserQuestionDao">
+	
+	<select id="getUserQuestionListByUserNo" parameterType="int" resultType="UserQuestionDto">
+		select
+			C.LESSON_TITLE							as questionLessonTitle,
+			B.LECT_QUESTION_CONTENTS				as questionContents,
+			B.LECT_QUESTION_CREATE_DATE				as questionCreateDate,
+			B.LECT_QUESTION_IS_ANSWERED				as isAnswered
+		FROM
+			LESSON_HISTORIES A, LECT_QUESTIONS B, LESSONS C
+		where
+			A.LESSON_NO = B.LESSON_NO
+		AND
+			A.USER_NO = B.USER_NO
+		AND
+			C.LESSON_NO = A.LESSON_NO
+		AND
+			A.USER_NO = #{value}
+			
+	</select>
+	
+	<select id="searchQuestion" parameterType="map" resultType="UserQuestionDto">
+  		select
+			C.LESSON_TITLE							as questionLessonTitle,
+			B.LECT_QUESTION_CONTENTS				as questionContents,
+			B.LECT_QUESTION_CREATE_DATE				as questionCreateDate,
+			B.LECT_QUESTION_IS_ANSWERED				as isAnswered
+		FROM
+			LESSON_HISTORIES A, LECT_QUESTIONS B, LESSONS C
+		where
+			A.LESSON_NO = B.LESSON_NO
+		AND
+			A.USER_NO = B.USER_NO
+		AND
+			C.LESSON_NO = A.LESSON_NO
+		AND
+			A.USER_NO = #{value}
+  		<where>
+  			<if test="sort != null">
+  				B.LECT_QUESTION_IS_ANSWERED == 'Y'
+  			</if>
+  		</where>
+  	</select>
+	
+</mapper>

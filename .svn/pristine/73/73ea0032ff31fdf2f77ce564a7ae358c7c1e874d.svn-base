@@ -1,0 +1,36 @@
+package kr.co.coduck.web.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/lecture")
+public class LectureController {
+
+	@GetMapping("/detail/description.hta")
+	public String description() {
+		return "lecture/detail/description";
+	}
+	
+	@GetMapping("/detail/dashboard.hta")
+	public String dashboard() {
+		return "lecture/detail/dashboard";
+	}
+	
+	@GetMapping("/detail/question.hta")
+	public String question() {
+		return "lecture/detail/question";
+	}
+	
+
+	@GetMapping("/main.hta")
+	public String main() {
+		return "lecture/main";
+	}
+	
+	@GetMapping("/player/player.hta")
+	public String player() {
+		return "lecture/player/player";
+	}
+}

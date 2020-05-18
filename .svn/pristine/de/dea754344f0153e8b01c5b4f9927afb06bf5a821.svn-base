@@ -1,0 +1,37 @@
+package kr.co.coduck.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.coduck.dao.LectDao;
+import kr.co.coduck.dao.UserDao;
+import kr.co.coduck.dto.UserByLectDto;
+import kr.co.coduck.vo.Lect;
+import kr.co.coduck.vo.User;
+
+@Service
+public class LectServiceImpl implements LectService{
+
+	@Autowired
+	private LectDao lectDao;
+	@Autowired
+	private UserDao userDao;
+	
+	@Override
+	public List<UserByLectDto> getLectListUserByNo(int userNo) {
+		User user = userDao.getUserProfilByNo(userNo);
+		List<UserByLectDto> userLectList = lectDao.getLectListUserByNo(user.getNo());
+		return userLectList;
+	}
+
+	@Override
+	public Lect getLectByNo(int lectNo) {
+		Lect lect = lectDao.getLectByNo(lectNo);
+		return lect;
+	}
+
+	
+
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.TestCartDao">
+	
+	<!-- 장바구니에 이미 담겼는지 확인, 장바구니 조회하기 -->
+	<select id="getCartTestByTestNoNUserNo" parameterType="map" resultType="TestCart">
+		select 
+			cart_test_no	no,
+			test_no			testNo,
+			user_no			userNo
+		from 
+			test_carts
+		where 
+			user_no = ${userNo}
+			and test_no = ${testNo}
+	</select>
+	
+	<!--장바구니 담기  -->
+	<insert id="insertCartTest" parameterType="TestCart">
+		insert into test_carts 
+			(cart_test_no, test_no, user_no)
+		values 
+			(test_carts_seq.nextval, #{testNo}, #{userNo})
+	</insert>
+	
+	<!-- 유저번호로 시험 장바구니 리스트 조회 -->
+	<select id="getCartTestListUserByNo" parameterType="int" resultType="CartTestDto">
+		SELECT
+			A.TEST_NO 		as no,
+			B.USER_NO 		as userNo,
+			C.TEST_NAME 	as name,
+			C.TEST_PRICE	as price,
+			C.TEST_EP		as ep
+		FROM
+			Test_Carts A, Users B, tests C
+		WHERE
+			A.USER_NO = B.USER_NO
+		AND
+			B.USER_NO = A.USER_NO
+		AND
+			C.TEST_NO = A.TEST_NO
+		AND
+			B.USER_NO = #{value}
+	</select>
+	
+	<select id="getCartChoiceTestListByCartChoiceTestNo" parameterType="map" resultType="CartChoiceTestListDto">
+     	select
+			B.test_no				as no,
+			B.TEST_NAME				as name,
+			B.test_price			as price
+		from
+			test_carts A, tests B, USERS C
+		where
+			A.test_no = B.test_no
+		AND
+			C.USER_NO = A.USER_NO
+		and
+			B.test_NO = #{testNo}
+		AND
+			C.USER_NO = #{userNo}
+   </select>
+   
+   <delete id="deleteCartTest" parameterType="TestCart">
+      delete from
+         TEST_CARTS
+      where
+         TEST_NO = #{testNo}
+         
+   </delete>
+	
+</mapper>

@@ -1,0 +1,339 @@
+
+ @font-face {
+    font-family: 'AppleSDGothicL';
+    src: url(../font/AppleSDGothicNeoL.ttf) format('truetype');
+	}
+	@font-face {
+	    font-family: 'AppleSDGothicEB';
+	    src: url(../font/AppleSDGothicNeoEB.ttf) format('truetype');
+	}
+	html,body {
+       height: 100%;
+	}
+    /* lesson player */
+    #main .lecture-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;  
+        font-size: 15px;
+        line-height: 1.5;
+        background-color: #171717;
+        color: #fff;
+   }
+    .lecture-container .lecture-nav-left {
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        color: #fff;  
+        left: -350px;
+        z-index: 999;
+        transition: all 0.5s;
+    }
+    .lecture-container .lecture-nav-left-header {
+        padding: 20px 15px 7px 15px;
+    }
+    .lecture-nav-left-header h5 {
+        font-family: 'AppleSDGothicEB', sans-serif;
+        font-size: 23px;
+        margin-bottom: 15px;
+    }
+    .lecture-nav-left-header label {
+        font-weight: 100;
+        font-size: 13.5px;
+
+    }
+    #main .lecture-container aside>div {
+        background-color: #171f27;
+        width: 350px;
+        transition: width .3s ease,transform .3s ease,-webkit-transform .3s ease;
+    }
+
+    .lecture-nav-left-header .progress {
+        height: 7px;
+        width: 98%;
+        margin-top: 0;
+    }
+    .lecture-nav .curriculum {
+        position: relative;
+        height: 100%;
+        overflow-y: auto;
+    } 
+    .lecture-nav .curriculum ul {
+        list-style: none;
+        padding: 0;
+    }
+    .lecture-nav-left .curriculum .list .list-item {
+        display: block;
+    }
+    .unit-chapter {
+        background: #303e4d;
+    }   
+    .list-item.unit-title {
+        cursor: default !important;
+    }    
+    .curriculum .list .unit-title, .unit-lesson {
+        position: relative;
+        font-weight: 700;
+        padding: 15px;
+    }
+    .list {
+        position: relative;
+        margin-bottom: 0;
+        border-radius: 0;
+        box-sizing: border-box;
+        font-size: 18px;
+    }
+    .curriculum .list .lesson-title {
+        font-weight: 100;
+    }    
+    .curriculum ul:nth-child(2) li {
+        background-color: #171f27;
+    }
+    .list-item.unit-lesson {
+        padding: 16px 20px;
+        font-size: 16px;
+    }
+    .unit-checked-icon {
+        position: absolute;
+        right: 14px;
+        top: 10px;
+        color: rgb(241, 196, 15);
+    }
+    .toggle-left {
+        position: fixed;
+        padding-top: 14px;
+        padding-left: 24px;
+        z-index: 63;
+    }
+ 
+    .contents-header-nav .unit-title {
+        position: absolute;
+        width: 100%;
+        transition: width .3s ease;
+        text-align: center;
+    }
+    .is-outlined{
+        background-color: transparent;
+        border-color: #fff;
+        color: #fff;
+    }
+    .right-buttons button {
+        font-weight: 500;
+        font-size: 17px;
+        border: 1px solid #fff;
+        cursor: pointer;
+        padding: 6px 13px;
+        text-align: center;
+    }
+    .right-buttons {
+        position: absolute;
+        margin-top: 15px;
+        margin-right: 28px;
+        right: 0;
+    }
+    .toggle-right:hover, .go-out:hover {
+        color: #fff;
+    }
+    .toggle-right:focus, .go-out:focus, .toggle-right:active, .go-out:active {
+        border: 1px solid #fff;
+    }
+    .toggle-btn-nav-left i {
+        width: 20px;
+        font-size: 20px;
+    }
+    .contents-header-nav button:hover, .contents-header-nav a:hover {
+        color: #fff;
+    }
+    .lecture-nav-left.is-active {
+        left: 0;
+    }
+    .overlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 998;
+        display: none;
+    }
+    .space-left {
+        margin-left: 340px;
+        transition: all 0.5s;
+    }
+    .none-space-left {
+        margin-left: 0;
+        transition: all 0.6s;
+    }
+    .unit-title h3 {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        font-size: 22px;
+    }
+    .curriculum .unit-lesson.active {
+        border-left :6px solid rgb(241, 196, 15);
+        padding :16px 5px 16px 20px;
+    }
+
+ .contents-unit-body {
+        position: absolute;
+        padding: 0;
+        text-align: center;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto 100px;
+        color: #fff;
+        top: 10%
+    }
+    .player-container {
+        height: 80%;
+        margin: 0 auto;
+        position: relative;
+    }
+    .contents-footer-nav {
+        bottom: 17%;
+        width: 100%;
+        position: fixed;
+        padding: 0 32px;
+        background: hsla(hue, saturation, lightness, alpha);
+        justify-content: center;
+        transition: width .3s ease;
+    }
+    .footer-nav-item {
+        position: relative;
+        display: flex;
+        margin: 0 32px;
+        min-width: 92.26px;
+        color: #4a4a4a;
+        line-height: 1.5;
+        padding:.5rem .75rem;
+        justify-content: center;
+    }
+    .lesson-video {
+        width: 1310px;
+        height: 100%;
+    }
+    .footer-nav-item button {
+        border: 0;
+        padding: 5px 50px;
+        font-size: 18px;
+    }
+
+    .lecture-nav.lecture-nav-right {
+        position: relative;
+        overflow-y: scroll;
+        padding: 15px;
+        width: 409px;
+        height: 100vh;
+        background-color: #f6f6f6;
+        color: #5f5f5f;
+        z-index: 999;
+        transition: all 0.5s;
+    }
+    .toggle-btn-closed {
+        position: absolute;
+        top: 19px;
+        right: 10px;  
+        cursor: pointer;
+    }
+    .toggle-btn-closed i {
+        color: #595959;
+        font-size: 19px;
+    }
+    .question-comment {
+        font-size: 17px;
+    }
+    .question-editor {
+        margin-bottom: 10px;
+    }
+    .question-editor .search-question {
+        position: relative;
+        display: flex;
+        -webkit-box-align: center;
+        margin-bottom: 16px;
+    }
+    .question-editor .search-question input {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 3px;
+        font-size: 18px;
+        width: 98%;
+        height: 35px;
+    }
+    .question-editor .search-question i {
+        position: absolute;
+        right: 17px;
+        top: 9px;
+    }
+    .unit-question-list {
+        height: calc(100% - 96px);
+        padding: 0 0 8rem;
+    }
+    .unit-question-list ul {
+        margin-bottom: 50px;
+        list-style: none;
+        padding: 0;
+    }
+    .unit-question-list ul li {
+        background: #fff;
+        margin-bottom: 11px;
+
+    }
+    .unit-question-list ul li .list-item-question {
+        padding: 1rem .75rem 0 .5rem;
+        position: relative;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+
+    .list-item-question figure {
+        display: inline-block;
+    }
+    .list-item-question .left-image img {
+        width: 30px;
+    }
+    .list-item-question .contents {
+        font-size: 16px;
+    }
+    .list-item-question .contents-title {
+        font-size: 16px;
+
+    }
+    .list-item-question .item-title {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .list-item-question .item-contents {
+        padding:  10px 8px 10px 8px;
+    }
+    .comments {
+        font-size: 16px;
+        text-align: end;
+    }
+    .btn-question {
+        text-align: right;
+        margin: 0;
+        margin-right: 9px;
+    }
+    .btn-question button {
+        font-size: 16px;
+    }
+        .opened {
+        right: -83%;
+    }
+    .closed {
+        right: -100%;
+    }
+
+    .overlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 998;
+        display: none;
+    }
+    

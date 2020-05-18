@@ -1,0 +1,64 @@
+package kr.co.coduck.web.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.co.coduck.dto.LectureDto;
+import kr.co.coduck.service.CategoryService;
+import kr.co.coduck.service.LectService;
+import kr.co.coduck.vo.Category;
+import kr.co.coduck.vo.Lect;
+
+@Controller
+@RequestMapping("/lecture")
+public class LectureController {
+	
+	@Autowired
+	private LectService lectservice;
+	
+	@Autowired
+	private CategoryService categoryService;
+
+	@RequestMapping("/detail/description.hta")
+	public String description(@RequestParam("lectureNo") int lectureNo, Model model) {
+		
+		LectureDto lecture = lectservice.getLectureByLectureNo(lectureNo);
+		
+		model.addAttribute("lecture", lecture);
+		
+		return "lecture/detail/description";
+	}
+	
+	@RequestMapping("/detail/dashboard.hta")
+	public String dashboard() {
+		return "lecture/detail/dashboard";
+	}
+	
+	@RequestMapping("/detail/question.hta")
+	public String question() {
+		return "lecture/detail/question";
+	}
+	
+	@RequestMapping("/main.hta")
+	public String mainByCateNo(@RequestParam("cateNo") int cateNo, Model model) {
+		
+		List<Category> categories = categoryService.getAllLectureCategories();
+		List<LectureDto> lectures = lectservice.getLectureByCategoryNo(cateNo);
+		
+		model.addAttribute("categories", categories);
+		model.addAttribute("lectures", lectures);
+		
+		return "lecture/main";
+	}
+	
+	@RequestMapping("/player/player.hta")
+	public String player() {
+		return "lecture/player/player";
+	}
+}

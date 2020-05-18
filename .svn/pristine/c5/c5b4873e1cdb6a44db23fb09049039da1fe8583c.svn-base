@@ -1,0 +1,31 @@
+package kr.co.coduck.web.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.coduck.dto.UserQuestionDto;
+import kr.co.coduck.service.UserQuestionService;
+import kr.co.coduck.vo.User;
+
+@Controller
+@RequestMapping("/userquestion")
+public class UserQuestionController {
+
+	@Autowired
+	private UserQuestionService userQuestionService;
+	
+	@GetMapping("/myquestionlist.hta")
+	public String myquestionlist(HttpSession session, Model model) {
+		User user = (User)session.getAttribute("LU");
+		List<UserQuestionDto> userQuestionList = userQuestionService.getUserQuestionListByUserNo(user.getNo());
+		model.addAttribute("userQuestionList", userQuestionList);
+		return "user/myquestionlist";
+	}
+}

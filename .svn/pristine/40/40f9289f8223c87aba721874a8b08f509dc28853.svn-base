@@ -1,0 +1,20 @@
+package kr.co.coduck.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.coduck.dao.ReviewDao;
+import kr.co.coduck.vo.Review;
+
+@Service
+public class ReviewServiceImpl implements ReviewService {
+
+	@Autowired
+	private ReviewDao reviewDao;
+	
+	@Override
+	public Review getAllReivewStarAvg(int lectureNo) {
+
+		return reviewDao.getAllReivewStarAvg(lectureNo);
+	}
+}

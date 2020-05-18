@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.CouponDao">
+	
+	<insert id="addNewCoupon" parameterType="Coupon">
+		insert into coupons
+		(coupon_no, coupon_title, coupon_detail, coupon_start_date, coupon_end_date, coupon_discount_price, coupon_discount_rate, coupon_amount, coupon_limited)
+		values
+		(coupons_seq.nextval, #{title}, #{detail}, #{startDate}, #{endDate}, #{discountPrice}, #{discountRate}, #{amount}, #{limited})		
+	</insert>
+	
+	<select id="getCouponByUserNo" parameterType="int" resultType="Coupon">
+		select
+			A.COUPON_NO					as couponNo,
+			A.USER_NO					as userNo,
+			B.USER_NO					as no,
+			B.USER_NAME					as name,
+			B.USER_EMAIL				as email,
+			B.USER_PWD					as password,
+			B.USER_IMAGE_FILENAME		as imageFilename,
+			B.USER_SELF_INTRODUCTION	as selfInfo,
+			B.USER_ID					as id,
+			B.USER_CREATE_DATE			as createDate,
+			B.USER_POINT				as point,
+			B.USER_NICKNAME				as nickname,
+			B.USER_ROLE					as role,
+			B.USER_BANKNUMBER			as bankNumber,
+			C.COUPON_NO					as no,
+			C.COUPON_TITLE				as title,
+			C.COUPON_DETAIL				as detail,
+			C.COUPON_ENABLED			as enabled,
+			C.COUPON_CREATE_DATE		as createDate,
+			C.COUPON_START_DATE			as startDate,
+			C.COUPON_END_DATE			as endDate,
+			C.COUPON_DISCOUNT_PRICE		as discountPrice,
+			C.COUPON_AMOUNT				as amount,
+			C.COUPON_LIMITED			as limited,
+			C.COUPON_DISCOUNT_RATE		as discountRate
+		FROM
+			COUPON_BOX A, USERS B, coupons C
+		WHERE
+			A.USER_NO = B.USER_NO
+		and
+			B.USER_NO = A.USER_NO
+		and
+			C.COUPON_NO = A.COUPON_NO
+		and
+			A.USER_NO = #{value}
+	</select>
+	
+	<update id="updateCoupon" parameterType="CouponBox">
+		update
+			COUPON_BOX
+		set
+			COUPON_NO = #{couponNo},
+			USER_NO = #{userNo}
+		where
+			USER_NO = #{userNo}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

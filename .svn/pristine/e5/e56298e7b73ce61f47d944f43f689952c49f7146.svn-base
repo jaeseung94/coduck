@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.OrderLectDao">	
+
+	<insert id="insertOrderLect" parameterType="OrdLect">
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			select ord_lects_seq.nextval from dual
+		</selectKey>
+		insert into ORD_LECTS
+		(ORD_NO, USER_NO, ORD_LECT_STATUS, ORD_LECT_TOTAL_PRICE)
+		values
+		(#{no}, #{userNo}, #{status}, #{totalPrice})		
+	</insert>	
+	
+	<insert id="insertOrderLectInfo" parameterType="OrderLectInfo">
+      insert into ORD_LECT_INFOS
+      (ORD_LECT_NO, LECT_NO, ORD_NO, COUPON_NO, ORD_LECT_AMOUNT)
+      values
+      (ord_lect_infos_seq.nextval, #{lectNo}, #{orderNo}, #{couponNo}, #{ordLectAmount})
+   </insert>
+
+	<select id="getOrderLectListByUserNo" parameterType="int" resultType="OrderLectListDto">
+		SELECT
+			D.ORD_NO					as orderNo,
+			B.LECT_TITLE				as lectTitle,
+			C.ORD_LECT_TOTAL_PRICE		as totalPrice,
+			C.ORD_LECT_CREATE_DATE		as lectCreateDate
+		FROM
+			Users A, lects B, Ord_lects C, Ord_lect_infos D
+		WHERE
+			A.USER_NO = C.USER_NO
+		and
+			B.LECT_NO = D.LECT_NO
+		AND
+			C.USER_NO = A.USER_NO
+		AND
+			D.ORD_NO = C.ORD_NO
+		AND
+			A.USER_NO = #{value}
+		order by
+			C.ORD_LECT_CREATE_DATE asc
+	</select>
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

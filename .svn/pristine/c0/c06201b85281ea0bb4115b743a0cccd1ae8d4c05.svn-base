@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+   <mapper namespace="kr.co.coduck.dao.LectCartDao">
+   
+   <select id="getCartLectListByUserNo" parameterType="int" resultType="CartLectDto">
+      SELECT
+         A.CART_LECT_NO    as cartLectNo,
+         B.USER_NO         as userNo,
+         C.LECT_TITLE      as lectTitle,
+         C.LECT_NO         as lectNo,
+         C.LECT_PRICE      as lectPrice
+      FROM
+         lect_Carts A, Users B, lects C
+      WHERE
+         A.USER_NO = B.USER_NO
+      AND
+         B.USER_NO = A.USER_NO
+      AND
+         C.LECT_NO = A.LECT_NO
+      AND
+         B.USER_NO = #{value}
+   </select>
+   
+   <select id="getCartChoiceLectListByCartChoiceLectNo" parameterType="int" resultType="CartChoiceLectListDto">
+     select
+			B.lect_no				as lectNo,
+			B.lect_title			as lectTitle,
+			B.lect_price			as lectPrice,
+			B.LECT_DISCOUNT_PRICE	as lectDiscountPrice
+		from
+			lect_carts A, lects B
+		where
+			A.lect_no = B.lect_no
+		and
+			B.LECT_NO = #{value}
+   </select>
+   
+   <delete id="deleteCartLect" parameterType="LectCart">
+      delete from
+         LECT_CARTS
+      where
+         LECT_NO = #{lectNo}
+   </delete>
+   
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

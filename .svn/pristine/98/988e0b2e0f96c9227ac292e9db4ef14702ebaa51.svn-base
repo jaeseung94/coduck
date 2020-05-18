@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+	<mapper namespace="kr.co.coduck.dao.UserDao">
+	
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO USERS
+			(USER_NO, USER_NAME, USER_EMAIL, USER_PWD, USER_SELF_INTRODUCTION, USER_ID, USER_NICKNAME, USER_IMAGE_FILENAME, USER_BANKNUMBER)
+		values
+			(users_seq.nextval, #{name}, #{email}, #{password}, #{selfInfo}, #{id}, #{nickname}, #{imageFilename}, #{bankNumber})
+	</insert>
+	
+	<select id="getUserById" parameterType="string" resultType="User">
+		select
+			USER_NO						as no,
+			USER_NAME					as name,
+			USER_EMAIL					as email,
+			user_enabled				as enabled,
+			USER_IMAGE_FILENAME			as imageFilename,
+			USER_SELF_INTRODUCTION		as selfInfo,
+			USER_ID						as id,
+			USER_NICKNAME				as nickname,
+			USER_BANKNUMBER				as bankNumber,
+			USER_POINT					as point,
+			USER_PWD					as password
+		from
+			USERS
+		where
+			USER_ID = #{value}		
+	</select>
+	
+	<select id="getUserByUserNo" parameterType="int" resultType="User">
+		select
+			USER_NO						as no,
+			USER_NAME					as name,
+			USER_EMAIL					as email,
+			user_enabled				as enabled,
+			USER_IMAGE_FILENAME			as imageFilename,
+			user_create_date			as createDate,
+			USER_SELF_INTRODUCTION		as selfInfo,
+			USER_ID						as id,
+			USER_NICKNAME				as nickname,
+			USER_BANKNUMBER				as bankNumber,
+			USER_POINT					as point,
+			USER_PWD					as password
+		from
+			USERS
+		where
+			USER_no = #{value}		
+	</select>
+
+	<select id="getUserProfilByNo" parameterType="int" resultType="User">
+		select
+			USER_NO						as no,
+			USER_NAME					as name,
+			USER_EMAIL					as email,
+			USER_IMAGE_FILENAME			as imageFilename,
+			USER_SELF_INTRODUCTION		as selfInfo,
+			USER_ID						as id,
+			USER_NICKNAME				as nickname,
+			USER_BANKNUMBER				as bankNumber,
+			USER_POINT					as point,
+			USER_PWD					as password
+		from
+			USERS
+		where
+			USER_NO = #{value}
+	</select>
+	
+	<update id="updateUser" parameterType="User">
+		update
+			USERS
+		set
+			USER_NO = #{no},
+			USER_NICKNAME = #{nickname},
+			USER_EMAIL = #{email},
+			USER_IMAGE_FILENAME = #{imageFilename},
+			user_enabled = #{enabled},
+			USER_SELF_INTRODUCTION = #{selfInfo},
+			USER_BANKNUMBER = #{bankNumber},
+			USER_POINT = #{point},
+			USER_PWD = #{password}
+		where
+			USER_NO = #{no}
+	</update>
+	
+	<!-- 유저 조회 (관리자) -->
+	<select id="selectAllUsersByAdmin" resultType="User">
+		select
+			user_no					as no,
+			user_name				as name,
+			user_email				as email,
+			user_image_filename		as imageFilename,
+			user_self_introduction	as selfInfo,
+			user_id					as id,
+			user_create_date		as createDate,
+			user_enabled			as enabled,
+			user_point				as point,
+			user_nickname			as nickname,
+			user_role				as role,
+			user_banknumber			as bankNumber
+		from 
+			users
+		where
+			user_role = 'U'
+	</select>
+	
+	<select id="getUserByCriteria" parameterType="UserCriteria" resultType="User">
+	 	select 
+	 		user_no					as no,
+			user_name				as name,
+			user_email				as email,
+			user_image_filename		as imageFilename,
+			user_id					as id,
+			user_create_date		as createDate,
+			user_enabled			as enabled,
+			user_point				as point,
+			user_nickname			as nickname,
+			user_role				as role,
+			user_banknumber			as bankNumber
+			
+			from (
+					select
+					<choose>
+						<when test="sort eq 'id'">
+							ROW_NUMBER() over (order by user_id desc) rn,
+						</when>
+						<when test="sort eq 'name'">
+							ROW_NUMBER() over (order by user_name desc) rn,
+						</when>
+						<otherwise>
+							ROW_NUMBER() over (order by user_no desc) rn,
+						</otherwise>
+					</choose>
+						user_no,
+						user_name,
+						user_email,
+						user_image_filename,
+						user_id,
+						user_create_date,
+						user_enabled,
+						user_point,
+						user_nickname,
+						user_role,
+						user_banknumber
+					from
+						users 
+					where 
+						user_role = 'U'
+						<if test="keyword != null and keyword != ''">
+			          		and (user_no like '%' || #{keyword} || '%'
+					        or user_name like '%' || #{keyword} || '%'
+					        or user_email like '%' || #{keyword} || '%'
+					        or user_id like '%' || #{keyword} || '%'
+					        or user_nickname like '%' || #{keyword} || '%'
+					        or user_enabled like '%' || #{keyword} || '%')
+						</if>
+						<if test="startDate != null and startDate != ''">
+							and to_char(user_create_date, 'yyyy-MM-dd') >= #{startDate}
+						</if>
+						<if test="endDate != null and endDate != ''">
+							and to_char(user_create_date, 'yyyy-MM-dd') &lt;= #{endDate}
+						</if>
+						<if test='enabled != null and !enabled.equals("A")'>
+							and user_enabled = #{enabled}
+						</if>			
+			)
+        	where rn between #{beginIndex} and #{endIndex}
+	</select>
+	
+	<select id="getUserCntByCriteria" parameterType="UserCriteria" resultType="int">
+		select count(*)
+			from
+				users 
+			where 
+				user_role = 'U'
+				<if test="keyword != null and keyword != ''">
+	          		and (user_no like '%' || #{keyword} || '%'
+			        or user_name like '%' || #{keyword} || '%'
+			        or user_email like '%' || #{keyword} || '%'
+			        or user_id like '%' || #{keyword} || '%'
+			        or user_nickname like '%' || #{keyword} || '%'
+			        or user_enabled like '%' || #{keyword} || '%')
+				</if>
+				<if test="startDate != null and startDate != ''">
+					and to_char(user_create_date, 'yyyy-MM-dd') >= #{startDate}
+				</if>
+				<if test="endDate != null and endDate != ''">
+					and to_char(user_create_date, 'yyyy-MM-dd') &lt;= #{endDate}
+				</if>
+				<if test='enabled != null and !enabled.equals("A")'>
+					and user_enabled = #{enabled}
+				</if>			
+	</select>
+</mapper>

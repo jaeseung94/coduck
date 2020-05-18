@@ -1,0 +1,21 @@
+package kr.co.coduck.dao;
+
+import java.util.List;
+
+import kr.co.coduck.dto.ChapterLessonDto;
+import kr.co.coduck.dto.LectureDto;
+import kr.co.coduck.dto.UserByLectDto;
+import kr.co.coduck.vo.Lect;
+
+public interface LectDao {
+
+	List<UserByLectDto> getLectListUserByNo(int userNo);
+	Lect getLectByNo(int lectNo);
+	
+	List<LectureDto> getLectureByCategoryNo(int cateNo);
+	LectureDto getLectureByLectureNo(int lectureNo);
+	
+	LectureDto getAllCountByLectureNo(int lectureNo);
+	List<ChapterLessonDto> getChapterByLectureNo(int lectureNo);
+	List<ChapterLessonDto> getLessonByChpaterNo(int lectureNo);
+}

@@ -1,0 +1,56 @@
+package kr.co.coduck.web.controller;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import kr.co.coduck.dto.LectureCourseDto;
+import kr.co.coduck.dto.LectureDto;
+import kr.co.coduck.service.CategoryService;
+import kr.co.coduck.service.LectService;
+import kr.co.coduck.vo.Category;
+import kr.co.coduck.vo.LectureCriteria;
+import kr.co.coduck.vo.Pagination;
+
+@RequestMapping("/lecture/api")
+@RestController
+public class LectRestController {
+
+	private static Logger log = Logger.getLogger(LectRestController.class);
+
+	@Autowired
+	private LectService lectService;
+	private CategoryService categoryService;
+	// @RequestMapping(name = "/lecture",method = RequestMethod.GET)
+
+	// 카테고리별, 조건별 강좌 조회
+	@PostMapping("/searchLecture")
+	public List<LectureCourseDto> mainByCateNo(@RequestBody LectureCriteria cri) {
+
+		// Pagenation
+		int totalCount = lectService.getLectureCountByCriteria(cri);
+		log.info("totalCount >> " + totalCount);
+
+		Pagination pagination = new Pagination(cri.getPage(), totalCount, 16, 3);
+		log.info("Pagination >> " + pagination);
+
+		cri.setBeginIndex(pagination.getBeginIndex());
+		cri.setEndIndex(pagination.getEndIndex());
+
+		List<LectureCourseDto> lectures = lectService.getLectureByCriteria(cri);
+		log.info("cri>> " + cri);
+		
+
+		lectures.forEach(lecture -> {
+			lecture.setLectureDto(lectService.getAllCountByLectureNo(lecture.getLecture().getNo()));
+		});
+
+		return lectures;
+	}
+
+}

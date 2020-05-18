@@ -1,0 +1,8 @@
+package kr.co.coduck.service;
+
+import kr.co.coduck.vo.Notice;
+
+public interface NoticeService {
+
+	void insertNotice(Notice notice);
+}

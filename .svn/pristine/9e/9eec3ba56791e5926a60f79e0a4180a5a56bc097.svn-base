@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- namespace 필수 설정! -->
+<mapper namespace="kr.co.coduck.dao.NoticeDao">
+	
+	<select id="getNoticeByNo" parameterType="int" resultType="Notice">
+		select 
+			A.notice_no				as no,
+			A.notice_title			as title,
+			A.notice_contents		as contents,
+			A.notice_file_name		as fileName,
+			A.notice_create_date	as createDate,
+			A.notice_counts			as counts,
+			B.user_no				as userNo
+		from 
+			ad_notices A, users B
+		where 
+			A.notice_no = ${value}
+			and A.user_no = B.user_no
+	</select>
+	
+	<select id="getNotices" resultType="Notice">
+		select 
+			A.notice_no				as no,
+			A.notice_title			as title,
+			A.notice_contents		as contents,
+			A.notice_file_name		as fileName,
+			A.notice_create_date	as createDate,
+			A.notice_counts			as counts,
+			B.user_no				as userNo
+		from 
+			ad_notices A, users B
+		where
+			A.user_no = B.user_no
+		order by
+			A.notice_no desc
+			
+	</select>
+	
+	<insert id="insertNotice" parameterType="Notice">
+		insert into ad_notices
+			(notice_no, notice_title, notice_contents, notice_file_name, user_no)
+		values 
+			(ad_notices_seq.nextval, #{title}, #{contents}, #{fileName}, #{userNo})
+	</insert>
+	
+	<update id="updateCouponByAdmin" parameterType="Notice">
+		update
+			ad_notices
+		set
+			notice_no = #{no},
+			notice_title = #{title},
+			notice_contents = #{contents},
+			notice_file_name = #{fileName},
+			notice_create_date = #{createDate},
+			notice_counts = #{counts}
+		where
+			notice_no = #{no}
+	</update>
+	
+   <delete id="deleteNotice" parameterType="int">
+      delete from
+         ad_notices
+      where
+         notice_no = #{value}       
+   </delete>
+	
+	<select id="getNoticeByCriteria" parameterType="NoticeCriteria" resultType="Notice">
+	 	select 
+	 		*		
+		from (
+				select
+				<choose>
+					<when test="sort eq 'title'">
+						ROW_NUMBER() over (order by A.notice_title desc) rn,
+					</when>
+					<otherwise>
+						ROW_NUMBER() over (order by A.notice_no desc) rn,
+					</otherwise>
+				</choose>
+					A.notice_no				as no,
+					A.notice_title			as title,
+					A.notice_contents		as contents,
+					A.notice_file_name		as fileName,
+					A.notice_create_date	as createDate,
+					A.notice_counts			as counts,
+					B.user_no				as userNo				
+				from
+					ad_notices A, users B
+				where 
+					A.user_no = B.user_no
+					<if test="keyword != null and keyword != ''">
+		          		and (A.notice_title like '%' || #{keyword} || '%'
+				        or A.notice_create_date like '%' || #{keyword} || '%')
+					</if>
+			)
+        	where rn between #{beginIndex} and #{endIndex}
+	</select>
+	
+	<select id="getNoticeCntByCriteria" parameterType="NoticeCriteria" resultType="int">
+		select count(*)
+			from
+				ad_notices A, users B
+			where 
+				A.user_no = B.user_no
+				<if test="keyword != null and keyword != ''">
+	          		and (A.notice_title like '%' || #{keyword} || '%'
+			        or A.notice_create_date like '%' || #{keyword} || '%')
+				</if>	
+	</select>
+	
+</mapper>
