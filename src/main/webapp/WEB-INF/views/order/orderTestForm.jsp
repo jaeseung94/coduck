@@ -275,11 +275,11 @@ ul {
 									<div class="radio" id="modal-radio">
 										<c:forEach var="coupon" items="${coupons }">
 											<p>
-												<label style="font-size: 12px;" class="label-coupon" data-coupon-no="${coupon.no }" data-discountPrice=${coupon.discountPrice } data-discount-way=${coupon.discountWay }> 
+												<label for="coupon-${coupon.no }" style="font-size: 12px;" class="label-coupon" data-coupon-no="${coupon.no }" data-discountPrice=${coupon.discountPrice } data-discount-way=${coupon.discountWay }>
 													<input class="radio-coupon" id="coupon-${coupon.no }" name="radio-coupon" value="${coupon.no }" type="radio"/>
 													<span class="span-discountPrice" style="font-size: 14px; font-weight: bold;">${coupon.discountPrice }</span>${coupon.discountWay eq 'price' ? '원' : '%' } 할인
 													<span style="margin-left: 10px;">${coupon.title }</span>
-												</label>
+												</label> 
 											</p>
 										</c:forEach>
 									</div>
@@ -337,10 +337,10 @@ ul {
 		</div>
 	</div>
 	</form>
-
+	
 	<script type="text/javascript">
 	var testNo;
-	var status = true;
+	var xxxx = true;
 	var checkedStatus = false;
 	
 	$(".coupon-apply-price").each(function(index, item){
@@ -383,7 +383,7 @@ ul {
 		}
 		couponNo = $("#modal-radio :checked").val();
 		$.get("/coupon/insertUsedCouponInTest.hta", {testNo:testNo, couponNo:couponNo}, function(data){
-			if(data != -1 && status){
+			if(data != -1 && xxxx){
 				$.get("/test/getTestInfo.hta?testno=" + data, function(result){
 					var price = result.price;
 					$("#td-coupon-apply-price-" +data).text(price.toLocaleString() + "원");
@@ -399,31 +399,38 @@ ul {
 	})
 	
 	//모달 내 쿠폰 클릭시
-	$(".label-coupon, .radio-coupon").click(function(e){
+	$(".radio-coupon").change(function(e){
+		console.log(111);
 		e.preventDefault();
 		e.stopPropagation();
 		var label = $(this).hasClass("label-coupon") ? $(this) : $(this).closest(".label-coupon");
 		var discountWay = label.data("discount-way");
-		checkedStatus = false;
+		/* $(this).change(function(){
+			console.log("체인지")
+		}) */
 		
 		//label.find("input:radio").prop("checked", false);
-		if(label.find("input:radio").prop("checked")){
+	/* 	if($(this).find("input:radio").prop("checked") || $(this).prop("checked")){
 			checkedStatus = true;
 			return;
-		}
+		} */
+		/* if(label.find("input:radio").prop("checked")){
+		}  */
 		
 		var couponNo = label.data("coupon-no");
 		$.get("/coupon/isUsedInTest.hta?couponNo=" + couponNo, function(data){
+			console.log(2);
 			
 			if(data && testNo != data.testNo){
-				status = confirm("이미 적용된 쿠폰입니다. 취소 후 이 상품에 새로 적용하시겠습니까?");
-				if(status){
+				xxxx = confirm("이미 적용된 쿠폰입니다. 취소 후 이 상품에 새로 적용하시겠습니까?");
+				if(xxxx){
 					label.find("input:radio").prop("checked", true);
-				}
+				} 
 			} else{
 				label.find("input:radio").prop("checked", true);
+				//checkedStatus = true;
 			}
-			if(status){
+			if(xxxx){
 				var price = $("#coupon-price").text();
 				var discountPrice = label.find(".span-discountPrice").text();
 				if(discountWay == 'percent'){
@@ -432,12 +439,16 @@ ul {
 				$("#coupon-disprice").text(discountPrice);
 				$("#coupon-total-price").text(price-discountPrice);
 			}
-		})
+		}) 
 	})
+	
+	function pf_couponClick(){
+		
+	}
 
 	//상품 리스트에서 쿠폰 적용 이미지 클릭 시
 	function applyCoupon(price, event, no){
-		event.preventDefault();
+ 		event.preventDefault();
 		testNo = no;
 		//클릭하지 않은 상태로 체크해제시킴.
 		$("#modal-radio :radio").prop("checked", false);
@@ -448,7 +459,7 @@ ul {
 		$.get("/coupon/getAppliedCouponInTest.hta?testNo=" + testNo, function(data){
 			//$("#coupon-" + data).prop("checked", true);
 			$("#coupon-" + data.couponNo).click();
-		})
+		}) 
 		$("#modal-my-coupons").modal("show"); 	
 	}
 	
