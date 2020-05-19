@@ -59,7 +59,7 @@ public class CouponController {
 //		   return "ok";
 //	   }
 //	   
-//	   couponService.insertUsedCouponInTest(couponUsedTest);
+//	   couponService.insertUsedCouponInTes 1(couponUsedTest);
 //	   return "ok";
 //   }
    

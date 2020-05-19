@@ -46,8 +46,14 @@ public class CartTestController {
 	public String orderAllTest(HttpSession session, Model model) {
 		User user = (User)session.getAttribute("LU");
 		List<CartTestDto> tests = cartTestService.getCartTestListUserByNo(user.getNo());
+		int total = 0;
+		for(CartTestDto e : tests) {
+			total += e.getPrice();
+		}
 		List<Coupon> coupons = couponService.getCouponsByUserNo(user.getNo());
 		model.addAttribute("tests", tests);
+		model.addAttribute("user", user);
+		model.addAttribute("totalPrice", total);
 		model.addAttribute("coupons", coupons);
 		return "order/orderTestForm";
 	}

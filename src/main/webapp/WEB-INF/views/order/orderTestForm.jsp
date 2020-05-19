@@ -30,7 +30,7 @@
 #table-final-price td {
 	text-align: left;
 	color: #737373;
-	font-size: 12px;
+	font-size: 13px;
 }
 
 #btn-pay {
@@ -121,22 +121,15 @@ ul {
 												class="a-coupon" href="" style="margin-left: 20px"><img
 													src="/imgs/쿠폰 적용.PNG"></a></td>
 											<td>1</td>
-											<td data-test-price="${test.price }" data-test-no="${test.no }" class="coupon-apply-price" id="td-coupon-apply-price-${test.no }"><fmt:formatNumber>${test.price }</fmt:formatNumber>원</td>
+											<td data-test-price="${test.price }" data-test-no="${test.no }" class="coupon-apply-price" id="td-coupon-apply-price-${test.no }"><span class="pricelist"><fmt:formatNumber>${test.price }</fmt:formatNumber></span>원</td>
 										</tr>
 									</c:forEach>
 								</c:otherwise>
 							</c:choose>
 						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="2">구매가격</td>
-								<td><strong id="test-summary-price">0</strong> 원</td>
-								<td></td>
-							</tr>
-						</tfoot>
 					</table>
 				</div>
-
+				
 			<div class="col-sm-3" style="padding-left: 0px;">
 				<table class="table" style="border: 3px solid #f44336; margin: 0px;"
 					id="table-final-price">
@@ -144,14 +137,15 @@ ul {
 						<tr style="background-color: #f44336;">
 							<td style="font-size: 20px; color: white; font-weight: bold;">최종결제금액</td>
 						</tr>
-						<tr>
-							<td>총 주문금액 :</td>
+						<tr style="height: 45px;">
+							<td style="vertical-align: middle;"><span style="float:left;width:49%;">총 주문금액 : </span><span style="float: right; color: black;">원</span> <span style="float:right; font-weight: bold; color: black;"><fmt:formatNumber value="${totalPrice }" /></span></td>
 						</tr>
-						<tr>
-							<td>총 할인 금액 :</td>
+						<tr style="height: 45px">
+							<td style="vertical-align: middle;"><span style="float:left;width:49%;">총 할인금액 : </span><span style="float: right; color: black;">원</span> <span style="float:right; font-weight: bold; color: black;" id="totalDiscount"></span></td>
 						</tr>
-						<tr>
-							<td style="font-weight: bold;">최종결제금액 :</td>
+						<tr style="height: 70px;">
+						
+							<td style="vertical-align: middle;"><span style="float:left;width:49%; font-weight: bold; margin-top: 10px;">최종결제금액 : </span><span style="float: right; color: black; margin-top: 10px;">원</span> <span style="float:right; font-weight: bold; color: red; font-size: 24px;" id="finalPrice"></span></td>
 						</tr>
 					</tbody>
 				</table>
@@ -174,13 +168,15 @@ ul {
 						<th>적립금 사용</th>
 						<td>
 							<p>
-								사용가능액 : <span style="font-weight: bold;">0</span>원
+								사용가능액 : <span style="font-weight: bold;"><fmt:formatNumber value="${point }"/></span>원
 							</p>
 							<p>
-								<input type="text" value="0" class="text-right"
-									style="padding-right: 5px; color: #f44336; width: 100px;">원<span
-									style="margin: 0px 15px 0px 15px;"><input type="radio">모두사용</span>
-								<button>적용</button>
+								<input type="text" value="0" class="text-right" id="input-point" 
+									style="padding-right: 5px; color: #f44336; width: 100px;">원
+								<span style="margin: 0px 15px 0px 15px;">
+								<label><input id="allpoint" type="checkbox">모두사용</label>	
+								</span>
+								<button id="btn-point-apply" type="button">적용</button>
 							</p>
 						</td>
 					</tr>
@@ -337,13 +333,80 @@ ul {
 		</div>
 	</div>
 	</form>
+	</div>
 	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
 	<script type="text/javascript">
+	
 	var testNo;
 	var xxxx = true;
 	var checkedStatus = false;
+	var sum = 0;
+	var prevPointDiscount;
+	var prevPointFinal;
+	var IMP = window.IMP;
+	IMP.init('imp06298246');
 	
-	$(".coupon-apply-price").each(function(index, item){
+	IMP.request_pay({
+	    pg : 'kakao',
+	    pay_method : 'card',
+	    merchant_uid : 'merchant_' + new Date().getTime(),
+	    name : '주문명:결제테스트',
+	    amount : 14000,
+	    buyer_email : ${user.email},
+	    buyer_name : ${user.name}
+	}, function(rsp) {
+	    if ( rsp.success ) {
+	        var msg = '결제가 완료되었습니다.';
+	        msg += '고유ID : ' + rsp.imp_uid;
+	        msg += '상점 거래ID : ' + rsp.merchant_uid;
+	        msg += '결제 금액 : ' + rsp.paid_amount;
+	        msg += '카드 승인번호 : ' + rsp.apply_num;
+	    } else {
+	        var msg = '결제에 실패하였습니다.';
+	        msg += '에러내용 : ' + rsp.error_msg;
+	    }
+
+	    alert(msg);
+	});
+	
+	$("#btn-point-apply").click(function(){
+		if($(this).hasClass("click")){
+			$(this).removeClass("click").addClass("nonclick");
+			$(this).text("적용");
+			$("#totalDiscount").text(prevPointDiscount.toLocaleString());
+			$("#finalPrice").text(prevPointFinal.toLocaleString());
+		} else{
+			$(this).removeClass("nonclick").addClass("click");
+			$(this).text("적용 취소");
+			var totalDiscount = commaNumberToInt($("#totalDiscount").text()) + commaNumberToInt($("#input-point").val());
+			$("#totalDiscount").text(totalDiscount.toLocaleString());
+			$("#finalPrice").text((${totalPrice} - totalDiscount).toLocaleString());
+		}
+	})
+	
+	$("#allpoint").click(function(e){
+		if($(this).is(":checked")){
+			var point =	${user.point};
+			$("#input-point").val(point.toLocaleString());
+		} else{
+			$("#input-point").val(0);
+		}
+	})
+	
+	function commaNumberToInt(str){
+		return parseInt(str.replace(/,/g , ''));
+	} 
+	
+ 	function totalDiscount(){
+		var result = 0;
+		$(".coupon-apply-price").each(function(index, item){
+			result += commaNumberToInt($(item).find(".pricelist").text());
+		})
+		return ${totalPrice}-result;
+	} 
+	
+ 	$(".coupon-apply-price").each(function(index, item){
 		testNo = $(item).data("test-no");
 		$.get("/coupon/getAppliedCouponInTest.hta?testNo=" + testNo, function(data){
 			if(data){//쿠폰
@@ -353,22 +416,15 @@ ul {
 				} else{
 					discountPrice = data.discountPrice;
 				}
-				$(item).text(($(item).data("test-price") - discountPrice).toLocaleString() +"원");
+				$(item).find(".pricelist").text(($(item).data("test-price") - discountPrice).toLocaleString());
 			}
+			sum += commaNumberToInt($(item).find(".pricelist").text());
+			prevPointDiscount = ${totalPrice} - sum;
+			$("#totalDiscount").text(prevPointDiscount.toLocaleString());
+			prevPointFinal = ${totalPrice} - prevPointDiscount;
+			$("#finalPrice").text(prevPointFinal.toLocaleString());
 		})
-	})
-	
-/* 	function getData(testNo){
-		return new Promise(function(resolve, reject){
-			$.get("/coupon/getAppliedCouponInTest.hta?testNo=" + testNo, function(data){
-				if(data){//쿠폰번호
-					resolve(data);
-					//$(item).text()
-					//return;
-				}
-			})
-		})
-	} */
+ 	})
 	
 	//모달 내 쿠폰 적용하기 클릭시
 	$("#btn-apply-coupon").click(function(e){
@@ -384,17 +440,21 @@ ul {
 		couponNo = $("#modal-radio :checked").val();
 		$.get("/coupon/insertUsedCouponInTest.hta", {testNo:testNo, couponNo:couponNo}, function(data){
 			if(data != -1 && xxxx){
-				$.get("/test/getTestInfo.hta?testno=" + data, function(result){
-					var price = result.price;
-					$("#td-coupon-apply-price-" +data).text(price.toLocaleString() + "원");
-				})
+				//상품 가격 구하기
+				var price = $("#td-coupon-apply-price-"+data).data("test-price");
+				$("#td-coupon-apply-price-" +data).find(".pricelist").text(price.toLocaleString());
 			}
 			console.log($("#coupon-total-price").text());
-			$("#td-coupon-apply-price-" + testNo).text($("#coupon-total-price").text().toLocaleString() + "원");
+			$("#td-coupon-apply-price-" + testNo).find(".pricelist").text($("#coupon-total-price").text().toLocaleString());
 			$("#modal-my-coupons").modal("hide");
-			//$("#td-coupon-apply-price-" + testNo).empty();
-			//var couponAppliedPrice = $("#coupon-total-price").text();
-			//$("#td-coupon-apply-price-" + testNo).append(couponAppliedPrice.toLocaleString()+'원');
+			console.log(totalDiscount());
+			prevPointDiscount = totalDiscount();
+			$("#totalDiscount").text(prevPointDiscount.toLocaleString());
+			prevPointFinal = ${totalPrice} - prevPointDiscount
+			$("#finalPrice").text(prevPointFinal.toLocaleString());
+			$("#input-point").val(0);
+			$("#allpoint").prop("checked", false);
+			$("#btn-point-apply").removeClass("click").removeClass("nonclick").text("적용");
 		})
 	})
 	
@@ -405,17 +465,6 @@ ul {
 		e.stopPropagation();
 		var label = $(this).hasClass("label-coupon") ? $(this) : $(this).closest(".label-coupon");
 		var discountWay = label.data("discount-way");
-		/* $(this).change(function(){
-			console.log("체인지")
-		}) */
-		
-		//label.find("input:radio").prop("checked", false);
-	/* 	if($(this).find("input:radio").prop("checked") || $(this).prop("checked")){
-			checkedStatus = true;
-			return;
-		} */
-		/* if(label.find("input:radio").prop("checked")){
-		}  */
 		
 		var couponNo = label.data("coupon-no");
 		$.get("/coupon/isUsedInTest.hta?couponNo=" + couponNo, function(data){
@@ -441,10 +490,6 @@ ul {
 			}
 		}) 
 	})
-	
-	function pf_couponClick(){
-		
-	}
 
 	//상품 리스트에서 쿠폰 적용 이미지 클릭 시
 	function applyCoupon(price, event, no){
