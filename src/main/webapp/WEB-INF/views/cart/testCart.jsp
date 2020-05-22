@@ -171,8 +171,8 @@
 		
 		<p style="text-align: center;">
 			<br>
-			<a href="/cart/orderAllTests.hta" class="btn-black-lg" id="btn-buy-all" >전체상품 주문</a>
-			<a href="" class="btn-black-lg" id="btn-buy-ck" style="background-color: #f44336;">선택상품 주문</a>
+			<button class="btn-black-lg" type="button" id="btn-buy-all" >전체상품 주문</button>
+			<button class="btn-black-lg" type="button" id="btn-buy-ck" style="background-color: #f44336;">선택상품 주문</button>
 		</p>
 	</div>
 
@@ -184,9 +184,13 @@
 		checkAll();
    		totalPrice();
    		
+   		//전체 상품 구매
+   		$("#btn-buy-all").click(function(e){
+   			location.href="/cart/orderAllTests.hta";
+   		})
+   		
    		//선택 상품 구매
-   		$("#btn-buy-ck").click(function(event){
-   			event.preventDefault();
+   		$("#btn-buy-ck").click(function(e){
    			$("#form-cart").attr("action", "/cart/orderCkTests.hta");
    			$("#form-cart").submit();
    			

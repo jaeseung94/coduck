@@ -10,7 +10,6 @@ public class CouponUsedTest {
 	private int couponNo;
 	private int userNo;
 	private int testNo;
-	private String finalUsed;
 	private String title;
 	private String detail;
 	private String enabled;
@@ -94,14 +93,6 @@ public class CouponUsedTest {
 		this.testNo = testNo;
 	}
 
-	public String getFinalUsed() {
-		return finalUsed;
-	}
-
-	public void setFinalUsed(String finalUsed) {
-		this.finalUsed = finalUsed;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -111,9 +102,8 @@ public class CouponUsedTest {
 	@Override
 	public String toString() {
 		return "CouponUsedTest [no=" + no + ", couponNo=" + couponNo + ", userNo=" + userNo + ", testNo=" + testNo
-				+ ", finalUsed=" + finalUsed + ", title=" + title + ", detail=" + detail + ", enabled=" + enabled
-				+ ", startDate=" + startDate + ", endDate=" + endDate + ", amount=" + amount + ", limited=" + limited
-				+ ", discountPrice=" + discountPrice + ", discountWay=" + discountWay + "]";
+				+ ", title=" + title + ", detail=" + detail + ", enabled=" + enabled + ", startDate=" + startDate
+				+ ", endDate=" + endDate + ", amount=" + amount + ", limited=" + limited + ", discountPrice="
+				+ discountPrice + ", discountWay=" + discountWay + "]";
 	}
-	
 }

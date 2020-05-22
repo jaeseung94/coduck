@@ -23,6 +23,21 @@ public class CouponServiceImpl implements CouponService {
 	private UserDao userDao;
 	
 	@Override
+	public void deleteCouponAtCounponBox(Map<String, Object> map) {
+		couponDao.deleteCouponAtCounponBox(map);
+	}
+	
+	@Override
+	public CouponUsedTest getCouponUsedTestByUserNoNTestNo(Map<String, Object> map) {
+		return couponDao.getCouponUsedTestByUserNoNTestNo(map);
+	}
+	
+	@Override
+	public List<CouponUsedTest> getCouponUserdTestsByUserNo(int userNo) {
+		return couponDao.getCouponUserdTestsByUserNo(userNo);
+	}
+	
+	@Override
 	public void updateCouponNoAtAppliedCoupon(CouponUsedTest couponUsedTest) {
 		couponDao.updateCouponNoAtAppliedCoupon(couponUsedTest);
 		

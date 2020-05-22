@@ -248,7 +248,7 @@ table thead tr td {
 				if(result == "success"){
 					var xx = confirm("장바구니에 담겼습니다.\n장바구니로 이동하시겠습니까?");
 					if(xx){
-						location.replace("/cart/userCartList.hta");
+						location.replace("/cart/myTestCartList.hta");
 					}
 				} else{
 					alert("장바구니에 이미 담겨있는 시험입니다. 다시 선택해주세요.");
@@ -419,7 +419,7 @@ table thead tr td {
 				row += "<td><button type='button' class='btn btn-default' id='btn-detail'>자세히보기</button></td>";
 			} else {
 				row += "<td>미응시</td>";
-				row += "<td><a href='/order/ordertests.hta?testno= " + item.testNo + "&testtotalprices= " + item.testPrice + "' class='btn btn-primary'>바로구매</a> <button type='button' class='btn btn-warning' name='testNo' value='" + item.testNo + "'>장바구니담기</button></td>";
+				row += "<td><a href='/order/orderTests.hta?testno= " + item.testNo + "&testtotalprices= " + item.testPrice + "' class='btn btn-primary'>바로구매</a> <button type='button' class='btn btn-warning' name='testNo' value='" + item.testNo + "'>장바구니담기</button></td>";
 			} */
 			row += "</tr>";
 		})

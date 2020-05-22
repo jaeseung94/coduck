@@ -8,7 +8,8 @@ import kr.co.coduck.vo.OrdTest;
 import kr.co.coduck.vo.OrdTestInfo;
 
 public interface OrderTestDao {
-
+	
+	int getOrderNo();
 	void insertOrderTest(OrdTest ordTest);
 	void insertOrderTestInfo(OrdTestInfo ordTestInfo);
 	List<OrderTestDetailListDto> getOrderTestInfoByOrderNo(int userNo);

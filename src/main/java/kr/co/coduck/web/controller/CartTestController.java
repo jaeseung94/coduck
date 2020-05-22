@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.siot.IamportRestHttpClientJava.IamportClient;
+
 import kr.co.coduck.dto.CartChoiceTestListDto;
 import kr.co.coduck.dto.CartTestDto;
 import kr.co.coduck.service.CartTestService;
@@ -72,6 +74,7 @@ public class CartTestController {
 			results.add(userChoiceTest); 
 		}
 		model.addAttribute("tests", results);
+		model.addAttribute("user", user);
 		return "order/orderTestForm";
 	}
 	

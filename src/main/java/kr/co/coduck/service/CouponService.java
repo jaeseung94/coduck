@@ -10,6 +10,11 @@ import kr.co.coduck.vo.CouponUsedTest;
 public interface CouponService {
 
 	//int isUsedCouponInTest(Map<String, Integer> map);
+	void deleteCouponAtCounponBox(Map<String, Object> map);
+	
+	CouponUsedTest getCouponUsedTestByUserNoNTestNo(Map<String, Object> map);
+	
+	List<CouponUsedTest> getCouponUserdTestsByUserNo(int userNo);
 	void deleteUsedCouponIntestByTestNo(CouponUsedTest couponUsedTest);
 	void deleteUsedCouponIntestByCouponNo(CouponUsedTest couponUsedTest);
 	

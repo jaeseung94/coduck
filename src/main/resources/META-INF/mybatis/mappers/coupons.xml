@@ -4,6 +4,42 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace 필수 설정! -->
 <mapper namespace="kr.co.coduck.dao.CouponDao">	
+
+	<!-- 사용자 번호 및 상품번호로 적용된 쿠폰 가져오기-->
+	<select id="getCouponUsedTestByUserNoNTestNo" parameterType="map" resultType="CouponUsedTest">
+		select 
+			A.coupon_used_no			no,
+			A.coupon_no					couponNo,
+			A.user_no					userNo,
+			A.test_no					testNo,
+			B.coupon_title				title,
+			B.coupon_detail				detail,
+			B.coupon_enabled			enabled,
+			B.coupon_start_date		 	startDate,
+			B.coupon_end_date			endDate,
+			B.coupon_amount				amount,
+			B.coupon_limited			limited,
+			B.discount_price			discountPrice,
+			B.discount_way				discountWay
+		from coupon_used_tests A, coupons B
+		where 
+			A.user_no = #{userNo}
+			and A.test_no = #{testNo}
+			and A.coupon_no = B.coupon_no
+	</select>
+
+	<!-- 사용자 번호로 적용되고 있는 쿠폰 및 상품정보 가져오기 -->
+	<select id="getCouponUserdTestsByUserNo" parameterType="int" resultType="CouponUsedTest">
+		select 
+			coupon_used_no		no,
+			coupon_no			couponNo,
+			user_no				userNo,
+			test_no				testNo
+		from 
+			coupon_used_tests
+		where 
+			user_no = #{value}
+	</select>
 	
 	<!-- 사용한 쿠폰목록에서 쿠폰 삭제하기 -->
 	<delete id="deleteUsedCouponIntestByCouponNo" parameterType="CouponUsedTest">
@@ -11,7 +47,6 @@
 		where
 			user_no = #{userNo}
 			and coupon_no = #{couponNo}
-			and final_used = 'N'
 	</delete>
 	
 	<!-- 사용한 쿠폰목록에서 쿠폰 삭제하기 -->
@@ -20,7 +55,6 @@
 		where
 			user_no = #{userNo}
 			and test_no = #{testNo}
-			and final_used = 'N'
 	</delete>
 	
 	<!-- 적용된 쿠폰에서 상품번호 바꾸기 -->
@@ -69,7 +103,6 @@
 		from coupon_used_tests A, coupons B
 		where
 			A.user_no = #{userNo}
-			and A.final_used = 'N'<!-- 구매 후 최종 사용 확정. -->
 			and A.coupon_no = B.coupon_no
 			<if test="couponNo != 0">
 				and A.coupon_no = #{couponNo}
@@ -186,8 +219,11 @@
 			COUPON_BOX A, coupons C
 		WHERE
 			C.COUPON_NO = A.COUPON_NO
+			
 		and
 			A.USER_NO = #{value}
+		and 
+			C.COUPON_ENABLED = 'Y'
 	</select>	
 	
 	<update id="updateCoupon" parameterType="CouponBox">
@@ -200,18 +236,13 @@
 			USER_NO = #{userNo}
 	</update>
 	
-	<delete id="deleteCouponBoxByUserNo" parameterType="CouponBox">
-		delete from
-			COUPON_BOX
-		where
-			USER_NO = #{userNo}
-	</delete>
-	
-	<delete id="deleteCouponBoxByCouponNo" parameterType="CouponBox">
+	<!-- 사용자가 가지고 있는 쿠폰 중에서 사용한 쿠폰 삭제하기 -->
+	<delete id="deleteCouponAtCounponBox" parameterType="map">
 		delete from
 			COUPON_BOX
 		where
 			COUPON_NO = #{couponNo}
+			and user_no = ${userNo}
 	</delete>
 	
 	<!-- 유저에게 쿠폰 발송하기 -->

@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CODUCK - 1등 온라인 강좌</title>
@@ -73,6 +74,7 @@ ul {
 </style>
 </head>
 <body>
+
 	<%@ include file="../common/header.jsp"%>
 	<%@ include file="../common/user-sidebar.jsp"%>
 
@@ -93,8 +95,9 @@ ul {
 			<p class="process" style="margin-top: 30px;">1. 주문 상품 확인 및 할인 적용</p>
 
 			<div class="col-sm-9">
-				<form action="/order/ordertests.hta" method="post"
-					class="form-horizontal">
+				<form action="/order/orderTests.hta" method="post"
+					class="form-horizontal" id="form-order">
+					<input type="hidden" id="input-point-hidden" name="point" value="0">
 					<table class="table table-bordered" id="test-table">
 						<thead id="test-thead">
 							<tr style="background-color: #f1f1f1;">
@@ -128,7 +131,8 @@ ul {
 							</c:choose>
 						</tbody>
 					</table>
-				</div>
+				</form>
+			</div>
 				
 			<div class="col-sm-3" style="padding-left: 0px;">
 				<table class="table" style="border: 3px solid #f44336; margin: 0px;"
@@ -149,7 +153,7 @@ ul {
 						</tr>
 					</tbody>
 				</table>
-				<button id="btn-pay" style="margin-left: 0px;">
+				<button id="btn-pay" style="margin-left: 0px;" type="button">
 					<img src="/imgs/결제 아이콘.PNG" height="35px;"
 						style="margin-right: 5px;" /><span>결제하기</span>
 				</button>
@@ -249,8 +253,6 @@ ul {
 			</div>
 		</div>
 	</div>
-	</div>
-
 
 	<div id="modal-my-coupons" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-lg">
@@ -332,10 +334,10 @@ ul {
 			</div>
 		</div>
 	</div>
-	</form>
+	</div>
 	</div>
 	
-	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
 	<script type="text/javascript">
 	
 	var testNo;
@@ -344,44 +346,84 @@ ul {
 	var sum = 0;
 	var prevPointDiscount;
 	var prevPointFinal;
-	var IMP = window.IMP;
-	IMP.init('imp06298246');
+		
+	$("#finalPrice").click(function(){
+		var formData = $("#form-order").serialize();
+		console.log("폼데이터");
+		console.log(formData);
+	})
 	
-	IMP.request_pay({
-	    pg : 'kakao',
-	    pay_method : 'card',
-	    merchant_uid : 'merchant_' + new Date().getTime(),
-	    name : '주문명:결제테스트',
-	    amount : 14000,
-	    buyer_email : ${user.email},
-	    buyer_name : ${user.name}
-	}, function(rsp) {
-	    if ( rsp.success ) {
-	        var msg = '결제가 완료되었습니다.';
-	        msg += '고유ID : ' + rsp.imp_uid;
-	        msg += '상점 거래ID : ' + rsp.merchant_uid;
-	        msg += '결제 금액 : ' + rsp.paid_amount;
-	        msg += '카드 승인번호 : ' + rsp.apply_num;
-	    } else {
-	        var msg = '결제에 실패하였습니다.';
-	        msg += '에러내용 : ' + rsp.error_msg;
-	    }
-
-	    alert(msg);
-	});
+/* 	$.ajax({
+		url:"/cart/temp.hta",
+		method:"get",
+		data:
+	}).done(function(result){
+		console.log("키?");
+		console.log(result);
+	}) */
+	
+	//결제하기 클릭시
+	$("#btn-pay").click(function(){
+		var formData = $("#form-order").serialize();
+		//주문 정보 저장
+		
+		$.ajax({
+					url:"/order/orderTests.hta",
+					method:"post",
+					data:formData
+				})
+				
+		var finalPrice = commaNumberToInt($("#finalPrice").text());
+		var IMP = window.IMP;
+		IMP.init('imp06298246'); 
+		IMP.request_pay({
+		    pg : 'kakao',
+		    pay_method : 'card',
+		    merchant_uid : 'merchant_' + new Date().getTime(),
+		    name : '주문명:결제테스트',
+		    amount : finalPrice,
+		}, function(rsp) {
+		    if ( rsp.success ) {
+			 	$.ajax({
+					url:"/order/orderTests.hta",
+					method:"post",
+					data:formData
+				}).done(function(data){
+					//2번 실행
+					alert("성공!!!");
+				}).fail(function(data){
+					alert("실패!!")
+				})
+			
+		        var msg = '결제가 완료되었습니다.';
+		        msg += '고유ID : ' + rsp.imp_uid;
+		        msg += '상점 거래ID : ' + rsp.merchant_uid;
+		        msg += '결제 금액 : ' + rsp.paid_amount;
+		        msg += '카드 승인번호 : ' + rsp.apply_num;
+		    } else {
+		        var msg = '결제에 실패하였습니다.';
+		        msg += '에러내용 : ' + rsp.error_msg;
+		    }
+			
+		    //1번실행
+		    alert(msg);
+		}); 
+	})
 	
 	$("#btn-point-apply").click(function(){
-		if($(this).hasClass("click")){
+		if($(this).hasClass("click")){//적용 취소 할때
 			$(this).removeClass("click").addClass("nonclick");
 			$(this).text("적용");
 			$("#totalDiscount").text(prevPointDiscount.toLocaleString());
 			$("#finalPrice").text(prevPointFinal.toLocaleString());
-		} else{
+			$("#input-point-hidden").val(0);
+		} else{//적용할 때
 			$(this).removeClass("nonclick").addClass("click");
 			$(this).text("적용 취소");
 			var totalDiscount = commaNumberToInt($("#totalDiscount").text()) + commaNumberToInt($("#input-point").val());
 			$("#totalDiscount").text(totalDiscount.toLocaleString());
 			$("#finalPrice").text((${totalPrice} - totalDiscount).toLocaleString());
+			$("#input-point-hidden").val($("#input-point").val());
 		}
 	})
 	

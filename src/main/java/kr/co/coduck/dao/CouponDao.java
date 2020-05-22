@@ -1,6 +1,7 @@
 package kr.co.coduck.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.co.coduck.dto.UserCouponBoxDto;
 import kr.co.coduck.vo.Coupon;
@@ -11,6 +12,10 @@ public interface CouponDao {
 
 	//쿠폰 사용 내역 확인
 	//int isUsedCouponInTest(Map<String, Integer> map);
+	
+	CouponUsedTest getCouponUsedTestByUserNoNTestNo(Map<String, Object> map);
+	
+	List<CouponUsedTest> getCouponUserdTestsByUserNo(int userNo);
 	void deleteUsedCouponIntestByTestNo(CouponUsedTest couponUsedTest);
 	void deleteUsedCouponIntestByCouponNo(CouponUsedTest couponUsedTest);
 	
@@ -38,8 +43,7 @@ public interface CouponDao {
 	
 	List<Coupon> getCouponsByUserNo(int userNo);
 	
-	void deleteCouponBoxByCouponNo(int couponNo);
-	
+	void deleteCouponAtCounponBox(Map<String, Object> map);
 	// 사용가능한 쿠폰만 조회하기
 	List<Coupon> getEnabledCouponsByAdmin();
 	

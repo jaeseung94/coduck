@@ -9,8 +9,9 @@ import kr.co.coduck.vo.OrdTestInfo;
 
 public interface OrderTestService {
 
-	void insertOrderTest(int userNo, Integer couponNo, int[] testNos, int testTotalPrice, String bankNo);
 	void insertOrderTestInfo(OrdTestInfo ordTestInfo);
 	List<OrderTestDetailListDto> getOrderTestInfoByOrderNo(int userNo);
 	OrdTest getOrdTestByTestNoNUserNo(Map<String, Integer> map);
+	void insertOrderTest(int userNo, List<Integer> testNos, int point);
+	int getOrderNo();
 }
