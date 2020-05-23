@@ -366,48 +366,53 @@ ul {
 	$("#btn-pay").click(function(){
 		var formData = $("#form-order").serialize();
 		//주문 정보 저장
-		
-		$.ajax({
-					url:"/order/orderTests.hta",
-					method:"post",
-					data:formData
-				})
-				
 		var finalPrice = commaNumberToInt($("#finalPrice").text());
 		var IMP = window.IMP;
-		IMP.init('imp06298246'); 
-		IMP.request_pay({
-		    pg : 'kakao',
-		    pay_method : 'card',
-		    merchant_uid : 'merchant_' + new Date().getTime(),
-		    name : '주문명:결제테스트',
-		    amount : finalPrice,
-		}, function(rsp) {
-		    if ( rsp.success ) {
-			 	$.ajax({
-					url:"/order/orderTests.hta",
-					method:"post",
-					data:formData
-				}).done(function(data){
-					//2번 실행
-					alert("성공!!!");
-				}).fail(function(data){
-					alert("실패!!")
-				})
-			
-		        var msg = '결제가 완료되었습니다.';
-		        msg += '고유ID : ' + rsp.imp_uid;
-		        msg += '상점 거래ID : ' + rsp.merchant_uid;
-		        msg += '결제 금액 : ' + rsp.paid_amount;
-		        msg += '카드 승인번호 : ' + rsp.apply_num;
-		    } else {
-		        var msg = '결제에 실패하였습니다.';
-		        msg += '에러내용 : ' + rsp.error_msg;
-		    }
-			
-		    //1번실행
-		    alert(msg);
-		}); 
+		var orderNo;
+		
+		//request_pay를 호출하기 전에 db에 주문 정보 저장(0원으로)
+		$.ajax({
+			url:"insertTempOrderTest.hta",
+			method:"post"
+		}).done(function(data){
+			orderNo = data;
+			IMP.init('imp06298246'); 
+			IMP.request_pay({
+			    pg : 'kakao',
+			    pay_method : 'card',
+			    merchant_uid : orderNo,
+			    name : '주문명:결제테스트',
+			    amount : finalPrice,
+			}, function(rsp) {
+			    if ( rsp.success ) {
+				 	$.ajax({
+						url:"/order/orderTests.hta",
+						method:"post",
+						data:formData + "&orderNo=" + orderNo
+					}).done(function(data){
+						switch(data.status){
+						case "success":
+					        var msg = '결제가 완료되었습니다.';
+					        msg += '고유ID : ' + rsp.imp_uid;
+					        msg += '상점 거래ID : ' + rsp.merchant_uid;
+					        msg += '결제 금액 : ' + rsp.paid_amount;
+					        msg += '카드 승인번호 : ' + rsp.apply_num;
+					        break;
+						case "faker":
+							var msg ="금액이 변조되었습니다. 다시 시도해주십시오.";
+							break;
+						}
+					})
+				
+			    } else {
+			        var msg = '결제에 실패하였습니다.';
+			        msg += '에러내용 : ' + rsp.error_msg;
+			    }
+				
+			    //1번실행
+			    alert(msg);
+			}); 
+		})
 	})
 	
 	$("#btn-point-apply").click(function(){

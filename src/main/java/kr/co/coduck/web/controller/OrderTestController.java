@@ -44,6 +44,16 @@ public class OrderTestController {
 	
 	@Autowired
 	private CouponService couponService;
+	
+	@PostMapping("/insertTempOrderTest.hta")
+	@ResponseBody
+	public int insertTempOrderTest(HttpSession session) {
+		User user = (User)session.getAttribute("LU");
+		int orderNo = orderTestService.getOrderNo();
+		orderTestService.insertOrderTest(user.getNo(), null, -1, orderNo);
+		
+		return orderNo;
+	}
 
 	@PostMapping("/orderTestForm.hta")
 	public String orderLect(HttpSession session) {
@@ -56,14 +66,17 @@ public class OrderTestController {
 	@PostMapping("/orderTests.hta")
 	@ResponseBody
 	public void orderTests(HttpSession session, @RequestParam("testno") List<Integer> testNos,
-			@RequestParam("point") int point) {
+			@RequestParam("point") int point, @RequestParam("orderNo") int orderNo) {
 		
 		System.out.println("");
 		System.out.println("");
 		System.out.println(testNos);
 		System.out.println(point);
-		User user = (User)session.getAttribute("LU");
-		orderTestService.insertOrderTest(user.getNo(), testNos, point);
+		User user = (User)session.getAttribute("LU");	
+		//결제될 금액과 아임포터 서버의 결제금액 비교
+		
+		
+		orderTestService.insertOrderTest(user.getNo(), testNos, point, orderNo);
 	}
 	
 	

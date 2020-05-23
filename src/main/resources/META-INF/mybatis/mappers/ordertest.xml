@@ -5,6 +5,12 @@
 <!-- namespace 필수 설정! -->
 <mapper namespace="kr.co.coduck.dao.OrderTestDao">	
 	
+	<!-- 주문정보 삭제 -->
+	<delete id="deleteOrdTest" parameterType="int">
+		delete from ord_tests
+		where ord_test_no = #{value}
+	</delete>
+	
 	<!-- 주문번호 생성 -->
 	<select id="getOrderNo" resultType="int">
 		select ord_tests_seq.nextval 

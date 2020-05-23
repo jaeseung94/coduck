@@ -23,7 +23,7 @@ import kr.co.coduck.vo.Test;
 import kr.co.coduck.vo.User;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class OrderTestServiceImpl implements OrderTestService{
 
 	private final String API_KEY = "0478914633649164";
@@ -41,18 +41,20 @@ public class OrderTestServiceImpl implements OrderTestService{
 	private OrderTestDao orderTestDao;
 	
 	@Override
-	public int getOrderNo() {
-		return orderTestDao.getOrderNo();
+	public void deleteOrdTest(int orderNo) {
+		orderTestDao.deleteOrdTest(orderNo);
 	}
 	
 	@Override
-	public void insertOrderTest(int userNo, List<Integer> testNos, int point) {
-		
-		IamportClient iamportClient = new IamportClient(API_KEY, API_SECRET );
+	public int getOrderNo() {
+		return orderTestDao.getOrderNo();
+	}
+
+	@Override
+	public int insertOrderTestInfo(List<Integer> testNos, int userNo, int orderNo) {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		OrdTestInfo ordTestInfo = new OrdTestInfo();
-		int orderNo = getOrderNo();
 		ordTestInfo.setOrderNo(orderNo);
 		int totalPrice = 0;
 		
@@ -96,17 +98,34 @@ public class OrderTestServiceImpl implements OrderTestService{
 //			2.5 상품번호를 장바구니에서 삭제한다.
 			testCartDao.deleteCartTest(e);
 		}
+		return totalPrice;
+	}
+	
+	@Override
+	public int insertOrderTest(int userNo, List<Integer> testNos, int point, int orderNo) {
+		OrdTest ordTest = new OrdTest();
+		//아임포트 모듈 쓰기 전에 임시로 주문정보 저장
+		if(testNos == null && point == -1) {
+			orderTestDao.insertOrderTest(ordTest);
+			ordTest.setTotalPrice(point);
+			ordTest.setUserNo(userNo);
+			ordTest.setNo(orderNo);
+			return -1;
+		}
+		
+		this.deleteOrdTest(orderNo);
+		
+		IamportClient iamportClient = new IamportClient(API_KEY, API_SECRET );
+		int totalPrice = insertOrderTestInfo(testNos, userNo, orderNo);
 //		3. 포인트를 총주문금액에서 뺀다.
 		totalPrice -= point;
 //		4. 주문정보테이블에 저장한다.
-//		if(1!=2) {
-//			throw new RuntimeException();
-//		}
-		OrdTest ordTest = new OrdTest();
 		ordTest.setNo(orderNo);
 		ordTest.setUserNo(userNo);
 		ordTest.setTotalPrice(totalPrice);
 		orderTestDao.insertOrderTest(ordTest);
+		
+		return orderNo;
 	}
 	
 //	public void insertOrderTest(int userNo, Integer couponNo, int[] testNos, int testTotalPrice, String bankNo) {
@@ -147,12 +166,6 @@ public class OrderTestServiceImpl implements OrderTestService{
 //		
 //		
 //	}
-
-	@Override
-	public void insertOrderTestInfo(OrdTestInfo ordTestInfo) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public List<OrderTestDetailListDto> getOrderTestInfoByOrderNo(int userNo) {
