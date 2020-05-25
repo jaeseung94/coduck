@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.siot.IamportRestHttpClientJava.IamportClient;
+import com.siot.IamportRestHttpClientJava.request.CancelData;
 
 import kr.co.coduck.dao.CouponDao;
 import kr.co.coduck.dto.CartChoiceTestListDto;
 import kr.co.coduck.dto.CartTestDto;
-import kr.co.coduck.dto.OrderTestDetailListDto;
+import kr.co.coduck.dto.OrderTestDetailDto;
 import kr.co.coduck.service.CartTestService;
 import kr.co.coduck.service.CouponService;
 import kr.co.coduck.service.OrderTestService;
@@ -29,6 +32,7 @@ import kr.co.coduck.service.TestService;
 import kr.co.coduck.vo.Coupon;
 import kr.co.coduck.vo.CouponUsedTest;
 import kr.co.coduck.vo.OrdTest;
+import kr.co.coduck.vo.OrdTestInfo;
 import kr.co.coduck.vo.Test;
 import kr.co.coduck.vo.User;
 
@@ -45,13 +49,24 @@ public class OrderTestController {
 	@Autowired
 	private CouponService couponService;
 	
+	@GetMapping("/orderComplete.hta")
+	public String orderComplete(@RequestParam("orderNo") int orderNo, HttpSession session, Model model) {
+		
+		List<OrderTestDetailDto> info = orderTestService.getOrderTestInfoByOrderNo(orderNo);
+		model.addAttribute("ordInfo", info);
+		return "order/orderComplete";
+	}
+	
+	@PostMapping("/cancelIamport.hta")
+	@ResponseBody
+	public void cancelOrderIamport(@RequestParam("orderNo") String orderNo) throws Exception {
+		orderTestService.cancelIamportPayment(orderNo);
+	}
+	
 	@PostMapping("/insertTempOrderTest.hta")
 	@ResponseBody
-	public int insertTempOrderTest(HttpSession session) {
-		User user = (User)session.getAttribute("LU");
+	public int insertTempOrderTest(HttpSession session) throws Exception {
 		int orderNo = orderTestService.getOrderNo();
-		orderTestService.insertOrderTest(user.getNo(), null, -1, orderNo);
-		
 		return orderNo;
 	}
 
@@ -65,7 +80,7 @@ public class OrderTestController {
 	
 	@PostMapping("/orderTests.hta")
 	@ResponseBody
-	public void orderTests(HttpSession session, @RequestParam("testno") List<Integer> testNos,
+	public ResponseEntity<Map<String, String>> orderTests(HttpSession session, @RequestParam("testno") List<Integer> testNos,
 			@RequestParam("point") int point, @RequestParam("orderNo") int orderNo) {
 		
 		System.out.println("");
@@ -74,19 +89,19 @@ public class OrderTestController {
 		System.out.println(point);
 		User user = (User)session.getAttribute("LU");	
 		//결제될 금액과 아임포터 서버의 결제금액 비교
-		
-		
-		orderTestService.insertOrderTest(user.getNo(), testNos, point, orderNo);
-	}
-	
-	
-	@PostMapping("/temp.hta")
-	@ResponseBody
-	public Object temp() throws Exception {
-		IamportClient iamportClient 
-		= new IamportClient("0478914633649164", "e6TnRo0WPMLOUepiA1IAen0e1e9UuDzJJs6BR7yGTjuOxU68WOIacIpeXy8rcHbVahx1p5Iiod7W8d44");
-		
-		return iamportClient.paymentByImpUid("imp_063594854972");
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			orderTestService.insertOrderTest(user.getNo(), testNos, point, orderNo);
+		} catch(Exception e) {
+			System.out.println("흠");
+			map.put("status", "forgery");
+			map.put("message", "위조된 결제시도");
+			return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+			//return "faker";
+		}
+		map.put("status", "success");
+		map.put("message", "일반 결제 성공");
+		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 	
 //	@PostMapping("/orderTests.hta")
@@ -114,7 +129,7 @@ public class OrderTestController {
 	@PostMapping("/userorderlectlist.hta")
 	public String userOrderTestList(HttpSession session, Model model) {
 		User user = (User) session.getAttribute("LU");
-		List<OrderTestDetailListDto> userOrderTestLists = orderTestService.getOrderTestInfoByOrderNo(user.getNo());
+		List<OrderTestDetailDto> userOrderTestLists = orderTestService.getOrderTestInfoByOrderNo(user.getNo());
 		model.addAttribute("userOrderTestLists", userOrderTestLists);
 		System.out
 				.println(userOrderTestLists + "=====================================================================");

@@ -172,7 +172,7 @@ ul {
 						<th>적립금 사용</th>
 						<td>
 							<p>
-								사용가능액 : <span style="font-weight: bold;"><fmt:formatNumber value="${point }"/></span>원
+								사용가능액 : <span style="font-weight: bold;"><fmt:formatNumber value="${user.point }"/></span>원
 							</p>
 							<p>
 								<input type="text" value="0" class="text-right" id="input-point" 
@@ -346,6 +346,7 @@ ul {
 	var sum = 0;
 	var prevPointDiscount;
 	var prevPointFinal;
+	var ress;
 		
 	$("#finalPrice").click(function(){
 		var formData = $("#form-order").serialize();
@@ -372,7 +373,7 @@ ul {
 		
 		//request_pay를 호출하기 전에 db에 주문 정보 저장(0원으로)
 		$.ajax({
-			url:"insertTempOrderTest.hta",
+			url:"/order/insertTempOrderTest.hta",
 			method:"post"
 		}).done(function(data){
 			orderNo = data;
@@ -382,35 +383,47 @@ ul {
 			    pay_method : 'card',
 			    merchant_uid : orderNo,
 			    name : '주문명:결제테스트',
-			    amount : finalPrice,
+			    amount : finalPrice
 			}, function(rsp) {
 			    if ( rsp.success ) {
+			    	var msg;
 				 	$.ajax({
 						url:"/order/orderTests.hta",
 						method:"post",
 						data:formData + "&orderNo=" + orderNo
 					}).done(function(data){
+						console.log(data);
 						switch(data.status){
 						case "success":
-					        var msg = '결제가 완료되었습니다.';
+					        msg = data.message;
 					        msg += '고유ID : ' + rsp.imp_uid;
 					        msg += '상점 거래ID : ' + rsp.merchant_uid;
 					        msg += '결제 금액 : ' + rsp.paid_amount;
 					        msg += '카드 승인번호 : ' + rsp.apply_num;
 					        break;
-						case "faker":
-							var msg ="금액이 변조되었습니다. 다시 시도해주십시오.";
-							break;
 						}
+						alert(msg);
+						location.href = "/order/orderComplete.hta?orderNo=" + orderNo;
+					}).fail(function(data){
+						console.log(data);
+						ress= data;
+						msg = data.message;
+						//아임포트 서버 결제취소
+						$.ajax({
+							url:"/order/cancelIamport.hta",
+							method:"post",
+							data:"orderNo="+orderNo
+						}).done(function(data){
+							alert(msg);
+						})
 					})
 				
 			    } else {
 			        var msg = '결제에 실패하였습니다.';
 			        msg += '에러내용 : ' + rsp.error_msg;
+			        alert(msg);
 			    }
 				
-			    //1번실행
-			    alert(msg);
 			}); 
 		})
 	})

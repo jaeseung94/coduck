@@ -1,5 +1,6 @@
 package kr.co.coduck.service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,28 +8,29 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.RollbackRuleAttribute;
 
 import com.siot.IamportRestHttpClientJava.IamportClient;
+import com.siot.IamportRestHttpClientJava.request.CancelData;
+import com.siot.IamportRestHttpClientJava.response.IamportResponse;
+import com.siot.IamportRestHttpClientJava.response.Payment;
 
 import kr.co.coduck.dao.CouponDao;
 import kr.co.coduck.dao.OrderTestDao;
 import kr.co.coduck.dao.TestCartDao;
 import kr.co.coduck.dao.TestDao;
 import kr.co.coduck.dao.UserDao;
-import kr.co.coduck.dto.OrderTestDetailListDto;
+import kr.co.coduck.dto.OrderTestDetailDto;
 import kr.co.coduck.vo.CouponUsedTest;
 import kr.co.coduck.vo.OrdTest;
 import kr.co.coduck.vo.OrdTestInfo;
+import kr.co.coduck.vo.PointHistory;
 import kr.co.coduck.vo.Test;
 import kr.co.coduck.vo.User;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class OrderTestServiceImpl implements OrderTestService{
 
-	private final String API_KEY = "0478914633649164";
-	private final String API_SECRET = "e6TnRo0WPMLOUepiA1IAen0e1e9UuDzJJs6BR7yGTjuOxU68WOIacIpeXy8rcHbVahx1p5Iiod7W8d44";
-	
 	@Autowired
 	private UserDao userDao;
 	@Autowired
@@ -39,6 +41,28 @@ public class OrderTestServiceImpl implements OrderTestService{
 	private CouponDao couponDao;
 	@Autowired
 	private OrderTestDao orderTestDao;
+	
+	private IamportClient iamportClient;
+	
+	public OrderTestServiceImpl() {
+		iamportClient  = new IamportClient("0478914633649164", "e6TnRo0WPMLOUepiA1IAen0e1e9UuDzJJs6BR7yGTjuOxU68WOIacIpeXy8rcHbVahx1p5Iiod7W8d44");
+	}
+	
+	@Override
+	public PointHistory getPointHistoryByOrdNo(int no) {
+		return orderTestDao.getPointHistoryByOrdNo(no);
+	}
+	
+	@Override
+	public void insertPointHistory(PointHistory pointHistory) {
+		orderTestDao.insertPointHistory(pointHistory);
+	}
+	
+	@Override
+	public void cancelIamportPayment(String orderNo) throws Exception {
+		CancelData cancelData = new CancelData(orderNo, false);
+		iamportClient.cancelPayment(cancelData);
+	}
 	
 	@Override
 	public void deleteOrdTest(int orderNo) {
@@ -92,6 +116,7 @@ public class OrderTestServiceImpl implements OrderTestService{
 			} else {//2.4 없다면
 //				2.4.1 주문상세테이블에 저장한다.
 				ordTestInfo.setCouponNo(null);
+				orderTestDao.insertOrderTestInfo(ordTestInfo);
 //				2.4.2 상품금액을 총주문금액에 더한다.	
 				totalPrice += test.getPrice();
 			}
@@ -102,24 +127,47 @@ public class OrderTestServiceImpl implements OrderTestService{
 	}
 	
 	@Override
-	public int insertOrderTest(int userNo, List<Integer> testNos, int point, int orderNo) {
+	public int insertOrderTest(int userNo, List<Integer> testNos, int point, int orderNo) throws Exception {
 		OrdTest ordTest = new OrdTest();
-		//아임포트 모듈 쓰기 전에 임시로 주문정보 저장
-		if(testNos == null && point == -1) {
-			orderTestDao.insertOrderTest(ordTest);
-			ordTest.setTotalPrice(point);
-			ordTest.setUserNo(userNo);
-			ordTest.setNo(orderNo);
-			return -1;
-		}
+		User user = userDao.getUserByUserNo(userNo);
+		PointHistory history = new PointHistory();
+		history.setOrdLectNo(null);
+		history.setOrdTestNo(orderNo);
+		history.setUserNo(userNo);
+		System.out.println("포포포포포포포포ㅗ포포ㅗ포포포포포ㅗㅍ");
+		System.out.println(point);
 		
-		this.deleteOrdTest(orderNo);
-		
-		IamportClient iamportClient = new IamportClient(API_KEY, API_SECRET );
 		int totalPrice = insertOrderTestInfo(testNos, userNo, orderNo);
+		if(point > 0) {
+			//유저에서 포인트 뺴기
+			user.setPoint(user.getPoint()-point);
+			
+			history.setContents("상품 구매시 포인트 사용");
+			history.setPoint(point);
+			history.setRole("M");
+			
+		} else if(point == 0) {
+			//포인트를 사용안했을 경우
+			//구매 금액의 5% 적립
+			int addPoint = user.getPoint() + (int)(totalPrice * 0.05);
+			history.setContents("상품 구매로 포인트 적립");
+			history.setPoint((int)(totalPrice * 0.05));
+			history.setRole("P");
+			user.setPoint(addPoint);
+		}
+		this.insertPointHistory(history);
+		userDao.updateUser(user);
 //		3. 포인트를 총주문금액에서 뺀다.
 		totalPrice -= point;
 //		4. 주문정보테이블에 저장한다.
+		IamportResponse<Payment> response = iamportClient.paymentByMerchantUid(Integer.toString(orderNo));
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		System.out.println(response.getResponse().getAmount().intValue());
+		if(response.getResponse().getAmount().intValue() != totalPrice) {
+			System.out.println("결제 불일치");
+			throw new RuntimeException();
+		}
+		System.out.println("결제 일치");
 		ordTest.setNo(orderNo);
 		ordTest.setUserNo(userNo);
 		ordTest.setTotalPrice(totalPrice);
@@ -168,9 +216,8 @@ public class OrderTestServiceImpl implements OrderTestService{
 //	}
 
 	@Override
-	public List<OrderTestDetailListDto> getOrderTestInfoByOrderNo(int userNo) {
-		User user = userDao.getUserProfilByNo(userNo);
-		List<OrderTestDetailListDto> userOrderList = orderTestDao.getOrderTestInfoByOrderNo(user.getNo());
+	public List<OrderTestDetailDto> getOrderTestInfoByOrderNo(int orderNo) {
+		List<OrderTestDetailDto> userOrderList = orderTestDao.getOrderTestInfoByOrderNo(orderNo);
 		return userOrderList;
 	}
 

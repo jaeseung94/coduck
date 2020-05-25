@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
-@Alias("OrderTestDetailListDto")
-public class OrderTestDetailListDto {
+@Alias("OrderTestDetailDto")
+public class OrderTestDetailDto {
 
 	private int orderNo;
 	private String testTitle;
@@ -13,10 +13,10 @@ public class OrderTestDetailListDto {
 	private Date testCreateDate;
 	private int testprice;
 	private String ep;
-	private String done;
 	private int testNo;
+	private int couponNo;
 	
-	public OrderTestDetailListDto() {
+	public OrderTestDetailDto() {
 		
 	}
 
@@ -76,13 +76,19 @@ public class OrderTestDetailListDto {
 		this.ep = ep;
 	}
 
-	public String getDone() {
-		return done;
+	public int getCouponNo() {
+		return couponNo;
 	}
 
-	public void setDone(String done) {
-		this.done = done;
+	public void setCouponNo(int couponNo) {
+		this.couponNo = couponNo;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "OrderTestDetailDto [orderNo=" + orderNo + ", testTitle=" + testTitle + ", totalPrice=" + totalPrice
+				+ ", testCreateDate=" + testCreateDate + ", testprice=" + testprice + ", ep=" + ep + ", testNo="
+				+ testNo + ", couponNo=" + couponNo + "]";
+	}
 	
 }

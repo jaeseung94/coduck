@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.coduck.dto.LessonDto;
-import kr.co.coduck.dto.OrderTestDetailListDto;
 import kr.co.coduck.dto.SearchTestDetailDto;
 import kr.co.coduck.dto.SearchTestDto;
 import kr.co.coduck.form.UserRegisterForm;

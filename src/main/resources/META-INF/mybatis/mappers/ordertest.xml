@@ -4,6 +4,35 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace 필수 설정! -->
 <mapper namespace="kr.co.coduck.dao.OrderTestDao">	
+
+	<!-- 포인트 내역 조회 -->
+	<select id="getPointHistoryByOrdNo" parameterType="PointHistory" resultType="PointHistory">
+		select 
+			point_history_no		no,
+			create_date				createDate,
+			contents				contents,
+			point					point,
+			ord_no					ordNo,
+			ord_test_no				ordTestNo,
+			user_no					userNo,
+			role					role
+		from
+			point_history
+		where
+			<if test="ordNo != null and ordTestNo == null">
+				and ord_no = #{ordNo}
+			</if>
+			<if test="ordNo == null and ordTestNo != null">
+				and ord_test_no = #{ordTestNo}
+			</if>
+			
+	</select>
+
+	<!-- 포인트 적립 -->
+	<insert id="insertPointHistory" parameterType="PointHistory">
+		insert into point_history
+		values (point_history_seq.nextval, sysdate, #{contents}, #{point}, #{ordLectNo}, #{ordTestNo}, #{userNo}, #{role})
+	</insert>
 	
 	<!-- 주문정보 삭제 -->
 	<delete id="deleteOrdTest" parameterType="int">
@@ -43,30 +72,26 @@
       (ord_test_infos_seq.nextval, #{orderNo}, #{testNo}, #{couponNo})
    </insert>
    
-   <select id="getOrderTestInfoByOrderNo" parameterType="int" resultType="OrderTestDetailListDto">
+   <select id="getOrderTestInfoByOrderNo" parameterType="int" resultType="OrderTestDetailDto">
 		SELECT
-			D.ORD_TEST_NO					orderNo,
+			C.ORD_TEST_NO					orderNo,
 			B.TEST_NAME						testTitle,
 			C.ORD_TEST_TOTAL_PRICE			totalPrice,
 			C.ORD_TEST_CREATE_DATE			testCreateDate,
 			B.TEST_PRICE					testprice,
 			B.TEST_EP						ep,
-			F.TEST_IS_DONE					done,
-			B.TEST_NO						testNo					
+			B.TEST_NO						testNo,
+			D.coupon_no						couponNo			
 		FROM
-			USERS A, TESTS B, ORD_TESTS C, ORD_TEST_INFOS D, TEST_RESULTS F
+			USERS A, TESTS B, ORD_TESTS C, ORD_TEST_INFOS D
 		WHERE
 			A.USER_NO = C.USER_NO
 		AND
 			B.TEST_NO = D.TEST_NO
 		AND
-			C.USER_NO = A.USER_NO
-		AND
 			D.ORD_TEST_NO = C.ORD_TEST_NO
 		AND
-			F.USER_NO = A.USER_NO
-		AND
-			A.USER_NO = #{value}
+			C.ORD_TEST_NO = #{value}
 	</select>
 
 </mapper>

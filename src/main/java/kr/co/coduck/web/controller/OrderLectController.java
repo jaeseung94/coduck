@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import kr.co.coduck.dto.CartChoiceLectListDto;
 import kr.co.coduck.dto.OrderLectDetailListDto;
 import kr.co.coduck.dto.OrderLectListDto;
-import kr.co.coduck.dto.OrderTestDetailListDto;
 import kr.co.coduck.dto.SearchTestDetailDto;
 import kr.co.coduck.service.CartLectService;
 import kr.co.coduck.service.LectService;
