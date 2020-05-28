@@ -8,7 +8,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.RollbackRuleAttribute;
 
 import com.siot.IamportRestHttpClientJava.IamportClient;
 import com.siot.IamportRestHttpClientJava.request.CancelData;
@@ -49,8 +48,19 @@ public class OrderTestServiceImpl implements OrderTestService{
 	}
 	
 	@Override
-	public PointHistory getPointHistoryByOrdNo(int no) {
-		return orderTestDao.getPointHistoryByOrdNo(no);
+	public List<OrderTestDetailDto> getOrderTestByUserNo(Map<String, Object> map) {
+		return orderTestDao.getOrderTestByUserNo(map);
+	}
+	
+	@Override
+	public IamportResponse<Payment> getIamportPayment(int orderNo) throws Exception {
+		
+		return iamportClient.paymentByMerchantUid(String.valueOf(orderNo));
+	}
+	
+	@Override
+	public PointHistory getPointHistoryByOrdNo(PointHistory history) {
+		return orderTestDao.getPointHistoryByOrdNo(history);
 	}
 	
 	@Override
@@ -220,10 +230,10 @@ public class OrderTestServiceImpl implements OrderTestService{
 		List<OrderTestDetailDto> userOrderList = orderTestDao.getOrderTestInfoByOrderNo(orderNo);
 		return userOrderList;
 	}
-
+	
 	@Override
-	public OrdTest getOrdTestByTestNoNUserNo(Map<String, Integer> map) {
-		return orderTestDao.getOrdTestByTestNoNUserNo(map);
+	public OrdTest getOrderTestByOrderNo(int orderNo) {
+		return orderTestDao.getOrderTestByOrderNo(orderNo);
 	}
 
 }

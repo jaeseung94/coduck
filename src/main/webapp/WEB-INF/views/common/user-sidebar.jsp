@@ -34,7 +34,7 @@
 				<li class="side-menu"><a href="/cart/myLectCartList.hta">강의 장바구니</a></li>
 				<li class="side-menu"><a href="/cart/myTestCartList.hta">모의고사 장바구니</a></li>
 				<li class="side-menu"><a href="/user/mycouponlist.hta">내 쿠폰함</a></li>
-				<li class="side-menu"><a href="/order/userorderlectlist.hta">구매내역</a></li>
+				<li class="side-menu"><a href="/order/myOrderTestList.hta">구매내역</a></li>
 			</ul>
 			<p class="side-menu">내 강의</p>
 			<ul style="list-style: none;">

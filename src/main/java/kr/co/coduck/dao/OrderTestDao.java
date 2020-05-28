@@ -11,12 +11,14 @@ import kr.co.coduck.vo.PointHistory;
 public interface OrderTestDao {
 	
 	//시험이든 강의든 주문번호로 조회하기
-	PointHistory getPointHistoryByOrdNo(int no);
+	PointHistory getPointHistoryByOrdNo(PointHistory history);
 	void insertPointHistory(PointHistory pointHistory);
 	void deleteOrdTest(int orderNo);
 	int getOrderNo();
 	void insertOrderTest(OrdTest ordTest);
 	void insertOrderTestInfo(OrdTestInfo ordTestInfo);
 	List<OrderTestDetailDto> getOrderTestInfoByOrderNo(int orderNo);
-	OrdTest getOrdTestByTestNoNUserNo(Map<String, Integer> map);
+	List<OrderTestDetailDto> getOrderTestByUserNo(Map<String, Object> map);
+	OrdTest getOrderTestByOrderNo(int orderNo);
+	
 }

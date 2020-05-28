@@ -11,10 +11,13 @@ public class OrderTestDetailDto {
 	private String testTitle;
 	private int totalPrice;
 	private Date testCreateDate;
+	private String status;
 	private int testprice;
 	private String ep;
 	private int testNo;
 	private int couponNo;
+	private int discountPrice;
+	private String discountWay;
 	
 	public OrderTestDetailDto() {
 		
@@ -84,11 +87,35 @@ public class OrderTestDetailDto {
 		this.couponNo = couponNo;
 	}
 
+	public int getDiscountPrice() {
+		return discountPrice;
+	}
+
+	public void setDiscountPrice(int discountPrice) {
+		this.discountPrice = discountPrice;
+	}
+
+	public String getDiscountWay() {
+		return discountWay;
+	}
+
+	public void setDiscountWay(String discountWay) {
+		this.discountWay = discountWay;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderTestDetailDto [orderNo=" + orderNo + ", testTitle=" + testTitle + ", totalPrice=" + totalPrice
-				+ ", testCreateDate=" + testCreateDate + ", testprice=" + testprice + ", ep=" + ep + ", testNo="
-				+ testNo + ", couponNo=" + couponNo + "]";
+				+ ", testCreateDate=" + testCreateDate + ", status=" + status + ", testprice=" + testprice + ", ep="
+				+ ep + ", testNo=" + testNo + ", couponNo=" + couponNo + ", discountPrice=" + discountPrice
+				+ ", discountWay=" + discountWay + "]";
 	}
-	
 }

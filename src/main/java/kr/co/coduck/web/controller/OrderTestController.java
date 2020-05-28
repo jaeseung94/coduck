@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.siot.IamportRestHttpClientJava.IamportClient;
 import com.siot.IamportRestHttpClientJava.request.CancelData;
+import com.siot.IamportRestHttpClientJava.response.IamportResponse;
+import com.siot.IamportRestHttpClientJava.response.Payment;
 
 import kr.co.coduck.dao.CouponDao;
 import kr.co.coduck.dto.CartChoiceTestListDto;
@@ -33,6 +35,7 @@ import kr.co.coduck.vo.Coupon;
 import kr.co.coduck.vo.CouponUsedTest;
 import kr.co.coduck.vo.OrdTest;
 import kr.co.coduck.vo.OrdTestInfo;
+import kr.co.coduck.vo.PointHistory;
 import kr.co.coduck.vo.Test;
 import kr.co.coduck.vo.User;
 
@@ -50,10 +53,24 @@ public class OrderTestController {
 	private CouponService couponService;
 	
 	@GetMapping("/orderComplete.hta")
-	public String orderComplete(@RequestParam("orderNo") int orderNo, HttpSession session, Model model) {
+	public String orderComplete(@RequestParam("orderNo") int orderNo, HttpSession session, Model model) throws Exception {
+		User user = (User)session.getAttribute("LU");
 		
-		List<OrderTestDetailDto> info = orderTestService.getOrderTestInfoByOrderNo(orderNo);
-		model.addAttribute("ordInfo", info);
+		List<OrderTestDetailDto> infos = orderTestService.getOrderTestInfoByOrderNo(orderNo);
+		
+		IamportResponse<Payment> payment = orderTestService.getIamportPayment(orderNo);
+		System.out.println("####################################");
+		System.out.println("####################################");
+		System.out.println("payment : " + payment.getResponse());
+		PointHistory history = new PointHistory();
+		history.setOrdTestNo(orderNo);
+		history = orderTestService.getPointHistoryByOrdNo(history);
+		OrdTest ordTest = orderTestService.getOrderTestByOrderNo(orderNo);
+		model.addAttribute("ordInfos", infos);
+		model.addAttribute("payment", payment.getResponse());
+		model.addAttribute("user", user);
+		model.addAttribute("ordTest", ordTest);
+		model.addAttribute("point", history);
 		return "order/orderComplete";
 	}
 	
@@ -103,36 +120,20 @@ public class OrderTestController {
 		map.put("message", "일반 결제 성공");
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
-	
-//	@PostMapping("/orderTests.hta")
-//	public String orderLect(
-//			@RequestParam(value = "choicecouponno", required = false, defaultValue = "0") Integer couponNo,
-//			HttpSession session, @RequestParam("testno") int[] testNos,
-//			@RequestParam("testtotalprices") int testTotalPrice, @RequestParam("bankno") String bankNo) {
-//		// System.out.println(couponNo);
-//		System.out.println(testNos.length);
-//		System.out.println(testTotalPrice);
-//		System.out.println(bankNo);
-//		User user = (User) session.getAttribute("LU");
-//		if (!user.getBankNumber().equals(bankNo)) {
-//			return "redirect:/order/ordertestform.hta?error=fail";
-//		}
-//		if (couponNo == 0) {
-//			couponNo = null;
-//		}
-//		orderTestService.insertOrderTest(user.getNo(), couponNo, testNos, testTotalPrice, bankNo);
-//		
-//		return "redirect:/order/userorderlectlist.hta";
-//	}
-	
 
-	@PostMapping("/userorderlectlist.hta")
+	@GetMapping("/myOrderTestList.hta")
 	public String userOrderTestList(HttpSession session, Model model) {
 		User user = (User) session.getAttribute("LU");
-		List<OrderTestDetailDto> userOrderTestLists = orderTestService.getOrderTestInfoByOrderNo(user.getNo());
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("userNo", user.getNo());
+		map.put("period", 7);
+		map.put("periodPrev", null);
+		map.put("periodNext", null);
+		List<OrderTestDetailDto> userOrderTestLists = orderTestService.getOrderTestByUserNo(map);
 		model.addAttribute("userOrderTestLists", userOrderTestLists);
 		System.out
 				.println(userOrderTestLists + "=====================================================================");
-		return "order/userorderlectlist";
+		return "order/myTestOrderList";
 	}
 }

@@ -12,20 +12,20 @@
 			create_date				createDate,
 			contents				contents,
 			point					point,
-			ord_no					ordNo,
+			ord_no					ordLectNo,
 			ord_test_no				ordTestNo,
 			user_no					userNo,
 			role					role
 		from
 			point_history
-		where
-			<if test="ordNo != null and ordTestNo == null">
-				and ord_no = #{ordNo}
+		<where>
+			<if test="ordLectNo != null and ordTestNo == null">
+				and ord_no = #{ordLectNo}
 			</if>
-			<if test="ordNo == null and ordTestNo != null">
+			<if test="ordLectNo == null and ordTestNo != null">
 				and ord_test_no = #{ordTestNo}
 			</if>
-			
+		</where>
 	</select>
 
 	<!-- 포인트 적립 -->
@@ -46,18 +46,6 @@
 		from dual
 	</select>
 	
-	<!-- 구매이력 조회 -->
-	<select id="getOrdTestByTestNoNUserNo" parameterType="map" resultType="OrdTest">
-		select 
-			C.user_no, B.test_no
-		from 
-			ord_test_infos B, ord_tests C
-		where 
-			B.ord_test_no = C.ord_test_no
-			and C.user_no = #{value}
-			and B.test_no = #{value}
-	</select>
-
 	<insert id="insertOrderTest" parameterType="OrdTest">
 		insert into ORD_TESTS
 		(ORD_TEST_NO, USER_NO, ORD_TEST_TOTAL_PRICE)
@@ -72,26 +60,79 @@
       (ord_test_infos_seq.nextval, #{orderNo}, #{testNo}, #{couponNo})
    </insert>
    
-   <select id="getOrderTestInfoByOrderNo" parameterType="int" resultType="OrderTestDetailDto">
+   <!-- 유저번호로 기간별 주문내역 조회 -->
+   <select id="getOrderTestByUserNo" parameterType="map" resultType="OrderTestDetailDto">
 		SELECT
 			C.ORD_TEST_NO					orderNo,
 			B.TEST_NAME						testTitle,
 			C.ORD_TEST_TOTAL_PRICE			totalPrice,
 			C.ORD_TEST_CREATE_DATE			testCreateDate,
+			C.ORD_TEST_STATUS				status,
 			B.TEST_PRICE					testprice,
 			B.TEST_EP						ep,
 			B.TEST_NO						testNo,
-			D.coupon_no						couponNo			
+			D.coupon_no						couponNo,
+			E.discount_price				discountPrice,
+			E.discount_way					discountWay	
 		FROM
-			USERS A, TESTS B, ORD_TESTS C, ORD_TEST_INFOS D
+			TESTS B, ORD_TESTS C, ORD_TEST_INFOS D, coupons E
+		<where>
+			B.TEST_NO = D.TEST_NO
+			AND
+				D.ORD_TEST_NO = C.ORD_TEST_NO
+			AND
+				C.user_no = #{userNo}
+			and
+				D.coupon_no = E.coupon_no(+)   
+			<if test="period != null and period != 0">
+				and ORD_TEST_CREATE_DATE >= sysdate - #{period}
+			</if>
+			<if test="periodPrev != null and periodPrev != 0 and periodNext != null and periodNext != 0">
+				and ORD_TEST_CREATE_DATE >= to_date(#{period-prev}, 'yyyy-mm-dd')
+				and ORD_TEST_CREATE_DATE &lt;= to_date(#{period-next}, 'yyyy-mm-dd') +1 
+			</if>
+		</where>
+		order by C.ORD_TEST_NO desc, B.test_name, B.test_ep
+	</select>
+	
+	<!-- 주문번호로 주문내역 조회 -->
+	<select id="getOrderTestByOrderNo" parameterType="int" resultType="OrdTest">
+		select
+			ord_test_no				no,
+			user_no					userNo,
+			ord_test_create_date	testCreateDate,
+			ord_test_status			status,
+			ord_test_total_price	totalPrice
+		from
+			ord_tests
+		where
+			ord_test_no = #{value}
+	</select>
+ 
+ 	<!-- 주문번호로 주문상세내역 조회 -->
+	<select id="getOrderTestInfoByOrderNo" parameterType="int" resultType="OrderTestDetailDto">
+		SELECT
+			C.ORD_TEST_NO					orderNo,
+			B.TEST_NAME						testTitle,
+			C.ORD_TEST_TOTAL_PRICE			totalPrice,
+			C.ORD_TEST_CREATE_DATE			testCreateDate,
+			C.ORD_TEST_STATUS				status,
+			B.TEST_PRICE					testprice,
+			B.TEST_EP						ep,
+			B.TEST_NO						testNo,
+			D.coupon_no						couponNo,
+			E.discount_price				discountPrice,
+			E.discount_way					discountWay	
+		FROM
+			TESTS B, ORD_TESTS C, ORD_TEST_INFOS D, coupons E
 		WHERE
-			A.USER_NO = C.USER_NO
-		AND
 			B.TEST_NO = D.TEST_NO
 		AND
 			D.ORD_TEST_NO = C.ORD_TEST_NO
 		AND
 			C.ORD_TEST_NO = #{value}
+		and
+			D.coupon_no = E.coupon_no(+)
 	</select>
 
 </mapper>

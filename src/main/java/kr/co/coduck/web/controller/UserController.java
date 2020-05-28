@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.coduck.dto.LessonDto;
+import kr.co.coduck.dto.OrderTestDetailDto;
 import kr.co.coduck.dto.SearchTestDetailDto;
 import kr.co.coduck.dto.SearchTestDto;
 import kr.co.coduck.form.UserRegisterForm;
@@ -36,10 +38,20 @@ public class UserController {
 	private LectService lectService;
 	@Autowired
 	private CouponService couponService;
-	@Autowired
+	@Autowired 
 	private TestService testService;
 	
 	private final String photoSaveDirectory = "C:\\projects\\spring_workspace\\coduck\\src\\main\\webapp\\resources\\images\\userImageFilename";
+	
+	@GetMapping("/myOrderList.hta")
+	@ResponseBody
+	public List<OrderTestDetailDto> myOrderList(HttpSession session, Model model,
+			@RequestParam(value="period", required=false, defaultValue="0")int period,
+			
+			){
+		
+		return null;
+	}
 	
 	@GetMapping("/profile-check.hta")
 	public String checkPassword(HttpSession session, Model model) {

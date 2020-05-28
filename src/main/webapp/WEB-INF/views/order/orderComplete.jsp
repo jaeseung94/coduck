@@ -23,7 +23,60 @@
 <!-- sy.js -->
 <script src="/resources/js/common.js"></script>
 <style type="text/css">
-
+	.center {
+		 text-align: center;
+	}
+	
+	#sum-table {
+		width:100%;
+		border-collapse:collapse; 
+		background-color: #f5f5f5; 
+		border: 2px solid black;
+		vertical-align: middle;
+	}
+	
+	#sum-table th, #sum-table td {
+		text-align: center;
+		border: 1px solid black;
+	}
+	
+	#sum-table th {
+		height: 35px;
+	}
+	
+	#sum-table td {
+		height: 60px;
+	}
+	
+	#tr-sum span{
+		font-weight: bold;
+		font-size: 23px;
+	}
+	
+	.xx th, .xx td {
+		border: 1px solid #ddd;
+	}
+	
+	.table th {
+		background-color: #f5f5f5;
+	}
+	
+	.yy th, .yy td{
+		padding: 15px;
+	}
+	
+	.btn-black-lg {
+		  background-color: #555555; 
+		  border: none;
+		  color: white;
+		  padding: 15px 32px;
+		  text-align: center;
+		  text-decoration: none;
+		  display: inline-block;
+		  font-size: 16px;
+		  margin: 4px 2px;
+		  cursor: pointer;
+	}
 </style>
 </head>
 <body>
@@ -31,129 +84,148 @@
 	<%@ include file="../common/user-sidebar.jsp"%>
 
 	<div class="col-sm-9">
-		<h1>주문완료</h1>
+		<img alt="" src="/imgs/주문완료.PNG" style="width: 100%; height: 90px;">
+		<br>
+		<br>
+		<div style="text-align: center;">
+			<h2>"주문이 정상적으로 처리되었습니다."</h2>
+			<h4>코덕을 이용해주셔서 감사합니다.</h4>
+		</div>
+		<br>
+		<br>
+		<h4 style="font-weight: bold;">주문상품 정보 및 결제내역</h4>
+		<table class="table xx" style="border: 1px solid #ddd; border-top: 2px solid black">
+			<thead>
+				<tr style="background-color: #f5f5f5;">
+					<th class="center">상품명/옵션</th>
+					<th class="center">수량</th>
+					<th class="center">상품금액</th>
+					<th class="center">쿠폰할인금액</th>
+					<th class="center">적립금사용금액</th>
+				</tr>
+			</thead>
+			<tbody class="center">
+					<c:set var="originPrice" value="0"></c:set>
+					<c:forEach var="info" items="${ordInfos }" varStatus="loop">
+						<c:set var="infoLen" value="${loop.count }"></c:set>
+						<c:set var="originPrice" value="${originPrice + info.testprice }"></c:set>
+						<tr>
+							<c:set var="totalPrice" value="${info.totalPrice }"></c:set>
+							<td>${info.testTitle } > ${info.ep }</td>
+							<td>1</td>
+							<td><fmt:formatNumber value="${info.testprice }"/></td>
+							<c:choose>
+								<c:when test="${info.discountWay eq 'percent' }">
+									<td><fmt:formatNumber value="${info.testprice * info.discountPrice*0.01 }"/></td>
+								</c:when>
+								<c:otherwise>
+									<td><fmt:formatNumber value="${info.discountPrice }"/></td>
+								</c:otherwise>
+							</c:choose>
+							<td class="row-span">
+								<c:choose>
+									<c:when test="${not empty point}">
+										<fmt:formatNumber value="${point.point }"/>
+									</c:when>
+									<c:otherwise>
+										0
+									</c:otherwise>
+								</c:choose>
+							</td>
+						</tr>
+					</c:forEach>
+			</tbody>
+		</table>
+		<br>
+		
+		<table id="sum-table" >	
+			<colgroup>
+				<col width="33%">
+				<col width="33%">
+				<col width="*">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>상품금액 <span>(상품 : <span id="span-cnt">${infoLen}</span>건)</span></th>
+					<th>총 할인금액</th>
+					<th>최종 결제금액</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr id="tr-sum">
+					<td><span id="span-total-price"><fmt:formatNumber><c:out value="${originPrice }"/></fmt:formatNumber></span>원</td>
+					<td><span style="margin-right: 30px; font-size: 20px;" class="glyphicon glyphicon-minus-sign"></span><span><fmt:formatNumber><c:out value="${originPrice - totalPrice }"/></fmt:formatNumber></span>원</td>
+					<td><img style="margin: 0px 30px 5px 0px; height: 22px;" alt="" src="/imgs/equals.png"/><span style="color: red;" id="span-final-price"><fmt:formatNumber><c:out value="${totalPrice }"/></fmt:formatNumber></span>원</td>
+				</tr>
+			</tbody>
+		</table>
+		<br>
+		<br>
+		<table class="table xx yy" style="border: 1px solid #ddd; border-top: 2px solid black;">
+			<tr>
+				<th style="vertical-align: middle;">
+					<div  style="min-height: 40px;">
+						주문번호
+					</div>
+				</th>
+				<td>${ordTest.no }</td>
+			</tr>
+			<tr>
+				<th style="vertical-align: middle;">
+					<div  style="min-height: 40px; vertical-align: middle;">
+						주문일시
+					</div>
+				</th>
+				<td><fmt:formatDate value="${ordTest.testCreateDate }" pattern="yyyy-MM-dd a hh:mm:ss"/></td>
+			</tr>
+			<tr>
+				<th style="vertical-align: middle;">주문자 정보</th>
+				<td>
+					<ul style="list-style: none; padding: 0px;">
+						<li>주문하시는 분 : ${user.name }</li>
+						<li>휴대폰번호 : 010-1234-4565</li>
+						<li>이메일 : ${user.email }</li>
+					</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<div  style="min-height: 40px; vertical-align: middle;">
+						결제정보
+					</div>
+				</th>
+				<td>
+					<ul style="list-style: none; padding:0px">
+						<li>결제방식 : ${payment.pgProvider }</li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		
+		<p style="text-align: center;">
+			<br>
+			<button class="btn-black-lg" type="button" id="btn-home" >홈으로</button>
+			<button class="btn-black-lg" type="button" id="btn-ord-list" style="background-color: #f44336;">나의 주문현황</button>
+		</p>
+	</div>
 	</div>
 	</div>
 
 
 	<script type="text/javascript">
-	var testNo;
-	
-	//모달 내 쿠폰 적용하기 클릭시
-	$("#btn-apply-coupon").click(function(event){
-		var couponNo = $("#modal-radio :checked").val();
-		if($("#modal-radio :checked").length == 0){
-			event.preventDefault();
-			alert("쿠폰이 선택되지 않았습니다.");
-			return;
-		}
-		$.get("/coupon/insertUsedCouponInTest.hta", 
-				{testNo:testNo, couponNo:couponNo}, function(data){
-			$("#modal-my-coupons").modal("hide");
-			$("#td-coupon-apply-price-" + testNo).empty();
-			var couponAppliedPrice = $("#coupon-total-price").text();
-			$("#td-coupon-apply-price-" + testNo).append(couponAppliedPrice.toLocaleString()+'원');
-		})
-	})
-	
-	//모달 내 할인금액 쿠폰 클릭시 실행
-	function calculateDiscountPrice(disprice,couponNo){
-		console.log("aaa");
-		var origin_disprice = $("#coupon-disprice").text();
-		//console.log("couponNo",couponNo);
-		//쿠폰 중복 여부 확인
-		$.get(
-			"/coupon/isUsedInTest.hta?couponNo=" + couponNo, function(data){
-				console.log(data);
-				console.log(data.testNo);
-				console.log(testNo);
-				if(data && testNo != data.testNo){
-					var status = confirm("다른 상품에 이미 적용된 쿠폰입니다. 취소 후 이 상품에 적용하시겠습니까?");
-					if(!status){
-						$("#coupon-" +couponNo).prop("checked", false);
-						$("#coupon-disprice").text(origin_disprice);
-					} else {
-						$("#coupon-disprice").text(disprice);
-					}
-				} 
-				//쿠폰 모달 금액 변동
-				$("#coupon-disprice").text(disprice);
-				var result = $("#coupon-price").text() - $("#coupon-disprice").text();
-				if(result < 0){
-					result = 0;
-				}
-				$("#coupon-total-price").text(result);
-			}		
-		)
-	}
-	
-	//모달 내 할인퍼센트 쿠폰 클릭시 실행
-	function calculateDiscountRate(rate,couponNo){
-		console.log("aaa");
-		$.get("/coupon/isUsedInTest.hta?couponNo=" + couponNo, function(data){
-				console.log("퍼센트",data);
-				if(data){
-					var status = confirm("적용된 쿠폰입니다. 이 상품에 새로 적용하시겠습니까?");
-					if(status == true){
-						
-					}
-				} else {
-					//쿠폰 모달 금액 변동
-					//$("#coupon-disprice").text(disprice);
-					var result = $("#coupon-price").text() - $("#coupon-disprice").text();
-					if(result < 0){
-						result = 0;
-					}
-					$("#coupon-total-price").text(result);
-					//
-				}
-			}		
-		)
-		var price = $("#coupon-price").text();
-		var result = 0;
-		$("#coupon-disprice").text(price*((100-rate)/100));
-		result = $("#coupon-price").text() - $("#coupon-disprice").text();
-		if(result < 0){
-			result = 0;
-		}
-		$("#coupon-total-price").text(result);
-	}
-	
-	//상품 리스트에서 쿠폰 적용 이미지 클릭 시
-	function applyCoupon(price, event, no){
-		//이건 한번
-		console.log("쿠폰적용")
-		event.preventDefault();
-		testNo = no;
-		//클릭하지 않은 상태로 체크해제시킴.
-		$("#modal-radio :radio").prop("checked", false);
-		$("#coupon-price").text(price);
-		$("#coupon-disprice").text(0);
-		$("#coupon-total-price").text(price);
-		$.get("/coupon/getAppliedCouponInTest.hta?testNo=" + testNo, function(data){
-			//$("#coupon-"+ data).click();
-			$("#coupon-" + data).prop("checked", true);
-			//$("#coupon-" + data).trigger("click");
-			//여기서부터 내일하자
-			/* if($("#modal-radio :radio").is(":checked")){
-				//$("#modal-radio :radio:checked").trigger("click");
-				
-				
-			} else {
-				$("#coupon-price").text(price);
-				$("#coupon-disprice").text(0);
-				$("#coupon-total-price").text(price); 
-			} */
-			//$("#modal-my-coupons").modal("show"); 	
-		})
-		$("#modal-my-coupons").modal("show"); 	
-	}
-	
-	$("label").click(function(){
-		$(".div-pay-info").css("display", "none");
-		$(".li-color").css("background-color", "white");
-		$(this).closest("li").css("background-color", "#ebf7f5").find(".div-pay-info").css("display", "block");
-	})
-	
+		var len = ${infoLen};
+		var price = ${originPrice};
+		
+		$(".row-span").not(":eq(0)").remove();
+		$(".row-span").eq(0).attr("rowspan", len);
+		$(".row-span").eq(0).css("vertical-align", "middle");
+		
+		$("#btn-home").click(function(){
+			location.href = "/home.hta";
+		})	
+		
+		$("#btn-ord-list").click(function(){
+			location.href = "/order/userorderlectlist.hta";
+		})		
    </script>
 	<%@ include file="../common/footer.jsp"%>

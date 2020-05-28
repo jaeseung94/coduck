@@ -67,6 +67,7 @@ public class OrderLectController {
 		return "redirect:/order/userorderlectlist.hta";
 	}
 	
+	//모의고사와 강의 나눠서하자
 	@GetMapping("/userorderlectlist.hta")
 	public String userOrderLectList(HttpSession session, Model model) {
 		User user = (User)session.getAttribute("LU");
