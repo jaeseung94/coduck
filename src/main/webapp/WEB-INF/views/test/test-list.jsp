@@ -161,7 +161,8 @@ table thead tr td {
 	console.log(searchFormData);
 	
 	//페이지네이션
-	function setPagination(pagination){
+	function setPagination(pagination
+			){
 		$("#pagination").empty();
 		
 		var pageRow ="";

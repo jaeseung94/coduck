@@ -35,6 +35,7 @@ import kr.co.coduck.vo.Coupon;
 import kr.co.coduck.vo.CouponUsedTest;
 import kr.co.coduck.vo.OrdTest;
 import kr.co.coduck.vo.OrdTestInfo;
+import kr.co.coduck.vo.Pagination;
 import kr.co.coduck.vo.PointHistory;
 import kr.co.coduck.vo.Test;
 import kr.co.coduck.vo.User;
@@ -51,6 +52,28 @@ public class OrderTestController {
 	
 	@Autowired
 	private CouponService couponService;
+	
+	@GetMapping("/myTestOrderListByPeriod.hta")
+	@ResponseBody
+	public Map<String, Object> myOrderList(HttpSession session, Model model,
+			@RequestParam("prev")int prev, @RequestParam("next") int next, @RequestParam("pageNo")int pageNo){
+		
+		
+		User user = (User)session.getAttribute("LU");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("periodPrev", prev);
+		map.put("periodNext", next);
+		map.put("userNo", user.getNo());
+		List<OrderTestDetailDto> dto = orderTestService.getOrderTestByUserNo(map);
+		Pagination pagination = new Pagination(pageNo, dto.size(), 5, 5);
+		map.put("pagination", pagination);
+		dto = orderTestService.getOrderTestByUserNo(map);
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("dto", dto);
+		result.put("pagination", pagination);
+		return result;
+	}
 	
 	@GetMapping("/orderComplete.hta")
 	public String orderComplete(@RequestParam("orderNo") int orderNo, HttpSession session, Model model) throws Exception {

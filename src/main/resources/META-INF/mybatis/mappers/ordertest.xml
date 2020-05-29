@@ -62,37 +62,45 @@
    
    <!-- 유저번호로 기간별 주문내역 조회 -->
    <select id="getOrderTestByUserNo" parameterType="map" resultType="OrderTestDetailDto">
-		SELECT
-			C.ORD_TEST_NO					orderNo,
-			B.TEST_NAME						testTitle,
-			C.ORD_TEST_TOTAL_PRICE			totalPrice,
-			C.ORD_TEST_CREATE_DATE			testCreateDate,
-			C.ORD_TEST_STATUS				status,
-			B.TEST_PRICE					testprice,
-			B.TEST_EP						ep,
-			B.TEST_NO						testNo,
-			D.coupon_no						couponNo,
-			E.discount_price				discountPrice,
-			E.discount_way					discountWay	
-		FROM
-			TESTS B, ORD_TESTS C, ORD_TEST_INFOS D, coupons E
-		<where>
-			B.TEST_NO = D.TEST_NO
-			AND
-				D.ORD_TEST_NO = C.ORD_TEST_NO
-			AND
-				C.user_no = #{userNo}
-			and
-				D.coupon_no = E.coupon_no(+)   
-			<if test="period != null and period != 0">
-				and ORD_TEST_CREATE_DATE >= sysdate - #{period}
-			</if>
-			<if test="periodPrev != null and periodPrev != 0 and periodNext != null and periodNext != 0">
-				and ORD_TEST_CREATE_DATE >= to_date(#{period-prev}, 'yyyy-mm-dd')
-				and ORD_TEST_CREATE_DATE &lt;= to_date(#{period-next}, 'yyyy-mm-dd') +1 
-			</if>
-		</where>
-		order by C.ORD_TEST_NO desc, B.test_name, B.test_ep
+		select *
+		from(
+			SELECT
+				row_number() over (order by C.ORD_TEST_NO desc, B.test_name, B.test_ep) rn,
+				C.ORD_TEST_NO					orderNo,
+				B.TEST_NAME						testTitle,
+				C.ORD_TEST_TOTAL_PRICE			totalPrice,
+				C.ORD_TEST_CREATE_DATE			testCreateDate,
+				C.ORD_TEST_STATUS				status,
+				B.TEST_PRICE					testprice,
+				B.TEST_EP						ep,
+				B.TEST_NO						testNo,
+				D.coupon_no						couponNo,
+				E.discount_price				discountPrice,
+				E.discount_way					discountWay	
+			FROM
+				TESTS B, ORD_TESTS C, ORD_TEST_INFOS D, coupons E
+			<where>
+				B.TEST_NO = D.TEST_NO
+				AND
+					D.ORD_TEST_NO = C.ORD_TEST_NO
+				AND
+					C.user_no = #{userNo}
+				and
+					D.coupon_no = E.coupon_no(+)   
+				<if test="period != null and period != 0">
+					and ORD_TEST_CREATE_DATE >= sysdate - #{period}
+				</if>
+				<if test="periodPrev != null and periodPrev != 0 and periodNext != null and periodNext != 0">
+					and ORD_TEST_CREATE_DATE >= to_date(#{periodPrev}, 'yyyy-mm-dd')
+					and ORD_TEST_CREATE_DATE &lt;= to_date(#{periodNext}, 'yyyy-mm-dd') +1 
+				</if>
+			</where>
+			)
+			<where>
+				<if test="pagination != null">
+					rn between #{pagination.beginIndex} and #{pagination.endIndex}
+				</if>
+			</where>
 	</select>
 	
 	<!-- 주문번호로 주문내역 조회 -->

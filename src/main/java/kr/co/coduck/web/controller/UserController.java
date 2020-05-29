@@ -43,16 +43,6 @@ public class UserController {
 	
 	private final String photoSaveDirectory = "C:\\projects\\spring_workspace\\coduck\\src\\main\\webapp\\resources\\images\\userImageFilename";
 	
-	@GetMapping("/myOrderList.hta")
-	@ResponseBody
-	public List<OrderTestDetailDto> myOrderList(HttpSession session, Model model,
-			@RequestParam(value="period", required=false, defaultValue="0")int period,
-			
-			){
-		
-		return null;
-	}
-	
 	@GetMapping("/profile-check.hta")
 	public String checkPassword(HttpSession session, Model model) {
 		User user = (User)session.getAttribute("LU");

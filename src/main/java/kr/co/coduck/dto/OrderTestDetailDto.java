@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
+import kr.co.coduck.vo.Pagination;
+
 @Alias("OrderTestDetailDto")
 public class OrderTestDetailDto {
 
@@ -118,4 +120,5 @@ public class OrderTestDetailDto {
 				+ ep + ", testNo=" + testNo + ", couponNo=" + couponNo + ", discountPrice=" + discountPrice
 				+ ", discountWay=" + discountWay + "]";
 	}
+
 }

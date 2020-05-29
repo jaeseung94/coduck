@@ -26,24 +26,6 @@
 <!-- sy.js -->
 <script src="/resources/js/common.js"></script>
 <style type="text/css">
-	.pagination a {
-		  color: black;
-		  float: left;
-		  padding: 8px 16px;
-		  text-decoration: none;
-		}
-		
-		.pagination a.active {
-		  background-color: #4CAF50;
-		  color: white;
-		  border-radius: 5px;
-		}
-		
-		.pagination a:hover:not(.active) {
-		  background-color: #ddd;
-		  border-radius: 5px;
-		}
-
 .box-radio-input input[type="radio"] {
 	display: none;
 }
@@ -129,21 +111,65 @@
 						</tr>
 					</thead>
 					<tbody>
-					
+						<c:choose>
+							<c:when test="${empty userOrderTestLists }">
+								<tr>
+									<td colspan="6" class="text-center">주문내역이 존재하지 않습니다.</td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								<c:forEach var="userOrderTestList"
+									items="${userOrderTestLists }">
+									<tr>
+										<td class="row-span">
+											<p style="margin: 0px; color: #666; font-weight: bold;"><fmt:formatDate value="${userOrderTestList.testCreateDate }" pattern="yyyy-MM-dd" /></p>
+											<p>(${userOrderTestList.orderNo })</p>
+										</td>
+										<td style="color: #666; height: 67px;">${userOrderTestList.testTitle }>
+											${userOrderTestList.ep }</td>
+										<td style="color: red;"><fmt:formatNumber value="${userOrderTestList.testprice }"/>원</td>
+										<td>${userOrderTestList.status }</td>
+									</tr>
+								</c:forEach>
+							</c:otherwise>
+						</c:choose>
 					</tbody>
 				</table>
-			</div>
-			
-			<div class="col-sm-12 text-center">
-				<div class="pagination" id="pagination">		
-				
-				</div>	
 			</div>
 		</div>
 	</div>
 	</div>
 	</div>
 
+
+	<div id="modal-order-detail" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">주문 상세 정보</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table" id="modal-order-detail-table">
+						<thead>
+							<tr>
+								<th>강의번호</th>
+								<th>강의이름</th>
+								<th>강의가격</th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script type="text/javascript">
    
    var prevNo = 0;
@@ -151,93 +177,53 @@
    var index;
    var statuss =  false;
    
-   setCalender(7);
-   inquiry(1)
+   setRowSpan();
    
-   	//페이지네이션
-	function setPagination(pagination){
-		$("#pagination").empty();
-		
-		var pageRow ="";
-		if(pagination.pageNo > 1){
-			pageRow += "<a href='' data-page-no='" + (pagination.pageNo - 1) + "'>이전</a>";
-		}
-		
-		for(var i=pagination.beginPage; i<=pagination.endPage; i++){
-			if(pagination.pageNo == i){
-				pageRow += "<a href='' data-page-no='" + i + 
-				"' class='active'>" + i + "</a>";
-			} else {
-				pageRow += "<a href='' data-page-no='" + i + 
-				"'>" + i + "</a>";
-			}
-		}
-		
-		if(pagination.pageNo < pagination.totalPagesCount){
-			pageRow += "<a href='' data-page-no='" + (pagination.pageNo + 1) + "'>다음</a>";
-		}
-		
-		$("#pagination").append(pageRow);
-	}
-	
-	//페이지네이션 클릭했을 때
-	$("#pagination").on("click", "a", function(event){
-		event.preventDefault();
-		var pageNo = $(this).data("page-no");
-		$("#input-page-no").val(pageNo);
-		inquiry(pageNo);
-	})
-   
-   function setCalender(data){
+   $("input[name='period']").change(function(){
+	   var today = new Date();   
 	   var time = new Date();
 	   time = time.getTime();
-	   time -= (60*60*24*data*1000);
-	   time = new Date(time);
-  		var year = time.getFullYear()
-  		var month =time.getMonth() + 1;
-  		var day = time.getDate();
-  		if(month < 10){
-  			month = "0"+month;
-  		}
-  		if(day < 10){
-  			day = "0"+day;
-  		}
-  		$("#Datepicker-prev").val(""+year+month+day);
-  		
-  		time = new Date();
-  		year = time.getFullYear()
-  		month =time.getMonth() + 1;
-  		day = time.getDate();
-  		if(month < 10){
-  			month = "0"+month;
-  		}
-  		if(day < 10){
-  			day = "0"+day;
-  		}
-  		$("#Datepicker-next").val(""+year+month+day);
-   }
-   
-	//개월 수 조회
-   $("input[name='period']").change(function(){
-	   var time;
+
 	   var val = $(this).val();
-	   
 	   switch(val){
 	   	case '7':	
-	   		time = 7;
+	   		time -= (60*60*24*7*1000);
 	   		break;
 	   	case '30':
-	   		time = 30;
+	   		time -= (60*60*24*30*1000);
 	   		break;
 	   	case '90':
-	   		time = 90;
+	   		time -= (60*60*24*90*1000);
 	   		break;
 	   	case '180':
-	   		time = 180;
+	   		time -= (60*60*24*180*1000);
 	   		break;
 	   }
-	   setCalender(time);
-	   inquiry(1);
+	   
+  		time = new Date(time);
+   		var year = time.getFullYear()
+   		var month =time.getMonth() + 1;
+   		var day = time.getDate();
+   		if(month < 10){
+   			month = "0"+month;
+   		}
+   		if(day < 10){
+   			day = "0"+day;
+   		}
+   		$("#Datepicker-prev").val(""+year+month+day);
+   		
+   		time = new Date();
+   		year = time.getFullYear()
+   		month =time.getMonth() + 1;
+   		day = time.getDate();
+   		if(month < 10){
+   			month = "0"+month;
+   		}
+   		if(day < 10){
+   			day = "0"+day;
+   		}
+   		$("#Datepicker-next").val(""+year+month+day);
+   		inquiry();
    }) 
    
    function setRowSpan(){
@@ -261,45 +247,21 @@
    }
     
     //조회함수
-	function inquiry(pageNo){
+	function inquiry(){
 	   var prev = $("#Datepicker-prev").val();
 	   var next = $("#Datepicker-next").val();
 	   $.ajax({
 		   url:"/order/myTestOrderListByPeriod.hta",
-		   data:{prev:prev, next:next, pageNo:pageNo},
+		   data:{prev:prev, next:next},
 		   method:"get"
 	   }).done(function(data){
-		   $("#table-myOrder tbody").empty();
-		   $("#pagination").empty();
-		   var row ="";
-		   if(data.dto==null || data.dto==""){
-			   row += "<tr><td colspan='6' class='text-center'>주문내역이 존재하지 않습니다.</td></tr>";
-			   $("#table-myOrder tbody").append(row);
-			   return;
-		   }
-		   for(var i=0; i<data.dto.length; i++){
-			   row+="<tr>";
-			   row+="<td class='row-span'>"
-			   //console.log(data[i].testCreateDate)
-			   row+="<p style='margin: 0px; color: #666; font-weight: bold;'>";
-			   var date = new Date(data.dto[i].testCreateDate);
-			   row+= date.toLocaleDateString() + "</p>";
-			   row+="<p>(" + data.dto[i].orderNo + ")</p>";
-			   row+="</td>";
-			   row+="<td style='color: #666; height: 67px;'>" + data.dto[i].testTitle + " > " + data.dto[i].ep + "</td>";
-			   row+="<td style='color: red;'>" + data.dto[i].testprice.toLocaleString() + "원</td>";
-			   row+="<td>" + data.dto[i].status + "</td>";
-			   row+="</tr>";
-		   }
-		   $("#table-myOrder tbody").append(row);
-		   setRowSpan();
-		   setPagination(data.pagination);
+		   console.log(data);
 	   })
 	}
 	
     //기간별 조회
    $("#btn-inquiry").click(function(e){
-	   inquiry(1);
+	   inquiry();
    })
    
    //달력 api
