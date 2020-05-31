@@ -272,6 +272,7 @@
 		   $("#table-myOrder tbody").empty();
 		   $("#pagination").empty();
 		   var row ="";
+		   var p;
 		   if(data.dto==null || data.dto==""){
 			   row += "<tr><td colspan='6' class='text-center'>주문내역이 존재하지 않습니다.</td></tr>";
 			   $("#table-myOrder tbody").append(row);
@@ -281,13 +282,18 @@
 			   row+="<tr>";
 			   row+="<td class='row-span'>"
 			   //console.log(data[i].testCreateDate)
-			   row+="<p style='margin: 0px; color: #666; font-weight: bold;'>";
+			   row+="<a href='/order/orderTestDetail.hta?orderNo="+ data.dto[i].orderNo + "'><p style='margin: 0px; color: #666; font-weight: bold;'>";
 			   var date = new Date(data.dto[i].testCreateDate);
 			   row+= date.toLocaleDateString() + "</p>";
-			   row+="<p>(" + data.dto[i].orderNo + ")</p>";
+			   row+="<p>(" + data.dto[i].orderNo + ")</p></a>";
 			   row+="</td>";
 			   row+="<td style='color: #666; height: 67px;'>" + data.dto[i].testTitle + " > " + data.dto[i].ep + "</td>";
-			   row+="<td style='color: red;'>" + data.dto[i].testprice.toLocaleString() + "원</td>";
+			   if(data.dto[i].discountWay == 'percent'){
+				   p = data.dto[i].testprice * (100 - data.dto[i].discountPrice) * 0.01;
+			   } else {
+				   p = data.dto[i].testprice - data.dto[i].discountPrice;
+			   }
+			   row+="<td style='color: red;'>" + p.toLocaleString() + "원</td>";
 			   row+="<td>" + data.dto[i].status + "</td>";
 			   row+="</tr>";
 		   }

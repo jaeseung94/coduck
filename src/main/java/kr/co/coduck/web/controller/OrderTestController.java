@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.crypto.dsig.keyinfo.PGPData;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,23 @@ public class OrderTestController {
 	
 	@Autowired
 	private CouponService couponService;
+	
+	@GetMapping("/orderTestDetail.hta")
+	public String orderTestDetail(HttpSession session, Model model, @RequestParam("orderNo")int orderNo) throws Exception {
+		List<OrderTestDetailDto> dtos = orderTestService.getOrderTestInfoByOrderNo(orderNo);
+		IamportResponse<Payment> payment = orderTestService.getIamportPayment(orderNo);
+		OrdTest test = orderTestService.getOrderTestByOrderNo(orderNo);
+		
+		PointHistory history = new PointHistory();
+		history.setOrdTestNo(orderNo);
+		history = orderTestService.getPointHistoryByOrdNo(history);
+		model.addAttribute("infos", dtos);
+		model.addAttribute("payment", payment.getResponse());
+		model.addAttribute("test", test);
+		model.addAttribute("history", history);
+		model.addAttribute("user", (User)session.getAttribute("LU"));
+		return "/order/orderDetail";
+	}
 	
 	@GetMapping("/myTestOrderListByPeriod.hta")
 	@ResponseBody
