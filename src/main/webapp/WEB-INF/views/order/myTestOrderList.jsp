@@ -85,6 +85,8 @@
 
 	<div class="col-sm-9">
 		<h3>구매한 모의고사</h3>
+		<br>
+		<br>
 		<div class="row">
 			<div class="col-sm-12">
 				<form id="form-myOrder" action="">

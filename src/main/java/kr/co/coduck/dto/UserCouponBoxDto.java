@@ -16,7 +16,7 @@ public class UserCouponBoxDto {
 	private Date startDate;
 	private Date endDate;
 	private int discountPrice;
-	private int discountRate;
+	private int discountWay;
 	private String limited;
 	private int amount;
 	
@@ -94,12 +94,12 @@ public class UserCouponBoxDto {
 		this.discountPrice = discountPrice;
 	}
 
-	public int getDiscountRate() {
-		return discountRate;
+	public int getDiscountWay() {
+		return discountWay;
 	}
 
-	public void setDiscountRate(int discountRate) {
-		this.discountRate = discountRate;
+	public void setDiscountWay(int discountWay) {
+		this.discountWay = discountWay;
 	}
 
 	public String getLimited() {

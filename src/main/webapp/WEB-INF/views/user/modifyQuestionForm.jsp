@@ -45,19 +45,19 @@
 				  <div class="form-group">
 				    <label class="control-label col-sm-1">제목</label>
 				    <div class="col-sm-10">
-				    	<input id="title" class="form-control" type="text" name="title">
+				    	<input id="title" class="form-control" type="text" name="title" value="${qna.title}">
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <label class="control-label col-sm-1">내용</label>
 				    <div class="col-sm-10">
-				      <textarea style="resize: none; width:100%;" rows="15" class="form-control" id=content name="content"></textarea>
+				      <textarea style="resize: none; width:100%;" rows="15" class="form-control" id=content name="content">${qna.content }</textarea>
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <label class="control-label col-sm-1">사진첨부</label>
 				    <div class="col-sm-10" id="attach">
-				       <input id="uploadInputBox" type="file" name="filedatas" multiple class="form-control" />
+				       <input id="uploadInputBox" type="file" name="filedatas" multiple class="form-control"/>
 				    </div>
 				  </div>
 				  <div class="form-group">
@@ -68,7 +68,8 @@
 				  
 				  <div class="form-group">
 				    <div class="col-sm-offset-1 col-sm-10 text-right">
-				      <button id="btn-submit" type="submit" class="btn btn-primary">등록</button>
+				      <button id="btn-submit" type="submit" class="btn btn-primary">수정</button>
+				      <button type="button" class="btn btn-grey">취소</button>
 				    </div>
 				  </div>
 				</form>
@@ -81,7 +82,7 @@
 		<br>
 </div>
 <script type="text/javascript">
-	
+
 	var oEditors =[];
 	nhn.husky.EZCreator.createInIFrame({
 	    oAppRef: oEditors,

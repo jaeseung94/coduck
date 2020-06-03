@@ -379,7 +379,7 @@ table thead tr td {
 		event.preventDefault();
 		var testNo = $(this).data("test-no");
 		window.location.reload();
-		window.open("/test/takeaTest.hta?testNo=" + testNo, "시험응시페이지", "width = 900, height = 850, top = 100, left = 200, location = no");
+		window.open("/test/takeaTest.hta?testNo=" + testNo, "시험응시페이지", "width = 1200, height = 850, top = 100, left = 200, location = no");
 	})
 	
 	//ajax 테이블 행 추가
@@ -402,16 +402,16 @@ table thead tr td {
 			if(orderYN == "Y"){
 				if(done == "Y"){
 					row += "<td>구매완료</td>";
-					row += "<td>응시완료</td>";
-					row += "<td><button type='button' class='btn btn-default' id='btn-detail'> 자세히보기</button></td>";
+					row += "<td style='color:red;'>응시완료</td>";
+					row += "<td><button type='button' class='btn btn-default' id='btn-detail'> 점수보기</button></td>";
 				} else {
 					row += "<td>구매완료</td>";
-					row += "<td>미응시</td>";
-					row += "<td><a data-test-no='" + item.testNo + "' href='' class='btn btn-default a-take-test'>응시하기</a></td>";
+					row += "<td style='color:blue;'>미응시</td>";
+					row += "<td><a data-test-no='" + item.testNo + "' href='' class='btn btn-success a-take-test'>응시하기</a></td>";
 				}
 			} else {
 				row += "<td>미구매</td>";
-				row += "<td>미응시</td>";
+				row += "<td  style='color:blue;'>미응시</td>";
 				row += "<td><a href='/buynow/ordernowtestform.hta?testno=" + item.testNo + "' class='btn btn-primary'>바로구매</a> <button type='button' class='btn btn-warning' name='testNo' value='" + item.testNo + "'>장바구니담기</button></td>";
 			}
 			

@@ -25,6 +25,11 @@ public class AdminQnaServiceImpl implements AdminQnaService {
 	private AdminQnaDao adminQnaDao;
 	
 	@Override
+	public void deleteQna(int qnaNo) {
+		adminQnaDao.deleteQna(qnaNo);
+	}
+	
+	@Override
 	public List<AdQnaFile> getAdQnaFilesByQnaNo(int qnaNo) {
 		return adminQnaDao.getAdQnaFilesByQnaNo(qnaNo);
 	}

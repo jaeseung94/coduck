@@ -49,6 +49,17 @@ public class AdminTestController {
 	@Autowired
 	private TestService testService;
 	
+	//엑셀 다운
+	@GetMapping("/excelDown.hta")
+	public String excelDown(@RequestParam("testNo") int testNo, Model model) {
+		Test test = testService.getTestByNo(testNo);
+		List<TestQtDto> qts = testService.getTestQtsDtoByNo(testNo);
+		model.addAttribute("test", test);
+		model.addAttribute("qts", qts);
+		
+		return "excelDownView";
+	}
+	
 	//가격 수정하기
 	@PostMapping("/modifyPrice.hta")
 	@ResponseBody

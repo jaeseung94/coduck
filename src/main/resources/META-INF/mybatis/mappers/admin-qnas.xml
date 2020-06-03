@@ -4,6 +4,12 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="kr.co.coduck.dao.AdminQnaDao">
+	<!-- 문의내역 삭제 -->
+	<delete id="deleteQna" parameterType="int">
+		delete from ad_answers
+		where admin_qna_no = #{value}
+	</delete>
+	
 	<update id="updateQna" parameterType="AdQnaDto">
 		update
 			ad_qnas

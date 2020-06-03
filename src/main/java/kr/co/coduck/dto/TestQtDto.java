@@ -23,6 +23,7 @@ public class TestQtDto {
 	private String name;
 	private String ep;
 	private int qtCnt;
+	private int trueRate; 
 	
 	public TestQtDto () {}
 
@@ -176,6 +177,14 @@ public class TestQtDto {
 				+ ", qtNo=" + qtNo + ", qtNum=" + qtNum + ", contents=" + contents + ", score=" + score + ", v1=" + v1
 				+ ", v2=" + v2 + ", v3=" + v3 + ", v4=" + v4 + ", ans=" + ans + ", img=" + img + ", testNo=" + testNo
 				+ ", name=" + name + ", ep=" + ep + ", qtCnt=" + qtCnt + "]";
+	}
+
+	public int getTrueRate() {
+		return trueRate;
+	}
+
+	public void setTrueRate(int trueRate) {
+		this.trueRate = trueRate;
 	}
 
 }

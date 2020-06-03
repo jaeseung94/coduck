@@ -5,7 +5,28 @@
   
 <mapper namespace="kr.co.coduck.dao.UserQuestionDao">
 
-	<!--  -->
+	<!-- 1:1 문의내역 삭제 -->
+	<delete id="deleteQna" parameterType="int">
+		delete from ad_qnas
+		where admin_qna_no = #{value}
+	</delete>
+	
+	<delete id="deleteQnaFile" parameterType="int">
+		delete from AD_QNAS_IMAGES
+		where admin_qna_no = #{value}
+	</delete>
+	
+	<!-- 1:1 문의내역 수정  -->
+	<update id="updateQna" parameterType="AdQna">
+		update ad_qnas
+		set
+			user_no = #{userNo},
+			admin_qna_title = #{title},
+			admin_qna_content = #{content}
+		where
+			admin_qna_no = #{no}
+	</update>
+	
 	<!-- 1:1 문의내역 사진조회 -->
 	<select id="getAdQnaFilesByQnaNo" parameterType="int" resultType="AdQnaFile">
 		select

@@ -66,6 +66,7 @@ public class CartTestController {
 		int testNo = 0;
 		List<CartChoiceTestListDto> results = new ArrayList<CartChoiceTestListDto>();
 		Map<String, Object> userChoiceTestList = new HashMap<String, Object>();
+		int totalPrice = 0;
 		for(Integer e : testNos) {
 			testNo = e;
 			userChoiceTestList.put("userNo", user.getNo());
@@ -73,6 +74,11 @@ public class CartTestController {
 			CartChoiceTestListDto userChoiceTest = cartTestService.getCartChoiceTestListByCartChoiceTestNo(userChoiceTestList);
 			results.add(userChoiceTest); 
 		}
+		
+		for(CartChoiceTestListDto e : results) {
+			totalPrice += e.getPrice();
+		}
+		model.addAttribute("totalPrice", totalPrice);
 		model.addAttribute("tests", results);
 		model.addAttribute("user", user);
 		return "order/orderTestForm";

@@ -31,6 +31,21 @@ public class UserQuestionServiceImpl implements UserQuestionService{
 	private UserQuestionDao userQuestionDao;
 	
 	@Override
+	public void deleteQnaFile(int qnaNo) {
+		userQuestionDao.deleteQnaFile(qnaNo);
+	}
+	
+	@Override
+	public void deleteQna(int qnaNo) {
+		userQuestionDao.deleteQna(qnaNo);
+	}
+	
+	@Override
+	public void updateQna(AdQna adQna) {
+		userQuestionDao.updateQna(adQna);
+	}
+	
+	@Override
 	public int getAllAdQnaCntByUserNo(int userNo){
 		return userQuestionDao.getAllAdQnaCntByUserNo(userNo);
 	}

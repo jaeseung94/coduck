@@ -30,38 +30,6 @@ public class CouponController {
 
    @Autowired
    private CouponService couponService;
-//   
-//   @GetMapping("/insertUsedCouponInTest.hta")
-//   @ResponseBody
-//   public String insertUsedCouponInTest(HttpSession session, 
-//		   @RequestParam("couponNo") int couponNo, @RequestParam("testNo") int testNo) {
-//	   User user = (User)session.getAttribute("LU");
-//	   CouponUsedTest couponUsedTest = new CouponUsedTest();
-//	   couponUsedTest.setUserNo(user.getNo());
-//	   couponUsedTest.setTestNo(testNo);
-//	   
-//	   CouponUsedTest result = couponService.isUsedCouponInTest(couponUsedTest);
-//	   couponUsedTest.setCouponNo(couponNo);
-//	   if(result != null) {
-//		   if(result.getCouponNo() == couponNo) {
-//			   System.out.println("4444444444444444444444444444444444444");
-//			   if(result.getTestNo() == testNo) {
-//				   System.out.println("333333333333333333333333333333333");
-//				   return "none";
-//			   }
-//			   System.out.println("++++++++++++++++++++++++++++++++");
-//			   System.out.println("22222222222222222222222222222222");
-//			   couponService.deleteUsedCouponIntest(couponUsedTest);
-//			   couponService.insertUsedCouponInTest(couponUsedTest);
-//			   return "ok";
-//		   }
-//		   couponService.updateCouponInTest(couponUsedTest);
-//		   return "ok";
-//	   }
-//	   
-//	   couponService.insertUsedCouponInTes 1(couponUsedTest);
-//	   return "ok";
-//   }
    
    @GetMapping("/insertUsedCouponInTest.hta")
    @ResponseBody

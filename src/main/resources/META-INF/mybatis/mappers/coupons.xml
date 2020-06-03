@@ -143,7 +143,7 @@
 			coupon_end_date = #{endDate},
 			coupon_amount = #{amount},
 			coupon_limited = #{limited},
-			discount_price = #{discountPrice},
+			discount_price = #{discountPrice}
 		where
 			coupon_no = #{no}
 	</update>
@@ -158,8 +158,8 @@
 			coupon_end_date			as endDate,
 			coupon_amount			as amount,
 			coupon_limited			as limited,
-			coupon_discount_price	as discountPrice,
-			coupon_discount_rate	as discountRate
+			discount_price			as discountPrice,
+			discount_way			as discountWay
 		from
 			coupons
 	</select>
@@ -174,8 +174,8 @@
 			coupon_end_date			as endDate,
 			coupon_amount			as amount,
 			coupon_limited			as limited,
-			coupon_discount_price	as discountPrice,
-			coupon_discount_rate	as discountRate
+			discount_price	as discountPrice,
+			discount_way			as discountWay
 		from
 			coupons
 		where 
@@ -271,10 +271,10 @@
 			B.coupon_enabled			as enabled,
 			B.coupon_start_date			as startDate,
 			B.coupon_end_date			as endDate,
-			B.coupon_discount_price		as discountPrice,
-			B.coupon_discount_rate		as discountRate,
+			B.discount_price		as discountPrice,
 			B.coupon_limited			as limited,
-			B.coupon_amount				as amount
+			B.coupon_amount				as amount,
+			discount_way			as discountWay
 		from
 			users A, coupons B, coupon_box C
 		where

@@ -22,11 +22,10 @@
 	<%@ include file="../common/header.jsp"%>
   <%@ include file="../common/user-sidebar.jsp" %>
          
-			<div class="col-sm-10">
+			<div class="col-sm-9">
             <div class="row">
                <div class="col-sm-12">
-                  <h3>구매한 강의</h3>
-                  <p>구매한 강의 리스트</p>
+                  <h3>보유한 쿠폰</h3>
                </div>
             </div>
             <div class="row">
@@ -36,15 +35,14 @@
                            <tr>
                                <th>쿠폰번호</th>
 		                       <th>쿠폰제목</th>
-		                       <th>쿠폰 가격할인</th>
-		                       <th>쿠폰 가격할인률</th>
+		                       <th>쿠폰 가격 할인</th>
                            </tr>
                        </thead>
                        <tbody>
                        <c:choose>
                          <c:when test="${empty couponDetails }">
                          	<tr>
-                         		<td colspan="6" class="text-center">없어 돌아가</td>
+                         		<td colspan="6" class="text-center">보유하신 쿠폰이 없습니다.</td>
                          	</tr>
                          </c:when>
                          <c:otherwise>
@@ -52,8 +50,15 @@
 		                         <tr>
 					                 <td>${couponDetail.no }</td>
 					                 <td>${couponDetail.title }</td>
-					                 <td>${couponDetail.discountPrice } 원</td>
-					                 <td>${couponDetail.discountRate } %</td>
+					                 <c:choose>
+					                 	<c:when test="${couponDetail.discountWay == 'percent' }">
+					                 		<td>${couponDetail.discountPrice }%</td>
+					                 	</c:when>
+					                 	<c:otherwise>
+							                 <td><fmt:formatNumber value="${couponDetail.discountPrice }" /> 원</td>
+					                 	</c:otherwise>
+					                 </c:choose>
+					                 
 			                     </tr>
                          	</c:forEach>
                          </c:otherwise>

@@ -267,7 +267,8 @@
 			D.TEST_NO					testNo, 
 			D.TEST_NAME					name, 
 			D.test_ep					ep, 
-			D.TEST_QT_CNT				qtCnt	
+			D.TEST_QT_CNT				qtCnt,
+			C.TEST_QT_TR_RATE			trueRate
 		from
 			TEST_SUBJS B, TEST_QTS C, TESTS D
 		where
@@ -299,7 +300,8 @@
 			D.TEST_NO					testNo, 
 			D.TEST_NAME					name, 
 			D.test_ep					ep, 
-			D.TEST_QT_CNT				qtCnt	
+			D.TEST_QT_CNT				qtCnt,
+			C.TEST_QT_TR_RATE			trueRate
 		from
 			TEST_SUBJS B, TEST_QTS C, TESTS D
 		where

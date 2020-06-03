@@ -295,7 +295,7 @@
 <!-- 문의글에 답변하는 모달창 -->
 <div id="modal-qna-answer" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-lg">
-		<form id="answer-form" class="well" method="post" action="addanswer.hta" enctype="multipart/form-data">
+		<form id="answer-form" class="well" method="post" action="/admin/addanswer.hta" enctype="multipart/form-data">
 		<div class="modal-content">
 			<div class="modal-header">
 	   			<input type="hidden" name="qnaNo">

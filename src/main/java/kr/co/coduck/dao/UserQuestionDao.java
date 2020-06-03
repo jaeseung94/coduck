@@ -9,6 +9,9 @@ import kr.co.coduck.vo.AdQnaFile;
 
 public interface UserQuestionDao {
 	
+	void deleteQnaFile(int qnaNo);
+	void deleteQna(int qnaNo);
+	void updateQna(AdQna adQna);
 	List<AdQnaFile> getAdQnaFilesByQnaNo(int qnaNo);
 	List<AdQna> getAdQnasByUserNo(int userNno);
 	List<AdQna> getAdQnasByCriteria(Map<String, Integer> criteria);

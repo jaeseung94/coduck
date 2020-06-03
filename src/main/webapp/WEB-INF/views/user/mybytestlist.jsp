@@ -17,57 +17,175 @@
    <link rel="stylesheet" href="<c:url value='/resources/css/sy-style.css' />">    
    <!-- sy.js -->
    <script src="/resources/js/common.js"></script>
+   <style type="text/css">
+    ul.tabs {
+            margin: 0;
+            padding: 0;
+            float: left;
+            list-style: none;
+            height: 32px; /*--Set height of tabs--*/
+            border-bottom: 1px solid #999;
+            border-left: 1px solid #999;
+            width: 100%;
+        }
+        ul.tabs li {
+            float: left;
+            margin: 0;
+            padding: 0;
+            height: 31px; /*--Subtract 1px from the height of the unordered list--*/
+            line-height: 31px; /*--Vertically aligns the text within the tab--*/
+            border: 1px solid #999;
+            border-left: none;
+            margin-bottom: -1px; /*--Pull the list item down 1px--*/
+            overflow: hidden;
+            position: relative;
+            background: #e0e0e0;
+        }
+        ul.tabs li a {
+            text-decoration: none;
+            color: #000;
+            display: block;
+            font-size: 1.2em;
+            padding: 0 20px;
+            /*--Gives the bevel look with a 1px white border inside the list item--*/
+            border: 1px solid #fff; 
+            outline: none;
+        }
+        ul.tabs li a:hover {
+            background: #ccc;
+        }
+        html ul.tabs li.active, html ul.tabs li.active a:hover  {
+             /*--Makes sure that the active tab does not listen to the hover properties--*/
+            background: #fff;
+            /*--Makes the active tab look like it's connected with its content--*/
+            border-bottom: 1px solid #fff; 
+        }
+
+        /*Tab Conent CSS*/
+        .tab_container {
+            border-top: none;
+            overflow: hidden;
+            clear: both;
+            float: left; 
+            width: 100%;
+            background: #fff;
+        }
+        .tab_content {
+            padding: 20px;
+            font-size: 1.2em;
+        }
+   </style>
 </head>
 <body>
 	<%@ include file="../common/header.jsp"%>
   <%@ include file="../common/user-sidebar.jsp" %>
          
-			<div class="col-sm-10">
+			<div class="col-sm-9">
+            <br>
+            <br>
             <div class="row">
                <div class="col-sm-12">
-                  <h3>구매한 모의고사</h3>
-               </div>
-            </div>
-            <div class="row">
-               <div class="col-sm-12">
-                   <table class="table" id="my-order-history-table" >
-                       <thead>
-                           <tr>
-                                <th>순번</th>
-								<th>시험명</th>
-								<th>시험회차</th>
-								<th>응시여부</th>
-                           </tr>
-                       </thead>
-                       <tbody>
-                       <c:choose>
-                         <c:when test="${empty userOrderTestLists }">
-                         	<tr>
-                         		<td colspan="4" class="text-center">없습니다.</td>
-                         	</tr>
-                         </c:when>
-                         <c:otherwise>
-                         	<c:forEach var="userOrderTestList" items="${userOrderTestLists }" varStatus="loop">
-						        <tr>
-							        <td>${loop.count }</td>
-							        <td>${userOrderTestList.testName }</td>
-							        <td>${userOrderTestList.testEp }</td>
-							        <td>
-							        <c:choose>
-							            <c:when test="${userOrderTestList.testDone == 'Y' }">
-							            	<button id="btn-detail" class="btn btn-info btn-xs" data-order-no="${userOrderTestList.testNo }">점수조회</button> | <a href="/test/test-result.hta?testNo=${userOrderTestList.testNo }" class="btn btn-info btn-xs">상세조회</a>
-							            </c:when>
-							            <c:when test="${userOrderTestList.testDone == 'N' }">
-					             			<a href="/test/takeaTest.hta?testNo=${userOrderTestList.testNo }" class="btn btn-info btn-xs a-take-test" data-test-no="${userOrderTestList.testNo }">응시하기</a>
-							            </c:when>
-					             	</c:choose>
-					             	</td>
-						         </tr>
-                         	</c:forEach>
-                         </c:otherwise>
-                       </c:choose>
-                       </tbody>
-                   </table>
+               <div id="wrapper">    
+				    <!--탭 메뉴 영역 -->
+				    <ul class="tabs">
+				        <li><a href="#tab1">응시한 모의고사</a></li>
+				        <li><a href="#tab2">미응시 모의고사</a></li>
+				    </ul>
+				
+				    <!--탭 콘텐츠 영역 -->
+				    <div class="tab_container">
+				        <div id="tab1" class="tab_content">
+				            <!--Content-->
+							<br/>
+						   <table class="table">
+		                       <thead>
+		                           <tr>
+		                                <th>순번</th>
+										<th>시험명</th>
+										<th>시험회차</th>
+										<th></th>
+		                           </tr>
+		                       </thead>
+		                       <tbody>
+						            <c:choose>
+			                         <c:when test="${empty done }">
+			                         	<tr>
+			                         		<td colspan="4" class="text-center">없습니다.</td>
+			                         	</tr>
+			                         </c:when>
+			                         <c:otherwise>
+			                         	<c:forEach var="d" items="${done }" varStatus="loop">
+									        <tr>
+										        <td>${loop.count }</td>
+										        <td>${d.testName }</td>
+										        <td>${d.testEp }</td>
+										        <td>
+										        <c:choose>
+										            <c:when test="${d.testDone == 'Y' }">
+										            	<button id="btn-detail" class="btn btn-info btn-xs" data-order-no="${d.testNo }">점수조회</button> | <a href="/test/test-result.hta?testNo=${d.testNo }" class="btn btn-info btn-xs">상세조회</a>
+										            </c:when>
+										            <c:when test="${d.testDone == 'N' }">
+								             			<a href="/test/takeaTest.hta?testNo=${userOrderTestList.testNo }" class="btn btn-info btn-xs a-take-test" data-test-no="${d.testNo }">응시하기</a>
+										            </c:when>
+								             	</c:choose>
+								             	</td>
+									         </tr>
+			                         	</c:forEach>
+			                         </c:otherwise>
+			                       </c:choose>
+		                       </tbody>
+		                   </table>
+				
+				        </div>
+				
+				        <div id="tab2" class="tab_content">
+				           <!--Content-->
+				           <br>
+			              <table class="table" >
+		                       <thead>
+		                           <tr>
+		                                <th>순번</th>
+										<th>시험명</th>
+										<th>시험회차</th>
+										<th>응시여부</th>
+		                           </tr>
+		                       </thead>
+		                       <tbody>
+					            <c:choose>
+		                         <c:when test="${empty notYet }">
+		                         	<tr>
+		                         		<td colspan="4" class="text-center">없습니다.</td>
+		                         	</tr>
+		                         </c:when>
+		                         <c:otherwise>
+		                         	<c:forEach var="e" items="${notYet }" varStatus="loop">
+								        <tr>
+									        <td>${loop.count }</td>
+									        <td>${e.testName }</td>
+									        <td>${e.testEp }</td>
+									        <td>
+									        <c:choose>
+									            <c:when test="${e.testDone == 'Y' }">
+									            	<button id="btn-detail" class="btn btn-info btn-xs" data-order-no="${e.testNo }">점수조회</button> | <a href="/test/test-result.hta?testNo=${e.testNo }" class="btn btn-info btn-xs">상세조회</a>
+									            </c:when>
+									            <c:when test="${e.testDone == 'N' }">
+							             			<a href="/test/takeaTest.hta?testNo=${e.testNo }" class="btn btn-info btn-xs a-take-test" data-test-no="${e.testNo }">응시하기</a>
+									            </c:when>
+							             	</c:choose>
+							             	</td>
+								         </tr>
+		                         	</c:forEach>
+		                         </c:otherwise>
+		                       </c:choose>
+		                       
+		                       </tbody>
+		                   </table>
+				        </div>
+				
+				    </div>
+				
+				</div>
+               
                </div>
             </div>
          </div>
@@ -106,12 +224,28 @@
 	
    <script type="text/javascript">
    
+   $(".tab_content").hide(); //Hide all content
+   $("ul.tabs li:first").addClass("active").show(); //Activate first tab
+   $(".tab_content:first").show(); //Show first tab content
+
+   //On Click Event
+   $("ul.tabs li").click(function() {
+
+       $("ul.tabs li").removeClass("active"); //Remove any "active" class
+       $(this).addClass("active"); //Add "active" class to selected tab
+       $(".tab_content").hide(); //Hide all tab content
+
+       var activeTab = $(this).find("a").attr("href"); //Find the href attribute value to identify the active tab + content
+       $(activeTab).fadeIn(); //Fade in the active ID content
+       return false;
+   });
+   
    //응시하기 클릭시
-   $("#my-order-history-table").on("click", ".a-take-test", function(){
+   $(".table").on("click", ".a-take-test", function(){
 		event.preventDefault();
 		var testNo = $(this).data("test-no");
 		window.location.reload();
-		window.open("/test/takeaTest.hta?testNo=" + testNo, "시험응시페이지", "width = 900, height = 850, top = 100, left = 200, location = no");
+		window.open("/test/takeaTest.hta?testNo=" + testNo, "시험응시페이지", "width = 1200, height = 850, top = 100, left = 200, location = no");
    })
    
  	//자세히보기 클릭했을 때	
@@ -136,63 +270,7 @@
 			$("#myModal").modal("show");
 			
 		})
-		/*  $.ajax({
-			type:"GET",
-			url:"/test/clickShowDetailTest.hta",
-			data:testNo,
-			success:function(){
-				$("#myModal").modal("show");
-			}
-		}) */
-		
 	}) 
    </script>
 <%@ include file="../common/footer.jsp"%>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -27,6 +27,14 @@
 	</repositories>
 	
 	<dependencies>
+		
+		<!-- Spring websocket -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		    <version>4.3.25.RELEASE</version>
+		</dependency>
+
         
         <dependency>
 		    <groupId>com.github.iamport</groupId>

@@ -50,7 +50,7 @@
 							</tr>
 							<tr>
 								<th>작성일</th>
-								<td style="padding-left: 30px;"><fmt:formatDate value="${map.qna.createDate }" pattern="yyyy.MM.dd HH:mm:ss"/></td>
+								<td style="padding-left: 30px;"><fmt:formatDate value="${map.qna.createDate }" pattern="yyyy.MM.dd a HH:mm:ss"/></td>
 							</tr>
 						</tbody>
 					</table>
@@ -72,15 +72,36 @@
 				</div>
 			</div>
 			
-			<div class="row" style="background-color: #f7f7f7; margin-top: 30px; margin-bottom: 30px;">
-				<div class="col-sm-2">
-					<p style="margin: 10px">${map.ans.userName }</p>
+			<c:if test="${not empty map.ans }">
+				<div class="row" style="background-color: #f7f7f7; margin-top: 30px; margin-bottom: 30px;">
+					<div class="col-sm-2">
+						<p style="margin: 10px">${map.ans.userName }</p>
+					</div>
+					<div class="col-sm-10">
+						<p style="margin: 10px">${map.ans.content }</p>
+					</div>
 				</div>
-				<div class="col-sm-10">
-					<p style="margin: 10px">${map.ans.content }</p>
+			</c:if>
+			
+			<div class="row">
+				<div class="col-sm-12" style="text-align: right;">
+					<a href="/userquestion/modify.hta?qnaNo=${map.qna.no }" class="btn btn-success">수정</a>
+					<a href="/userquestion/del.hta?qnaNo=${map.qna.no }" id="a-del" class="btn btn-danger">삭제</a>
 				</div>
 			</div>
 		</div>
 	</div>	
 	</div>
+	
+	<script type="text/javascript">
+		$("#a-del").click(function(e){
+			e.preventDefault();
+			var x = confirm("정말로 삭제하시겠습니까?");
+			if(x){
+				location.href = "/userquestion/del.hta?qnaNo="+ ${map.qna.no };
+				return;
+			}
+		})
+	
+	</script>
 <%@ include file="../common/footer.jsp"%>

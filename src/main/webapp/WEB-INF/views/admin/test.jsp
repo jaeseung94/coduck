@@ -85,18 +85,16 @@
 		                    
 	                       <div class="form-group col-sm-10" style="display: inline-flex;">
 		                        <label class="col-sm-1 control-label">검색</label>
-		                        <div class="col-sm-3">
+		                        <div class="col-sm-6" style="padding-right: 0px;">
 		                            <input type="text" class="form-control" name="searchKeyword" id="searchKeyword" placeholder="검색할 키워드를 입력해주세요." 
-		                            style="font-size: 15px; width: 400px;"/>
+		                            style="font-size: 15px;"/>
 		                            <!-- <button type="button" id="button-search" class="btn btn-primary" >검색</button> -->
 		                        </div>
-		                        <div class="col-sm-5">
+		                        <div class="col-sm-1" style="padding-left: 0px;">
 		                            <button type="button" class="btn btn-default" id="button-search"><i class="fas fa-search"></i></button>
-		                    	</div>
-			                    <div>
-			                        <button class="btn btn-warning" id="button-reset">초기화</button>
-			                    </div>
+		                        </div>
 		                    </div>
+	                        <p><button class="btn btn-warning" id="button-reset">초기화</button></p>
 		
 		                </div>
 		            </form>
@@ -105,19 +103,27 @@
 			
 			<div class="row">
 				<div class="col-sm-12">
-	                <div class="form-panel" style="background: #fff; margin-left:50px; margin-right:50px; "> 
-	                    <div class="col-sm-3">
+	                <div class="form-panel" style="background: #fff; margin: 0px 50px; padding: 33px 17px;"> 
+	                	<div class="row">
+	                		<div class="col-sm-6">
+	                			<p>총 <span id="search-count">0</span>건의 조회결과</p>
+	                		</div>
+	                		<div class="col-sm-6" style="text-align: right;">
+	                			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">시험 등록</button>
+	                		</div>
+	                	</div>
+	                   <!--  <div class="col-sm-3">
                     		<div class="customers_length" id="search-count" role="status" aria-live="polite">
                     			<p>총 <span>0</span>건의 조회결과 <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#myModal">시험 등록</button>		</p>	
                     			       
                     		</div>
-                    	</div>   
+                    	</div> -->   
                     	       
-	           			<div class="form-group col-sm-10">   
+	           			<div class="form-group col-sm-12">   
 		                	<div class="row" style="margin-top: 10px;">
 		                   		<div class="col-sm-12">
 			                     	<table class="table" id="table-test-info" style="text-align: center;">
-		                        		<colgroup>
+		                        		<!-- <colgroup>
 		                        			<col width="6%">
 		                        			<col width="*">
 		                        			<col width="20%">
@@ -128,7 +134,7 @@
 		                        			<col width="8%">
 		                        			<col width="8%">
 		                        			<col width="12%">
-		                        		</colgroup>
+		                        		</colgroup> -->
 										<thead>
 											<tr>
 							                    <th>번호</th>
@@ -158,13 +164,12 @@
 	</div>
 	
 	<div class="modal fade" id="myModal" role="dialog">
-		<div class="modal-dialog modal-lg">
-
+		<div class="modal-dialog modal-md">
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header" >
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h4 class="modal-title">시험 등록</h4>
+					<p><button type="button" class="close" data-dismiss="modal">&times;</button></p>
 				</div>
 
 				<form class="form-horizontal" id="form-register" action="/admin/addTestByExcel.hta" method="post" enctype="multipart/form-data">
@@ -172,7 +177,7 @@
 					<div class="modal-body">
 						<div class="form-group">
 							<label class="control-label col-sm-2">분류1</label>
-							<div class="col-sm-3">
+							<div class="col-sm-6">
 								<select name="testMainCateNo" class="form-control" id="testMainCateNo">
 									<option value="" selected disabled>카테고리를 선택하세요.</option>
 									<c:forEach var="cate" items="${testMainCates }" varStatus="loop">
@@ -181,14 +186,14 @@
 								</select>
 							</div>
 							<label class="control-label col-sm-2">분류2</label>
-							<div class="col-sm-4">
+							<div class="col-sm-6">
 								<select name="testCateNo" class="form-control" id="testCateNo">
 									<option value="" selected disabled>시험을 선택하세요.</option>
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="control-label col-sm-2">엑셀파일</label>
+							<label class="control-label col-sm-4">엑셀파일</label>
 							<div class="col-sm-6">
 								<input type="file" class="form-control" name="xlsfile" id="xlsfile" accept=".xls,.xlsx">
 							</div>
@@ -212,10 +217,13 @@
 	
 	<!-- 시험행 클릭시 과목별 보기 -->
 	<div class="modal fade" id="myModal2" role="dialog">
-	  <div class="modal-dialog">
-	  
+	  <div class="modal-dialog modal-lg">
+	  	
 	    <!-- Modal content-->
 	    <div class="modal-content">
+	    <div class="modal-header" style="border-bottom: none; ">
+		  	<div class="moodal-title" id="modal-title"></div>
+	    </div>
 	      <div class="modal-body">
 	        <table class="table" id="table-modal">
 	        	<thead>
@@ -282,6 +290,12 @@
 	$("input[name='from']").val();
 	var formData = $("#searchForm").serialize();
 	console.log("formData : " + formData);
+	
+	//엑셀 다운
+	$("#table-test-info tbody").on("click", "#btn-excel-down", function(event){
+		event.stopPropagation();
+		location.href = "/admin/excelDown.hta?testNo=" + $(this).data("testno");
+	})
 	
 	//가격 수정 폼 제출
  	$("#form-modify-price").submit(function(event){
@@ -355,6 +369,8 @@
  	$("#table-test-info tbody").on("click", "tr", function(){
 		//event.preventDefault();
 		//event.stopPropagation();
+		$("#modal-title").text($(this).find("td").eq(2).text());
+		
 		var testNo = $(this).data("testno");
 		//window.open("/test/takeaTest.hta?testNo=" + testNo, "시험문제확인", "width = 900, height = 850, top = 100, left = 200, location = no");
 		$.getJSON("/admin/showSubjInfo.hta", {testNo:testNo}, function(result){
@@ -418,11 +434,12 @@
 				row += "<td style='color:red;'>비공개</td>";
 				row += "<td><button type='button' class='btn btn-success btn-sm btn-isShow' data-testno='" + item.testNo + "'>공개하기</button></td>";
 			}
-			row += "<td><button type='button' class='btn btn-warning btn-sm modify-test' data-testno='"+ item.testNo +"' data-price='" + item.testPrice + "'>가격수정</button><button style='margin-left:10px;' type='button' class='btn btn-danger btn-sm del-test'>삭제</button></td>";
+			row += "<td><button type='button' class='btn btn-warning btn-sm modify-test' data-testno='"+ item.testNo +"' data-price='" + item.testPrice + "'>가격수정</button><button style='margin-left:10px;' type='button' class='btn btn-danger btn-sm del-test'>삭제</button>";
+			row += "<button type='button' style='margin-left:10px;' id='btn-excel-down' class='btn btn-info btn-sm' data-testno='"+ item.testNo + "'>엑셀다운</button>";
 			row += "</tr>";
 			$("#table-test-info tbody").append(row);
 		})
-		$("#search-count").find("span").text(dtos.length);
+		$("#search-count").text(dtos.length);
 	}
 	
 	

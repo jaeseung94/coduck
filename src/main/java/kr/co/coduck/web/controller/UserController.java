@@ -1,6 +1,7 @@
 package kr.co.coduck.web.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -179,14 +180,25 @@ public class UserController {
 		User user = (User)session.getAttribute("LU");
 		List<Coupon> couponDetails = couponService.getCouponsByUserNo(user.getNo());
 		model.addAttribute("couponDetails", couponDetails);
-		return "user/mycouponlist";
+		return "/user/mycouponlist";
 	}
 	
 	@GetMapping("/mybytestlist.hta")
 	public String mybytestlist(HttpSession session, Model model) {
 		User user = (User)session.getAttribute("LU");
 		List<SearchTestDetailDto> userOrderTestLists = testService.userBySearchTestList(user.getNo());
+		List<SearchTestDetailDto> done = new ArrayList<SearchTestDetailDto>();;
+		List<SearchTestDetailDto> notYet = new ArrayList<SearchTestDetailDto>();
+		for(SearchTestDetailDto e : userOrderTestLists) {
+			if(e.getTestDone().equals("Y")){
+				done.add(e);
+			} else {
+				notYet.add(e);
+			}
+		}
 		model.addAttribute("userOrderTestLists", userOrderTestLists);
+		model.addAttribute("done", done);
+		model.addAttribute("notYet", notYet);
 		return "user/mybytestlist";
 	}
 	

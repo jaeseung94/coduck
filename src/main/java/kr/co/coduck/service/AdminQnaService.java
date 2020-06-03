@@ -13,6 +13,8 @@ import kr.co.coduck.vo.AdQnaFile;
 
 @Transactional
 public interface AdminQnaService {
+	
+	void deleteQna(int qnaNo);
 	List<AdQnaFile> getAdQnaFilesByQnaNo(int qnaNo);
 	List<AdQna> getAdQnasByUserNo(int userNo);
 	AdQna getAdQnaByNo(int no);

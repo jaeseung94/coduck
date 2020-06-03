@@ -73,7 +73,7 @@
 								<tr>
 									<td>${loop.count }</td>
 									<td style="text-align: left;"><a href="/userquestion/userQnaToAdmDetail.hta?qnaNo=${q.no }">${q.title }</a></td>
-									<td><fmt:formatDate value="${q.createDate }" pattern="yyyy.MM.dd HH:mm:ss"/></td>
+									<td><fmt:formatDate value="${q.createDate }" pattern="yyyy.MM.dd a HH:mm:ss"/></td>
 									<td>${q.isAnswered }</td>
 								</tr>
 							</c:forEach>
