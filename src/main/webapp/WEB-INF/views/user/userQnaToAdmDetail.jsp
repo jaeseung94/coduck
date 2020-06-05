@@ -94,6 +94,19 @@
 	</div>
 	
 	<script type="text/javascript">
+		$.ajax({
+			url:"/admin/qnaConfirm.hta",
+			data:{qnaNo:${map.qna.no}},
+			method:"post"
+		}).done(function(){
+			$.ajax({
+	      		url:"/admin/notConfirmCnt.hta",
+	      		method:"get"
+	      	}).done(function(data){
+	      		$("#alarm-cnt").text(data);
+	      	})
+		})
+	
 		$("#a-del").click(function(e){
 			e.preventDefault();
 			var x = confirm("정말로 삭제하시겠습니까?");

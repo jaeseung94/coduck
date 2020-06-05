@@ -11,6 +11,8 @@ import kr.co.coduck.vo.AdQnaFile;
 
 public interface AdminQnaDao {
 	
+	List<AdminAnswerDto> getAnsweredQnaTop5(int userNo);
+	int getNotConfirmCntQna(int userNo);
 	void deleteQna(int qnaNo);
 	List<AdQnaFile> getAdQnaFilesByQnaNo(int qnaNo);
 	List<AdQna> getAdQnasByUserNo(int userNno);

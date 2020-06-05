@@ -4,6 +4,16 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="kr.co.coduck.dao.AdminQnaDao">
+
+	<!-- 확인 안한 답변 개수 조회하기 -->
+	<select id="getNotConfirmCntQna" parameterType="int" resultType="int">
+		select count(*)
+		from ad_qnas 
+		where
+			user_no = #{value}
+			and is_confirm = 'N'
+	</select>
+
 	<!-- 문의내역 삭제 -->
 	<delete id="deleteQna" parameterType="int">
 		delete from ad_answers
@@ -14,7 +24,12 @@
 		update
 			ad_qnas
 		set
+			<if test="isConfirm != null">
+			is_confirm = 'Y'
+			</if>
+			<if test="isAnswered != null">
 			admin_qna_isanswered = #{isAnswered}
+			</if>
 		where
 			admin_qna_no = #{no}
 	</update>
@@ -96,11 +111,33 @@
 			admin_qna_title				title,
 			admin_qna_content			content,
 			admin_qna_create_date		createDate,
-			admin_qna_isanswered		isAnswered
+			admin_qna_isanswered		isAnswered,
 		from
 			ad_qnas
 		where
 			user_no = #{value}
+	</select>
+	
+	<!-- 답변받은 글 상위 5개 조회 -->
+	<select id="getAnsweredQnaTop5" parameterType="int" resultType="AdminAnswerDto">
+		select *
+			from (
+				select 
+					B.ADMIN_QNA_TITLE					title,	
+					A.admin_answer_create_date			createDate,
+					A.admin_qna_no						qnaNo,
+					A.admin_answer_no					no,
+					B.user_no							userNo,
+					B.is_confirm						isConfirm
+				from
+					ad_answers A, AD_QNAS B
+				where
+					A.ADMIN_QNA_NO = B.ADMIN_QNA_NO
+					and	B.user_no = #{value}
+					and B.ADMIN_QNA_ISANSWERED = 'Y'
+				order by admin_answer_create_date desc
+			)
+			where rownum &lt;= 20
 	</select>
 	
 	<!-- 1:1 문의글 조회하기 -->
@@ -111,13 +148,13 @@
 				select
 				<choose>
 					<when test="sort eq 'date'">
-						ROW_NUMBER() over (order by A.admin_qna_no desc) rn,
+						ROW_NUMBER() over (order by A.admin_qna_create_date desc) rn,
 					</when>
 					<when test="sort eq 'title'">
-						ROW_NUMBER() over (order by A.admin_qna_title desc) rn,
+						ROW_NUMBER() over (order by A.admin_qna_title asc) rn,
 					</when>
 					<otherwise>
-						ROW_NUMBER() over (order by A.admin_qna_isanswered asc) rn,
+						ROW_NUMBER() over (order by A.admin_qna_create_date desc) rn,
 					</otherwise>
 				</choose>
 					A.admin_qna_no				as no,

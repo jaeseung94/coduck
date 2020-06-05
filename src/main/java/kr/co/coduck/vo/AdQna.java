@@ -13,6 +13,7 @@ public class AdQna {
 	private String content;
 	private Date createDate;
 	private String isAnswered;
+	private String isConfirm;
 	
 	public AdQna() {}
 
@@ -68,6 +69,14 @@ public class AdQna {
 	public String toString() {
 		return "AdQna [no=" + no + ", userNo=" + userNo + ", title=" + title + ", content=" + content + ", createDate="
 				+ createDate + ", isAnswered=" + isAnswered + "]";
+	}
+
+	public String getIsConfirm() {
+		return isConfirm;
+	}
+
+	public void setIsConfirm(String isConfirm) {
+		this.isConfirm = isConfirm;
 	}
 }
 	

@@ -18,6 +18,8 @@ public class AdQnaDto {
 	private String content;
 	private Date createDate;
 	private String isAnswered;
+	private String isConfirm;
+	
 	
 	public AdQnaDto() {}
 
@@ -95,6 +97,14 @@ public class AdQnaDto {
 
 	public String getFmtCreateDate() {
 		return DateUtils.dateToString(createDate);
+	}
+
+	public String getIsConfirm() {
+		return isConfirm;
+	}
+
+	public void setIsConfirm(String isConfirm) {
+		this.isConfirm = isConfirm;
 	}
 
 }

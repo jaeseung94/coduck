@@ -25,6 +25,16 @@ public class AdminQnaServiceImpl implements AdminQnaService {
 	private AdminQnaDao adminQnaDao;
 	
 	@Override
+	public List<AdminAnswerDto> getAnsweredQnaTop5(int userNo) {
+		return adminQnaDao.getAnsweredQnaTop5(userNo);
+	}
+	
+	@Override
+	public int getNotConfirmCntQna(int userNo) {
+		return adminQnaDao.getNotConfirmCntQna(userNo);
+	}
+	
+	@Override
 	public void deleteQna(int qnaNo) {
 		adminQnaDao.deleteQna(qnaNo);
 	}

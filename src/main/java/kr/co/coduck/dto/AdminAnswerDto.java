@@ -20,8 +20,7 @@ public class AdminAnswerDto {
 	private String userName;
 	private String userImgFile;
 	private int userNo;
-	
-	
+	private String isConfirm;
 	
 	public int getUserNo() {
 		return userNo;
@@ -86,6 +85,12 @@ public class AdminAnswerDto {
 	
 	public String getFmtCreateDate() {
 		return DateUtils.dateToString(createDate);
+	}
+	public String getIsConfirm() {
+		return isConfirm;
+	}
+	public void setIsConfirm(String isConfirm) {
+		this.isConfirm = isConfirm;
 	}
 	
 }

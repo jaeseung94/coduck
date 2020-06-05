@@ -68,11 +68,7 @@ public class UserQuestionController {
 		map.put("qna", userQuestionService.getAdQnaByNo(qnaNo));
 		map.put("images", userQuestionService.getAdQnaFilesByQnaNo(qnaNo));
 		map.put("ans", adminQnaService.getAnswerByNo(qnaNo));
-		System.out.println("=====================================");
-		System.out.println("qnaNo :" + qnaNo);
-		System.out.println("images"+ userQuestionService.getAdQnaFilesByQnaNo(qnaNo));
 		model.addAttribute("map", map);
-		System.out.println("sdfdsfdsfdsfdsf"+map.get("qna"));
 		
 		return "/user/userQnaToAdmDetail";
 	}
@@ -82,11 +78,6 @@ public class UserQuestionController {
     public String insertAdQna(userQuestionToAdm form, HttpSession session, Model model) throws IOException {
         User user = (User)session.getAttribute("LU");
         
-        System.out.println("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-        System.out.println("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-        System.out.println("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-        
-        System.out.println(form);
         int qnaNo = userQuestionService.insertAdQna(form, user.getNo());
         return "redirect:/userquestion/userQnaToAdmDetail.hta?qnaNo=" + qnaNo;
     }

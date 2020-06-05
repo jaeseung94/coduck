@@ -22,6 +22,7 @@ import kr.co.coduck.dto.AdminQnaCriteria;
 import kr.co.coduck.dto.AdminQnaDto;
 import kr.co.coduck.form.AnswerForm;
 import kr.co.coduck.service.AdminQnaService;
+import kr.co.coduck.vo.AdQna;
 import kr.co.coduck.vo.AdQnaFile;
 import kr.co.coduck.vo.Pagination;
 import kr.co.coduck.vo.User;
@@ -33,12 +34,35 @@ public class AdminQnaController {
 	@Autowired
 	private AdminQnaService adminQnaService;
 	
+	@PostMapping("/qnaConfirm.hta")
+	@ResponseBody
+	public void qnaConfirm(@RequestParam("qnaNo") int qnaNo) {
+		AdQnaDto dto = new AdQnaDto();
+		dto.setIsConfirm("Y");
+		dto.setNo(qnaNo);
+		
+		adminQnaService.updateQna(dto);
+	}
+	
+	@GetMapping("/getAlarm.hta")
+	@ResponseBody
+	public List<AdminAnswerDto> getAlarm(HttpSession session){
+		User user = (User)session.getAttribute("LU");
+		return adminQnaService.getAnsweredQnaTop5(user.getNo());
+	}
+	
+	@GetMapping("/notConfirmCnt.hta")
+	@ResponseBody
+	public int getNotConfirmCnt(HttpSession session) {
+		User user = (User)session.getAttribute("LU");
+		return adminQnaService.getNotConfirmCntQna(user.getNo());
+	}
+	
 	@GetMapping("/qna.hta")
 	public String qnaSearch(AdminQnaCriteria criteria, @RequestParam(value = "pageno", required = false, defaultValue = "1") int pageNo, Model model) {
 		
 		int totalCnt = adminQnaService.getQnaCntByCriteria(criteria);
 		Pagination pagination = new Pagination(pageNo, totalCnt, 10, 5);
-		
 		criteria.setBeginIndex(pagination.getBeginIndex());
 		 criteria.setEndIndex(pagination.getEndIndex()); 
 	    List<AdminQnaDto> qnaList = adminQnaService.getQnaByCriteria(criteria);
