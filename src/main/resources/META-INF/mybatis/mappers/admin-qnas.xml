@@ -137,7 +137,7 @@
 					and B.ADMIN_QNA_ISANSWERED = 'Y'
 				order by admin_answer_create_date desc
 			)
-			where rownum &lt;= 20
+			where rownum &lt;= 5
 	</select>
 	
 	<!-- 1:1 문의글 조회하기 -->

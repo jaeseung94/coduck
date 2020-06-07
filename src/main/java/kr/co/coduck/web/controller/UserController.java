@@ -102,13 +102,17 @@ public class UserController {
 	public String login(@RequestParam("id") String userId, @RequestParam("pwd") String userPassword, HttpSession session) {
 		User user = userService.login(userId, userPassword);
 		
+		String url = "";
+		
 		if(user == null) {
 			return "redirect:/user/login.hta?error=fail";
 		}else if(user.getRole().equals("A")) {
-			return "redirect:/admin/home.hta";
+			url = "redirect:/admin/home.hta";
+		} else {
+			url = "redirect:/home.hta";
 		}
 		session.setAttribute("LU", user);
-		return "redirect:/home.hta";
+		return url;
 	}
 	
 	@GetMapping("/register.hta")//get방식의 요청은 여기로
